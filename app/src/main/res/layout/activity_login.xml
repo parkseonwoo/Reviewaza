@@ -5,21 +5,37 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/login_signUpBtn"
+    <EditText
+        android:id="@+id/loginEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="회원가입" />
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="@string/email" />
+
+    <EditText
+        android:id="@+id/login_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:hint="@string/password" />
 
     <Button
-        android:id="@+id/login_loginBtn"
+        android:id="@+id/login_signup_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="로그인" />
+        android:hint="@string/signup_btn" />
+
+    <Button
+        android:id="@+id/login_login_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/login_btn" />
 
     <Button
         android:id="@+id/google_login_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="구글 로그인"/>
+        android:hint="@string/google_login_btn"/>
 </LinearLayout>

@@ -1,12 +1,15 @@
 package com.app.service.reviewaza.login
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
 import android.widget.Toast
-import com.app.service.reviewaza.MainActivity
+import com.app.service.reviewaza.LOGIN_EMAIL
+import com.app.service.reviewaza.LOGIN_VALUE
 import com.app.service.reviewaza.R
+import com.app.service.reviewaza.USER_INFORMATION
+import com.app.service.reviewaza.databinding.ActivityLoginBinding
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -18,6 +21,9 @@ import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityLoginBinding
+
     private var auth : FirebaseAuth? = null
     private var googleSignInClient : GoogleSignInClient? = null
     private var GOOGLE_LOGIN_CODE = 9001
@@ -27,19 +33,24 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
         auth = FirebaseAuth.getInstance()
 
-//        // 회원가입 창으로
-//        login_signUpBtn.setOnClickListener {
-//            startActivity(Intent(this,SignupActivity::class.java))
-//        }
-//
-//        // 로그인 버튼
-//        login_loginBtn.setOnClickListener {
-//            // signIn(idEditText.text.toString(),login_password.text.toString())
-//        }
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        // 회원가입 버튼
+        binding.loginSignupBtn.setOnClickListener {
+            var intent = Intent(this, SignUpActivity::class.java)
+            startActivity(intent)
+        }
+
+        // 로그인 버튼
+        binding.loginLoginBtn.setOnClickListener {
+            signinEmail()
+        }
 
         // 구글 로그인 버튼
-        val google_login_btn : Button = findViewById(R.id.google_login_btn)
-        google_login_btn.setOnClickListener { googleLogin() }
+        binding.googleLoginBtn.setOnClickListener {
+            googleLogin()
+        }
 
         var gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken("672142770659-7egalp3t6q54fbv2jdu5t28kku48q7hc.apps.googleusercontent.com")
@@ -48,32 +59,34 @@ class LoginActivity : AppCompatActivity() {
         googleSignInClient = GoogleSignIn.getClient(this,gso)
     }
 
+    // 로그인이 성공하면 다음 페이지로 넘어가는 함수
+//    fun moveMainPage(user:FirebaseUser?) {
+//        // 파이어베이스 유저 상태가 있을 경우 다음 페이지로 넘어갈 수 있음
+//        if(user != null) {
+//            startActivity(Intent(this, MainActivity::class.java))
+//        }
+//    }
+
     // 로그아웃하지 않을 시 자동 로그인 , 회원가입시 바로 로그인 됨
-    public override fun onStart() {
-        super.onStart()
-        moveMainPage(auth?.currentUser)
-    }
+//    public override fun onStart() {
+//        super.onStart()
+//        moveMainPage(auth?.currentUser)
+//    }
 
     // 로그인
-    private fun signIn(email: String, password: String) {
-
-        if (email.isNotEmpty() && password.isNotEmpty()) {
-            auth?.signInWithEmailAndPassword(email, password)
-                ?.addOnCompleteListener(this) { task ->
-                    if (task.isSuccessful) {
-                        Toast.makeText(
-                            baseContext, "로그인에 성공 하였습니다.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        moveMainPage(auth?.currentUser)
-                    } else {
-                        Toast.makeText(
-                            baseContext, "로그인에 실패 하였습니다.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
+    fun signinEmail() {
+        auth?.signInWithEmailAndPassword(loginEmail.text.toString(),login_password.text.toString())
+            ?.addOnCompleteListener {
+                    task ->
+                if(task.isSuccessful) {
+                    // Login, 아이디와 패스워드가 맞았을 때
+                    saveData()
+                    moveMainPage(task.result?.user)
+                } else {
+                    // Show the error message, 아이디와 패스워드가 틀렸을 때
+                    Toast.makeText(this, task.exception?.message, Toast.LENGTH_LONG).show()
                 }
-        }
+            }
     }
 
     // 구글 로그인 함수
@@ -116,13 +129,19 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-
-
     // 유저정보 넘겨주고 메인 액티비티 호출
     fun moveMainPage(user: FirebaseUser?){
         if( user!= null){
-            startActivity(Intent(this, MainActivity::class.java))
+            LOGIN_VALUE = 1
             finish()
         }
+    }
+
+    fun saveData() {
+        with(getSharedPreferences(USER_INFORMATION, MODE_PRIVATE).edit()) {
+            putString(LOGIN_EMAIL, binding.loginEmail.text.toString())
+            apply()
+        }
+        Toast.makeText(this, "저장을 완료했습니다", Toast.LENGTH_SHORT).show()
     }
 }
