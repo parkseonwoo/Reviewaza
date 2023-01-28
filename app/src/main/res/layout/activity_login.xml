@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        android:hint="@string/email" />
+        android:hint="email" />
 
     <EditText
         android:id="@+id/login_password"
@@ -19,23 +19,23 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        android:hint="@string/password" />
+        android:hint="password" />
 
     <Button
         android:id="@+id/login_signup_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/signup_btn" />
+        android:hint="signup_btn" />
 
     <Button
         android:id="@+id/login_login_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/login_btn" />
+        android:hint="login_btn" />
 
     <Button
         android:id="@+id/google_login_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/google_login_btn"/>
+        android:hint="google_login_btn"/>
 </LinearLayout>

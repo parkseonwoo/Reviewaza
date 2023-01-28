@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.helper.widget.Flow
+        android:id="@+id/myPageFlow"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.3"
+        app:flow_maxElementsWrap="1"
+        app:flow_wrapMode="chain"
+        app:constraint_referenced_ids="myPageMyInfo, myPageMyReview, myPageCupon, myPageEvent"
+        />
+
+    <TextView
+        android:id="@+id/myPageMyInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/myInfo"
+        tools:ignore="MissingConstraints"/>
+
+    <TextView
+        android:id="@+id/myPageMyReview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/myReview"
+        tools:ignore="MissingConstraints"/>
+
+    <TextView
+        android:id="@+id/myPageCupon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/myCupon"
+        tools:ignore="MissingConstraints"/>
+
+    <TextView
+        android:id="@+id/myPageEvent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/myEvent"
+        tools:ignore="MissingConstraints"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

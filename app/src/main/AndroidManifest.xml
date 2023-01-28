@@ -12,17 +12,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Reviewaza"
         tools:targetApi="31">
-        <activity
-            android:name=".UserActivity"
-            android:exported="false"
-            android:label="@string/title_activity_user"
-            android:theme="@style/Theme.Reviewaza.NoActionBar">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
+
         <activity android:name=".login.LoginActivity" />
         <activity android:name=".login.SignUpActivity" />
+        <activity android:name=".mypage.MyPageActivity" />
+        <activity android:name=".mypage.MyPageInfoActivity" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -32,6 +26,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="com.naver.maps.map.CLIENT_ID"
+            android:value="nysy79sc3c" />
     </application>
 
 </manifest>
