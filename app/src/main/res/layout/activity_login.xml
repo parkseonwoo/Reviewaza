@@ -5,13 +5,20 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="로그인 페이지"
+        style="@style/Title" />
+
     <EditText
         android:id="@+id/loginEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        android:hint="email" />
+        android:hint="email"
+        style="@style/LoginButtons"/>
 
     <EditText
         android:id="@+id/login_password"
@@ -19,23 +26,38 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        android:hint="password" />
+        android:hint="password"
+        style="@style/LoginButtons"/>
 
-    <Button
+    <android.widget.Button
         android:id="@+id/login_signup_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="signup_btn" />
+        android:background="@drawable/btn_round"
+        style="@style/LoginButtons"
+        android:backgroundTint="@color/white"
+        android:drawableLeft="@drawable/drawable_left_image_costomise_signup"
+        android:text="회원 가입" />
 
-    <Button
+    <android.widget.Button
         android:id="@+id/login_login_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="login_btn" />
+        android:background="@drawable/btn_round"
+        style="@style/LoginButtons"
+        android:backgroundTint="@color/white"
+        android:drawableLeft="@drawable/drawable_left_image_costomise_login"
+        android:text="로그인" />
 
-    <Button
+    <android.widget.Button
         android:id="@+id/google_login_btn"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="google_login_btn"/>
+        android:layout_height="50dp"
+        android:background="@drawable/btn_round"
+        android:backgroundTint="@color/white"
+        android:drawableLeft="@drawable/drawable_left_image_costomise_google_login"
+        android:text="구글 로그인"
+        style="@style/LoginButtons"
+        android:textColor="@color/black" />
+
 </LinearLayout>

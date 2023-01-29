@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import com.app.service.reviewaza.LOGIN_EMAIL
 import com.app.service.reviewaza.LOGIN_VALUE
 import com.app.service.reviewaza.databinding.ActivityMyPageInfoBinding
 import com.app.service.reviewaza.databinding.ActivityMypageEditDialogBinding
@@ -18,12 +19,14 @@ class MyPageInfoActivity : AppCompatActivity() {
         binding = ActivityMyPageInfoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        if(LOGIN_EMAIL != null) binding.emailValueTextView.text = LOGIN_EMAIL
+
         binding.logoutButton.setOnClickListener {
             LOGIN_VALUE = 0
             finish()
         }
 
-        binding.nicknameEditImageView.setOnClickListener {
+        binding.nicknameEditHelper.setOnClickListener {
             showAlertDialog()
         }
 

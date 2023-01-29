@@ -31,30 +31,34 @@
 
     <ImageView
         android:id="@+id/mainHomeImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         tools:ignore="MissingConstraints"
+        style="@style/mainPage"
         app:srcCompat="@drawable/ic_baseline_home_24" />
 
     <ImageView
         android:id="@+id/mainReviewImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         tools:ignore="MissingConstraints"
+        style="@style/mainPage"
         app:srcCompat="@drawable/ic_baseline_rate_review_24" />
 
     <ImageView
         android:id="@+id/mainTaxiCallImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         tools:ignore="MissingConstraints"
+        style="@style/mainPage"
         app:srcCompat="@drawable/ic_baseline_local_taxi_24" />
 
     <ImageView
         android:id="@+id/mainMyPageImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         tools:ignore="MissingConstraints"
+        style="@style/mainPage"
         app:srcCompat="@drawable/ic_baseline_person_24" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,10 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import com.app.service.reviewaza.LOGIN_EMAIL
-import com.app.service.reviewaza.LOGIN_VALUE
-import com.app.service.reviewaza.R
-import com.app.service.reviewaza.USER_INFORMATION
+import com.app.service.reviewaza.*
 import com.app.service.reviewaza.databinding.ActivityLoginBinding
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -104,6 +101,7 @@ class LoginActivity : AppCompatActivity() {
                     task ->
                 if(task.isSuccessful){
                     // 아이디, 비밀번호 맞을 때
+
                     moveMainPage(task.result?.user)
                 }else{
                     // 틀렸을 때
@@ -133,6 +131,8 @@ class LoginActivity : AppCompatActivity() {
     fun moveMainPage(user: FirebaseUser?){
         if( user!= null){
             LOGIN_VALUE = 1
+            LOGIN_EMAIL = user.email
+            Toast.makeText(this, "${user.email}", Toast.LENGTH_SHORT).show()
             finish()
         }
     }

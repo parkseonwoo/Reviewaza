@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="24dp">
+
+    <TextView
+        android:id="@+id/reviewsTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/Title"
+        android:text="리뷰 제목"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <TextView
+        android:id="@+id/reviewsTaxiType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/Value"
+        android:text="택시 종류"
+        app:layout_constraintTop_toBottomOf="@id/reviewsTitle"
+        app:layout_constraintStart_toStartOf="@id/reviewsTitle" />
+
+    <TextView
+        android:id="@+id/reviewsTaxiNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/Value"
+        android:text="11일 1111"
+        app:layout_constraintStart_toEndOf="@id/reviewsTaxiType"
+        app:layout_constraintBottom_toBottomOf="@id/reviewsTaxiType"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/reviewsDateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/Value"
+        android:text="날짜 : "
+        app:layout_constraintTop_toBottomOf="@id/reviewsTaxiType"
+        app:layout_constraintStart_toStartOf="@id/reviewsTitle"/>
+
+    <TextView
+        android:id="@+id/reviewsDateValueTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/Value"
+        android:text="0000-00-00"
+        app:layout_constraintStart_toStartOf="@id/reviewsTaxiNumber"
+        app:layout_constraintBottom_toBottomOf="@id/reviewsDateTextView" />
+</androidx.constraintlayout.widget.ConstraintLayout>

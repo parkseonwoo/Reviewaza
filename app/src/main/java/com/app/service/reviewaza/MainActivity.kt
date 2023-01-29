@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.app.service.reviewaza.databinding.ActivityMainBinding
 import com.app.service.reviewaza.mypage.MyPageActivity
+import com.app.service.reviewaza.reviews.LatestReviewsActivity
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding : ActivityMainBinding
@@ -19,6 +20,10 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        binding.mainReviewImageButton.setOnClickListener {
+            val intent = Intent (this, LatestReviewsActivity::class.java)
+            startActivity(intent)
+        }
 
     }
 

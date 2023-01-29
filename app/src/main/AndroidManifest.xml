@@ -17,6 +17,8 @@
         <activity android:name=".login.SignUpActivity" />
         <activity android:name=".mypage.MyPageActivity" />
         <activity android:name=".mypage.MyPageInfoActivity" />
+        <activity android:name=".reviews.LatestReviewsActivity" />
+        <activity android:name=".reviews.ReviewsWriteActivity"/>
         <activity
             android:name=".MainActivity"
             android:exported="true">
