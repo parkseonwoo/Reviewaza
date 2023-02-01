@@ -9,9 +9,9 @@ import java.text.SimpleDateFormat
 @Parcelize
 @Entity(tableName = "reviews")
 data class Reviews(
-    val detail: String,
     val taxiType: String,
     val taxiNumber: String,
+    val detail: String,
     val currentTime: String,
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
 ) : Parcelable

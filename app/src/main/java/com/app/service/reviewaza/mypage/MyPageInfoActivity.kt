@@ -2,7 +2,6 @@ package com.app.service.reviewaza.mypage
 
 import android.Manifest
 import android.app.AlertDialog
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -11,8 +10,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.app.service.reviewaza.LOGIN_EMAIL
-import com.app.service.reviewaza.LOGIN_VALUE
+import com.app.service.reviewaza.*
 import com.app.service.reviewaza.databinding.ActivityMyPageInfoBinding
 import com.app.service.reviewaza.databinding.ActivityMypageEditDialogBinding
 import kotlinx.android.synthetic.main.activity_mypage_edit_dialog.view.*
@@ -20,6 +18,7 @@ import kotlinx.android.synthetic.main.activity_mypage_edit_dialog.view.*
 class MyPageInfoActivity : AppCompatActivity() {
 
     private lateinit var binding : ActivityMyPageInfoBinding
+
     // 갤러리 이미지 로드하는 런처
     private val imageLoadLauncher = registerForActivityResult(ActivityResultContracts.GetContent() ) { uri ->
         if (uri != null) {
@@ -52,7 +51,12 @@ class MyPageInfoActivity : AppCompatActivity() {
             showAlertDialog()
         }
 
+    }
 
+    override fun onResume() {
+        binding.nicknameTextView.text = MYPAGE_NICKNAME_VALUE
+
+        super.onResume()
     }
 
     private fun showAlertDialog() {
@@ -67,7 +71,9 @@ class MyPageInfoActivity : AppCompatActivity() {
             setView(builderItem.root)
             setPositiveButton("네"){dialog, id ->
                 if(editText.textInputEditText != null) {
-                    binding.nicknameTextView.text = editText.textInputEditText.text
+                    MYPAGE_NICKNAME_VALUE = editText.textInputEditText.text.toString()
+                    binding.nicknameTextView.setText(MYPAGE_NICKNAME_VALUE)
+                    setResult(RESULT_OK, intent)
                     Toast.makeText(applicationContext, "변경된 이름은 ${editText.textInputEditText} 입니다", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -151,4 +157,5 @@ class MyPageInfoActivity : AppCompatActivity() {
         // 싱글톤으로 바로 객체가 만들어지는 특징이 있다
         object LoadMore : ImageItems()
     }
+
 }

@@ -31,9 +31,9 @@ class LatestReviewsActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListe
         setContentView(binding.root)
 
         initRecyclerView()
-        binding.taxiTypeSpinner.adapter = ArrayAdapter.createFromResource(
+        binding.reviewTypeSpinner.adapter = ArrayAdapter.createFromResource(
             this,
-            R.array.taxi_types,
+            R.array.review_types,
             android.R.layout.simple_list_item_1
         )
 

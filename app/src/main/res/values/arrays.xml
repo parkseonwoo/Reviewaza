@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="taxi_types">
+    <string-array name="review_types">
         <item>별점 높은 순</item>
         <item>별점 낮은 순</item>
         <item>최신순</item>

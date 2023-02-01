@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import com.app.service.reviewaza.databinding.ActivityReviewsWriteBinding
+import com.app.service.reviewaza.databinding.ItemReviewsBinding
 import com.google.android.material.chip.Chip
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -27,6 +28,12 @@ class ReviewsWriteActivity : AppCompatActivity() {
         binding.reviewsWriteOkButton.setOnClickListener {
             add()
             finish()
+        }
+
+        binding.reviewsWriteRatingBar.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->
+            var rating = binding.reviewsWriteRatingBar.rating
+
+            Toast.makeText(this, "$rating 입니다", Toast.LENGTH_SHORT).show()
         }
 
 

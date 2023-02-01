@@ -34,8 +34,8 @@ class ReviewsAdapter(
     class ReviewsViewHolder(private val binding: ItemReviewsBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(reviews: Reviews) {
             binding.apply {
-                reviewsTaxiType.text = reviews.taxiType
-                reviewsTaxiNumber.text = reviews.taxiNumber
+                reviewsTaxiTypeValue.text = reviews.taxiType
+                reviewsTaxiNumberValue.text = reviews.taxiNumber
                 reviewsDateValueTextView.text = reviews.currentTime
             }
         }

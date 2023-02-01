@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.widget.Toast
 import com.app.service.reviewaza.*
 import com.app.service.reviewaza.databinding.ActivityLoginBinding
+import com.app.service.reviewaza.databinding.ActivityMainBinding
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -27,7 +28,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+
         auth = FirebaseAuth.getInstance()
 
         binding = ActivityLoginBinding.inflate(layoutInflater)
