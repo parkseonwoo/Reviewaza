@@ -14,6 +14,9 @@ interface ReviewsDao {
     @Query("SELECT * from reviews ORDER BY id DESC LIMIT 1")
     fun getLatesReviews() : Reviews
 
+    @Query("SELECT * FROM reviews ORDER BY rating DESC")
+    fun getHigerReviews() : Reviews
+
     @Insert
     fun insert(reviews: Reviews)
 

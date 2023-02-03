@@ -1,9 +1,7 @@
 package com.app.service.reviewaza.reviews
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -78,11 +76,12 @@ class ReviewsWriteActivity : AppCompatActivity() {
     }
 
     private fun add() {
+        val rating = binding.reviewsWriteRatingBar.rating
         val taxiType = binding.reviewsWriteTaxiTypeEditText.text.toString()
         val taxiNumber = binding.reviewsWriteTaxiNumberEditText.text.toString()
         val detail = binding.reviewsWriteDetailEditTextView.text.toString()
         var currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-        val reviews = Reviews(taxiType, taxiNumber, detail, currentTime)
+        val reviews = Reviews(rating, taxiType, taxiNumber, detail, currentTime)
 
         Thread {
             AppDatabase.getInstance(this)?.reviewsDao()?.insert(reviews)

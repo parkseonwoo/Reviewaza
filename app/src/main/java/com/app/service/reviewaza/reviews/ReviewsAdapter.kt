@@ -3,8 +3,10 @@ package com.app.service.reviewaza.reviews
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.app.service.reviewaza.databinding.ItemReviewsBinding
+import kotlinx.android.synthetic.main.item_reviews.view.*
 
 class ReviewsAdapter(
     val list: MutableList<Reviews>,
@@ -34,6 +36,7 @@ class ReviewsAdapter(
     class ReviewsViewHolder(private val binding: ItemReviewsBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(reviews: Reviews) {
             binding.apply {
+                reviewsRatingBar.rating = reviews.rating
                 reviewsTaxiTypeValue.text = reviews.taxiType
                 reviewsTaxiNumberValue.text = reviews.taxiNumber
                 reviewsDateValueTextView.text = reviews.currentTime

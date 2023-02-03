@@ -1,5 +1,6 @@
 package com.app.service.reviewaza.reviews
 
+import android.media.Rating
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -9,6 +10,7 @@ import java.text.SimpleDateFormat
 @Parcelize
 @Entity(tableName = "reviews")
 data class Reviews(
+    val rating: Float,
     val taxiType: String,
     val taxiNumber: String,
     val detail: String,
