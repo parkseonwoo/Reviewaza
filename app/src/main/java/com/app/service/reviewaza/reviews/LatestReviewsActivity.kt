@@ -36,11 +36,54 @@ class LatestReviewsActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListe
 
         initRecyclerView()
 
-        binding.reviewTypeSpinner.adapter = ArrayAdapter.createFromResource(
+        var spinnerAdapter = ArrayAdapter.createFromResource(
             this,
             R.array.review_types,
             android.R.layout.simple_list_item_1
         )
+
+        binding.reviewTypeSpinner.adapter = spinnerAdapter
+
+        binding.reviewTypeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                when(position) {
+                    0 -> Thread {
+
+                        val list = AppDatabase.getInstance(this@LatestReviewsActivity)?.reviewsDao()?.getAll() ?: emptyList()
+                        reviewsAdapter.list.addAll(0, list)
+                        runOnUiThread {
+                            Toast.makeText(this@LatestReviewsActivity, "$position", Toast.LENGTH_SHORT).show()
+                            reviewsAdapter.notifyDataSetChanged() }
+                    }.start()
+                    1 -> Thread {
+
+                        val list = AppDatabase.getInstance(this@LatestReviewsActivity)?.reviewsDao()?.getHigerReviews() ?: emptyList()
+                        reviewsAdapter.list.addAll(list)
+                        runOnUiThread {
+                            Toast.makeText(this@LatestReviewsActivity, "$position", Toast.LENGTH_SHORT).show()
+                            reviewsAdapter.notifyDataSetChanged() }
+                    }.start()
+                    else -> Thread {
+
+                        val list = AppDatabase.getInstance(this@LatestReviewsActivity)?.reviewsDao()?.getLowerReviews() ?: emptyList()
+                        reviewsAdapter.list.addAll(list)
+                        runOnUiThread {
+                            Toast.makeText(this@LatestReviewsActivity, "$position", Toast.LENGTH_SHORT).show()
+                            reviewsAdapter.notifyDataSetChanged() }
+                    }.start()
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                Toast.makeText(this@LatestReviewsActivity, "아무것도 선택되지 않음", Toast.LENGTH_SHORT).show()
+            }
+
+        }
 
         binding.reviewsWriteButton.setOnClickListener {
             Intent(this, ReviewsWriteActivity::class.java).let {

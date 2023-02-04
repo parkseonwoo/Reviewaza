@@ -15,7 +15,10 @@ interface ReviewsDao {
     fun getLatesReviews() : Reviews
 
     @Query("SELECT * FROM reviews ORDER BY rating DESC")
-    fun getHigerReviews() : Reviews
+    fun getHigerReviews() : List<Reviews>
+
+    @Query("SELECT * FROM reviews ORDER BY rating ASC")
+    fun getLowerReviews() : List<Reviews>
 
     @Insert
     fun insert(reviews: Reviews)
