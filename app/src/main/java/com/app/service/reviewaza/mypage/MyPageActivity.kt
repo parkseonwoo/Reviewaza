@@ -2,6 +2,7 @@ package com.app.service.reviewaza.mypage
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.app.service.reviewaza.LOGIN_VALUE
 import com.app.service.reviewaza.databinding.ActivityMypageBinding
@@ -22,6 +23,16 @@ class MyPageActivity : AppCompatActivity() {
                 startActivity(intent)
             } else {
                 val intent = Intent(this, MyPageInfoActivity::class.java)
+                startActivity(intent)
+            }
+
+        }
+
+        binding.myPageMyReviews.setOnClickListener {
+            if(LOGIN_VALUE != 1) {
+                Toast.makeText(this, "로그인을 먼저 해주세요.", Toast.LENGTH_SHORT).show()
+            } else {
+                val intent = Intent(this, MyPageMyReviewsActivity::class.java)
                 startActivity(intent)
             }
 

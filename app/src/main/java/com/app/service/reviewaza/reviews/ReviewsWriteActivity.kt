@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
+import com.app.service.reviewaza.LOGIN_EMAIL
 import com.app.service.reviewaza.databinding.ActivityReviewsWriteBinding
 import com.app.service.reviewaza.databinding.ItemReviewsBinding
 import com.google.android.material.chip.Chip
@@ -38,6 +39,8 @@ class ReviewsWriteActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
+        binding.reviewsUserEmail.setText(LOGIN_EMAIL)
+
         val types = listOf("친절해요", "쾌적해요", "깔끔해요", "보통이였어요", "불친절해요", "별로였어요", "싸가지없어요")
         binding.reviewsChipGroup.apply {
             types.forEach { text ->
@@ -64,7 +67,6 @@ class ReviewsWriteActivity : AppCompatActivity() {
             }
         }
 
-
     }
 
     private fun createChip(text: String) : Chip {
@@ -81,7 +83,8 @@ class ReviewsWriteActivity : AppCompatActivity() {
         val taxiNumber = binding.reviewsWriteTaxiNumberEditText.text.toString()
         val detail = binding.reviewsWriteDetailEditTextView.text.toString()
         var currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-        val reviews = Reviews(rating, taxiType, taxiNumber, detail, currentTime)
+        val userEmail = "LOGIN_EMAIL"
+        val reviews = Reviews(rating, taxiType, taxiNumber, detail, currentTime, userEmail)
 
         Thread {
             AppDatabase.getInstance(this)?.reviewsDao()?.insert(reviews)

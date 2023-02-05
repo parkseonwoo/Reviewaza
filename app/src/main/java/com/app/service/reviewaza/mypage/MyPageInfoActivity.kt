@@ -11,13 +11,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.app.service.reviewaza.*
-import com.app.service.reviewaza.databinding.ActivityMyPageInfoBinding
 import com.app.service.reviewaza.databinding.ActivityMypageEditDialogBinding
+import com.app.service.reviewaza.databinding.ActivityMypageInfoBinding
 import kotlinx.android.synthetic.main.activity_mypage_edit_dialog.view.*
 
 class MyPageInfoActivity : AppCompatActivity() {
 
-    private lateinit var binding : ActivityMyPageInfoBinding
+    private lateinit var binding : ActivityMypageInfoBinding
 
     // 갤러리 이미지 로드하는 런처
     private val imageLoadLauncher = registerForActivityResult(ActivityResultContracts.GetContent() ) { uri ->
@@ -27,7 +27,7 @@ class MyPageInfoActivity : AppCompatActivity() {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMyPageInfoBinding.inflate(layoutInflater)
+        binding = ActivityMypageInfoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         if(LOGIN_EMAIL != null) binding.emailValueTextView.text = LOGIN_EMAIL

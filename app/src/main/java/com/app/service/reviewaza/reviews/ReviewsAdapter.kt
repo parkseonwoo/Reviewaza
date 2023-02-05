@@ -27,6 +27,7 @@ class ReviewsAdapter(
         holder.itemView.setOnClickListener {
             itemClickListener?.onClick(reviews)
         }
+
     }
 
     override fun getItemCount(): Int {
@@ -47,4 +48,5 @@ class ReviewsAdapter(
     interface ItemClickListener {
         fun onClick(reviews: Reviews)
     }
+
 }
