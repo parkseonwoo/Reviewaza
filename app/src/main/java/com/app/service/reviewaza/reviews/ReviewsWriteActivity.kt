@@ -13,9 +13,10 @@ import com.google.android.material.chip.Chip
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class ReviewsWriteActivity : AppCompatActivity() {
+class ReviewsWriteActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListener {
 
     private lateinit var binding : ActivityReviewsWriteBinding
+    private lateinit var reviewsAdapter: ReviewsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,12 +27,10 @@ class ReviewsWriteActivity : AppCompatActivity() {
 
         binding.reviewsWriteOkButton.setOnClickListener {
             add()
-            finish()
         }
 
         binding.reviewsWriteRatingBar.setOnRatingBarChangeListener { ratingBar, rating, fromUser ->
             var rating = binding.reviewsWriteRatingBar.rating
-
             Toast.makeText(this, "$rating 입니다", Toast.LENGTH_SHORT).show()
         }
 
@@ -39,6 +38,8 @@ class ReviewsWriteActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
+        reviewsAdapter = ReviewsAdapter(mutableListOf(), this@ReviewsWriteActivity)
+
         binding.reviewsUserEmail.setText(LOGIN_EMAIL)
 
         val types = listOf("친절해요", "쾌적해요", "깔끔해요", "보통이였어요", "불친절해요", "별로였어요", "싸가지없어요")
@@ -89,12 +90,17 @@ class ReviewsWriteActivity : AppCompatActivity() {
         Thread {
             AppDatabase.getInstance(this)?.reviewsDao()?.insert(reviews)
             runOnUiThread {
+                reviewsAdapter.list.add(reviews)
+                val intent = Intent().putExtra("isUpdated", true)
+                setResult(RESULT_OK, intent)
                 Toast.makeText(this, "저장을 완료했습니다", Toast.LENGTH_SHORT).show()
+                finish()
             }
-            val intent = Intent().putExtra("isUpdated", true)
-            setResult(RESULT_OK, intent)
-            finish()
         }.start()
+    }
+
+    override fun onClick(reviews: Reviews) {
+        TODO("Not yet implemented")
     }
 
 

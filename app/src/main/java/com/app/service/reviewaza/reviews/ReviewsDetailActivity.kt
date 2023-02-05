@@ -1,15 +1,18 @@
 package com.app.service.reviewaza.reviews
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import com.app.service.reviewaza.LOGIN_EMAIL
+import com.app.service.reviewaza.LOGIN_VALUE
 import com.app.service.reviewaza.databinding.ActivityReviewsDetailBinding
 
 
-class ReviewsDetailActivity : AppCompatActivity() {
+class ReviewsDetailActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListener {
 
     private lateinit var binding: ActivityReviewsDetailBinding
     private lateinit var reviews: Reviews
@@ -26,6 +29,18 @@ class ReviewsDetailActivity : AppCompatActivity() {
 
         reviews = intent.getParcelableExtra("reviews")!!
 
+//        if(LOGIN_VALUE != 1) {
+//            binding.reviewsEditButton.isEnabled = false
+//            binding.reviewsDeleteButton.isEnabled = false
+//            binding.reviewsEditButton.isVisible = false
+//            binding.reviewsDeleteButton.isVisible = false
+//        } else {
+//            binding.reviewsEditButton.isEnabled = true
+//            binding.reviewsDeleteButton.isEnabled = true
+//            binding.reviewsEditButton.isVisible = true
+//            binding.reviewsDeleteButton.isVisible = true
+//        }
+
         binding.reviewsEditButton.setOnClickListener {
             Toast.makeText(this, "수정 버튼 클릭", Toast.LENGTH_SHORT).show()
         }
@@ -36,7 +51,6 @@ class ReviewsDetailActivity : AppCompatActivity() {
                 setNegativeButton("취소", null)
                 setPositiveButton("확인") { _, _ ->
                     delete()
-                    finish()
                 }.show()
             }
         }
@@ -45,6 +59,7 @@ class ReviewsDetailActivity : AppCompatActivity() {
     }
 
     private fun initView() {
+        reviewsAdapter = ReviewsAdapter(mutableListOf(), this@ReviewsDetailActivity)
         binding.reviewsUserEmail.text = LOGIN_EMAIL
         binding.reviewsWriteRatingBar.rating = reviews.rating
         binding.reviewsWriteTaxiTypeValueTextView.text = reviews.taxiType
@@ -57,10 +72,16 @@ class ReviewsDetailActivity : AppCompatActivity() {
             AppDatabase.getInstance(this)?.reviewsDao()?.delete(reviews)
             runOnUiThread {
                 reviewsAdapter.list.remove(reviews)
-                reviewsAdapter.notifyDataSetChanged()
+                val intent = Intent().putExtra("isDelete", true)
+                setResult(RESULT_OK, intent)
                 Toast.makeText(this, "삭제가 완료됐습니다", Toast.LENGTH_SHORT).show()
+                finish()
             }
         }.start()
+    }
+
+    override fun onClick(reviews: Reviews) {
+        TODO("Not yet implemented")
     }
 
 }

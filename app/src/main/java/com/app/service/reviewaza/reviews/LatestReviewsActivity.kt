@@ -17,15 +17,25 @@ import kotlinx.android.synthetic.main.item_reviews.*
 class LatestReviewsActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListener {
     private lateinit var binding: ActivityLatestReviewsBinding
     private lateinit var reviewsAdapter: ReviewsAdapter
+    private lateinit var reviews: Reviews
 
     private val updateAddReviewsWriteResult = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         val isUpdated = result.data?.getBooleanExtra("isUpdated", false) ?: false
-        updateAddReviews()
 
         if (result.resultCode == RESULT_OK && isUpdated) {
             updateAddReviews()
+        }
+    }
+
+    private val updateDeleteReviews = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val isDelete = result.data?.getBooleanExtra("isDelete", false) ?: false
+
+        if (result.resultCode == RESULT_OK && isDelete) {
+            updateDeleteReviews()
         }
     }
 
@@ -136,12 +146,52 @@ class LatestReviewsActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListe
         Thread {
             AppDatabase.getInstance(this)?.reviewsDao()?.getLatesReviews()?.let { reviews ->
                 reviewsAdapter.list.add(0, reviews)
-                runOnUiThread { reviewsAdapter.notifyDataSetChanged() }
+                runOnUiThread {
+                    binding.reviewsRecyclerView.apply {
+                        adapter = reviewsAdapter
+                        layoutManager =
+                            LinearLayoutManager(
+                                applicationContext,
+                                LinearLayoutManager.VERTICAL,
+                                false
+                            )
+                        val dividerItemDecoration =
+                            DividerItemDecoration(applicationContext, LinearLayoutManager.VERTICAL)
+                        addItemDecoration(dividerItemDecoration)
+                    }
+
+                    reviewsAdapter.notifyDataSetChanged()
+                }
+            }
+        }.start()
+    }
+
+    private fun updateDeleteReviews() {
+        Thread {
+            AppDatabase.getInstance(this)?.reviewsDao()?.delete(this.reviews)?.let { reviews ->
+                reviewsAdapter.list.remove(this.reviews)
+                runOnUiThread {
+                    binding.reviewsRecyclerView.apply {
+                        adapter = reviewsAdapter
+                        layoutManager =
+                            LinearLayoutManager(
+                                applicationContext,
+                                LinearLayoutManager.VERTICAL,
+                                false
+                            )
+                        val dividerItemDecoration =
+                            DividerItemDecoration(applicationContext, LinearLayoutManager.VERTICAL)
+                        addItemDecoration(dividerItemDecoration)
+                    }
+
+                    reviewsAdapter.notifyDataSetChanged()
+                }
             }
         }.start()
     }
 
     override fun onClick(reviews: Reviews) {
+        this.reviews = reviews
         reviewsTaxiTelNumberTextView.setOnClickListener {
             with(Intent(Intent.ACTION_DIAL)) {
                 startActivity(this)
@@ -151,8 +201,8 @@ class LatestReviewsActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListe
 
         val intent = Intent(this@LatestReviewsActivity, ReviewsDetailActivity::class.java).apply {
             putExtra("reviews", reviews)
+            updateDeleteReviews.launch(this)
         }
 
-        startActivity(intent)
     }
 }
