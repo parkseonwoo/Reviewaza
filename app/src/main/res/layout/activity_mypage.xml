@@ -15,8 +15,7 @@
         app:layout_constraintHeight_percent="0.5"
         app:flow_maxElementsWrap="1"
         app:flow_wrapMode="chain"
-        app:constraint_referenced_ids="myPageMyInfo, myPageMyReviews, myPageCupon, myPageEvent"
-        />
+        app:constraint_referenced_ids="myPageMyInfo, myPageMyReviews, myPageCupon, myPageChatbot" />
 
     <TextView
         android:id="@+id/myPageMyInfo"
@@ -40,9 +39,9 @@
         tools:ignore="MissingConstraints"/>
 
     <TextView
-        android:id="@+id/myPageEvent"
+        android:id="@+id/myPageChatbot"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/myEvent"
+        android:text="@string/myChatbot"
         tools:ignore="MissingConstraints"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

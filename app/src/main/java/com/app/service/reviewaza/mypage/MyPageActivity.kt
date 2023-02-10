@@ -5,8 +5,10 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.app.service.reviewaza.LOGIN_VALUE
+import com.app.service.reviewaza.chatbot.ChatActivity
 import com.app.service.reviewaza.databinding.ActivityMypageBinding
 import com.app.service.reviewaza.login.LoginActivity
+import kotlinx.android.synthetic.main.activity_mypage.*
 
 class MyPageActivity : AppCompatActivity() {
 
@@ -35,7 +37,11 @@ class MyPageActivity : AppCompatActivity() {
                 val intent = Intent(this, MyPageMyReviewsActivity::class.java)
                 startActivity(intent)
             }
+        }
 
+        binding.myPageChatbot.setOnClickListener {
+            val intent = Intent(this, ChatActivity::class.java)
+            startActivity(intent)
         }
 
     }

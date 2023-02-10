@@ -21,6 +21,7 @@
         <activity android:name=".reviews.LatestReviewsActivity" />
         <activity android:name=".reviews.ReviewsWriteActivity"/>
         <activity android:name=".reviews.ReviewsDetailActivity"/>
+        <activity android:name=".chatbot.ChatActivity"/>
         <activity
             android:name=".MainActivity"
             android:exported="true">
