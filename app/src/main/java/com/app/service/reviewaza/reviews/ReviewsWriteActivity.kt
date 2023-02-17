@@ -84,7 +84,7 @@ class ReviewsWriteActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListen
         val taxiNumber = binding.reviewsWriteTaxiNumberEditText.text.toString()
         val detail = binding.reviewsWriteDetailEditTextView.text.toString()
         var currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-        val userEmail = "LOGIN_EMAIL"
+        val userEmail = LOGIN_EMAIL
         val reviews = Reviews(rating, taxiType, taxiNumber, detail, currentTime, userEmail)
 
         Thread {

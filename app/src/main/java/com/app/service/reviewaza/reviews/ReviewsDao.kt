@@ -20,8 +20,8 @@ interface ReviewsDao {
     @Query("SELECT * FROM reviews ORDER BY rating ASC")
     fun getLowerReviews() : List<Reviews>
 
-    @Query("SELECT * FROM reviews WHERE userEmail")
-    fun getMyReviews() : List<Reviews>
+    @Query("SELECT * FROM reviews WHERE userEmail = :user_email")
+    fun getMyReviews(user_email: String) : List<Reviews>
 
     @Insert
     fun insert(reviews: Reviews)

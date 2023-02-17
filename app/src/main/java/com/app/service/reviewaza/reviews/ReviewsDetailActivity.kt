@@ -60,7 +60,7 @@ class ReviewsDetailActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListe
 
     private fun initView() {
         reviewsAdapter = ReviewsAdapter(mutableListOf(), this@ReviewsDetailActivity)
-        binding.reviewsUserEmail.text = LOGIN_EMAIL
+        binding.reviewsUserEmail.text = reviews.userEmail
         binding.reviewsWriteRatingBar.rating = reviews.rating
         binding.reviewsWriteTaxiTypeValueTextView.text = reviews.taxiType
         binding.reviewsWriteTaxiNumberValueTextView.text = reviews.taxiNumber

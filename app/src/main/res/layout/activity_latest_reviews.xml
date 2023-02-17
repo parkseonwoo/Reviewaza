@@ -5,49 +5,54 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/latestReviewsSearch"
-        android:layout_width="0dp"
+    <SearchView
+        android:id="@+id/reviewsSearchView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:hint="검색어 입력"
+        android:layout_marginBottom="10dp"
+        android:iconifiedByDefault="false"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp"
+        app:layout_constraintTop_toBottomOf="@id/toolBar" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/notFoundView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:lottie_rawRes="@raw/not_found"
+        app:lottie_loop="true"
+        app:lottie_autoPlay="true"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.6" />
-
-    <ImageView
-        android:id="@+id/latestReviewsSearchIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_baseline_search_24"
-        app:layout_constraintBottom_toBottomOf="@id/latestReviewsSearch"
-        app:layout_constraintStart_toEndOf="@+id/latestReviewsSearch"
-        app:layout_constraintTop_toTopOf="@+id/latestReviewsSearch" />
+        app:layout_constraintTop_toBottomOf="@id/reviewsSearchView" />
 
     <Spinner
         android:id="@+id/reviewTypeSpinner"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
-        app:layout_constraintEnd_toEndOf="@+id/latestReviewsSearchIcon"
-        app:layout_constraintStart_toStartOf="@+id/latestReviewsSearch"
-        app:layout_constraintTop_toBottomOf="@+id/latestReviewsSearch" />
+        android:layout_marginTop="10dp"
+        app:layout_constraintTop_toBottomOf="@+id/reviewsSearchView"
+        app:layout_constraintStart_toStartOf="@+id/reviewsSearchView"
+        app:layout_constraintEnd_toEndOf="@id/reviewsSearchView"
+        app:layout_constraintWidth_percent="0.6"/>
 
-    <androidx.constraintlayout.helper.widget.Layer
-        android:id="@+id/reviewsSearchlayer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:constraint_referenced_ids="latestReviewsSearch, latestReviewsSearchIcon"
-        tools:ignore="MissingConstraints"/>
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/purple_200"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/reviewsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="10dp"
+        tools:listitem="@layout/activity_reviews_detail"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/reviewTypeSpinner" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
