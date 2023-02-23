@@ -34,7 +34,7 @@
 
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"
-            android:value="nysy79sc3c" />
+            android:value="${MAPS_API_KEY}" />
     </application>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 </manifest>

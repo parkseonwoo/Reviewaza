@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import com.airbnb.lottie.BuildConfig
 import com.app.service.reviewaza.*
 import com.app.service.reviewaza.databinding.ActivityLoginBinding
 import com.app.service.reviewaza.databinding.ActivityMainBinding
@@ -29,6 +30,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val REQUEST_ID_TOKEN = "${getString(R.string.REQUEST_ID_TOKEN)}"
         auth = FirebaseAuth.getInstance()
 
         binding = ActivityLoginBinding.inflate(layoutInflater)
@@ -51,7 +53,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         var gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken("672142770659-7egalp3t6q54fbv2jdu5t28kku48q7hc.apps.googleusercontent.com")
+            .requestIdToken(REQUEST_ID_TOKEN)
             .requestEmail()
             .build()
         googleSignInClient = GoogleSignIn.getClient(this,gso)

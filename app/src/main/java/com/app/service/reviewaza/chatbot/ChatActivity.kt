@@ -59,8 +59,8 @@ class ChatActivity : AppCompatActivity() {
             }
         }
 
-        //initialize bot config
-        //setUpBot()
+        // initialize bot config
+        setUpBot()
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -71,24 +71,24 @@ class ChatActivity : AppCompatActivity() {
         chatView.layoutManager?.scrollToPosition(messageList.size - 1)
     }
 
-//    private fun setUpBot() {
-//        try {
-//            // TODO 챗봇 사용 시 JSON KEY 파일 RAW에 삽입
-//            val stream = this.resources.openRawResource(R.raw.credentials)
-//            val credentials: GoogleCredentials = GoogleCredentials.fromStream(stream)
-//                .createScoped("https://www.googleapis.com/auth/cloud-platform")
-//            val projectId: String = (credentials as ServiceAccountCredentials).projectId
-//            val settingsBuilder: SessionsSettings.Builder = SessionsSettings.newBuilder()
-//            val sessionsSettings: SessionsSettings = settingsBuilder.setCredentialsProvider(
-//                FixedCredentialsProvider.create(credentials)
-//            ).build()
-//            sessionsClient = SessionsClient.create(sessionsSettings)
-//            sessionName = SessionName.of(projectId, uuid)
-//            Log.d(TAG, "projectId : $projectId")
-//        } catch (e: Exception) {
-//            Log.d(TAG, "setUpBot: " + e.message)
-//        }
-//    }
+    private fun setUpBot() {
+        try {
+            // TODO 챗봇 사용 시 JSON KEY 파일 RAW에 삽입
+            val stream = this.resources.openRawResource(R.raw.credentials)
+            val credentials: GoogleCredentials = GoogleCredentials.fromStream(stream)
+                .createScoped("https://www.googleapis.com/auth/cloud-platform")
+            val projectId: String = (credentials as ServiceAccountCredentials).projectId
+            val settingsBuilder: SessionsSettings.Builder = SessionsSettings.newBuilder()
+            val sessionsSettings: SessionsSettings = settingsBuilder.setCredentialsProvider(
+                FixedCredentialsProvider.create(credentials)
+            ).build()
+            sessionsClient = SessionsClient.create(sessionsSettings)
+            sessionName = SessionName.of(projectId, uuid)
+            Log.d(TAG, "projectId : $projectId")
+        } catch (e: Exception) {
+            Log.d(TAG, "setUpBot: " + e.message)
+        }
+    }
 
     private fun sendMessageToBot(message: String) {
         val input = QueryInput.newBuilder()

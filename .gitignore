@@ -9,7 +9,12 @@
 /.idea/assetWizardSettings.xml
 .DS_Store
 /build
+local.properties
 /captures
 .externalNativeBuild
 .cxx
-local.properties
+
+app/google-services.json
+app/src/main/res/raw/credentials.json
+/app/src/main/res/values/api_key.xml
+

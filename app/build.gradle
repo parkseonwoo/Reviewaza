@@ -7,6 +7,12 @@ plugins {
     //id 'kotlin-parcelize'
 }
 
+// local.properties에서 키,값 가져오기
+def localProperties = new Properties()
+localProperties.load(new FileInputStream(rootProject.file("local.properties")))
+def MAPS_API_KEY=localProperties['MAPS_API_KEY']
+
+
 android {
     namespace 'com.app.service.reviewaza'
     compileSdk 33
@@ -19,6 +25,9 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // 매니페스트에서 사용할려면 이 코드를 사용해주세요.
+        manifestPlaceholders = [MAPS_API_KEY:MAPS_API_KEY]
     }
 
     buildTypes {
