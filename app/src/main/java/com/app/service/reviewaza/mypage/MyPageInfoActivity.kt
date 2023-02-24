@@ -13,6 +13,8 @@ import androidx.core.content.ContextCompat
 import com.app.service.reviewaza.*
 import com.app.service.reviewaza.databinding.ActivityMypageEditDialogBinding
 import com.app.service.reviewaza.databinding.ActivityMypageInfoBinding
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_mypage_edit_dialog.view.*
 
 class MyPageInfoActivity : AppCompatActivity() {
@@ -34,6 +36,7 @@ class MyPageInfoActivity : AppCompatActivity() {
 
         binding.logoutButton.setOnClickListener {
             LOGIN_VALUE = 0
+            Firebase.auth.signOut()
             finish()
         }
 

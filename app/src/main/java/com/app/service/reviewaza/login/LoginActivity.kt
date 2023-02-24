@@ -1,14 +1,13 @@
 package com.app.service.reviewaza.login
 
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import com.airbnb.lottie.BuildConfig
 import com.app.service.reviewaza.*
+import com.app.service.reviewaza.call.Key.Companion.DB_URL
+import com.app.service.reviewaza.call.Key.Companion.DB_USERS
 import com.app.service.reviewaza.databinding.ActivityLoginBinding
-import com.app.service.reviewaza.databinding.ActivityMainBinding
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -17,6 +16,10 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
@@ -44,7 +47,13 @@ class LoginActivity : AppCompatActivity() {
 
         // 로그인 버튼
         binding.loginLoginBtn.setOnClickListener {
-            signinEmail()
+            val email = loginEmail.text.toString()
+            val password = login_password.text.toString()
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(this, "이메일 또는 패스워드가 입력되지 않았습니다", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            signinEmail(email, password)
         }
 
         // 구글 로그인 버튼
@@ -59,7 +68,7 @@ class LoginActivity : AppCompatActivity() {
         googleSignInClient = GoogleSignIn.getClient(this,gso)
     }
 
-    // 로그인이 성공하면 다음 페이지로 넘어가는 함수
+//    로그인이 성공하면 다음 페이지로 넘어가는 함수
 //    fun moveMainPage(user:FirebaseUser?) {
 //        // 파이어베이스 유저 상태가 있을 경우 다음 페이지로 넘어갈 수 있음
 //        if(user != null) {
@@ -67,20 +76,36 @@ class LoginActivity : AppCompatActivity() {
 //        }
 //    }
 
-    // 로그아웃하지 않을 시 자동 로그인 , 회원가입시 바로 로그인 됨
-//    public override fun onStart() {
-//        super.onStart()
-//        moveMainPage(auth?.currentUser)
-//    }
+    //로그아웃하지 않을 시 자동 로그인 , 회원가입시 바로 로그인 됨
+    public override fun onStart() {
+        super.onStart()
+        LOGIN_VALUE = 1
+        moveMainPage(auth?.currentUser)
+    }
 
     // 로그인
-    fun signinEmail() {
-        auth?.signInWithEmailAndPassword(loginEmail.text.toString(),login_password.text.toString())
-            ?.addOnCompleteListener {
-                    task ->
-                if(task.isSuccessful) {
+    fun signinEmail(email: String, password: String) {
+
+        Firebase.auth.signInWithEmailAndPassword(email,password)
+            .addOnCompleteListener(this) { task ->
+                val currentUser = Firebase.auth.currentUser
+                if(task.isSuccessful && currentUser != null) {
                     // Login, 아이디와 패스워드가 맞았을 때
                     saveData()
+                    LOGIN_VALUE = 1
+                    val userId = currentUser.uid
+
+                    Firebase.messaging.token.addOnCompleteListener {
+                        val token = it.result
+
+                        val user = mutableMapOf<String, Any>()
+                        user["userId"] = userId
+                        user["username"] = email
+                        user["fcmToken"] = token!!
+
+                        Firebase.database(DB_URL).reference.child(DB_USERS).child(userId).updateChildren(user)
+
+                    }
                     moveMainPage(task.result?.user)
                 } else {
                     // Show the error message, 아이디와 패스워드가 틀렸을 때
@@ -104,7 +129,6 @@ class LoginActivity : AppCompatActivity() {
                     task ->
                 if(task.isSuccessful){
                     // 아이디, 비밀번호 맞을 때
-
                     moveMainPage(task.result?.user)
                 }else{
                     // 틀렸을 때
@@ -133,9 +157,8 @@ class LoginActivity : AppCompatActivity() {
     // 유저정보 넘겨주고 메인 액티비티 호출
     fun moveMainPage(user: FirebaseUser?){
         if( user!= null){
-            LOGIN_VALUE = 1
             LOGIN_EMAIL = user.email
-            Toast.makeText(this, "${user.email}", Toast.LENGTH_SHORT).show()
+
             finish()
         }
     }

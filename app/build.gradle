@@ -103,4 +103,15 @@ dependencies {
 
     // Lottie
     implementation "com.airbnb.android:lottie:6.0.0"
+
+    // Firebase realtime-database
+    implementation 'com.google.firebase:firebase-database-ktx'
+    
+    // Firebase cloud messaging
+    implementation 'com.google.firebase:firebase-messaging-ktx'
+
+    // OKHttp
+    implementation 'com.squareup.okhttp3:okhttp:4.10.0'
+
+
 }
