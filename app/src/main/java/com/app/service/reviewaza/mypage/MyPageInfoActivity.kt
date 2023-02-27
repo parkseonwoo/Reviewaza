@@ -2,22 +2,34 @@ package com.app.service.reviewaza.mypage
 
 import android.Manifest
 import android.app.AlertDialog
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import com.app.service.reviewaza.LOGIN_SET
+import com.app.service.reviewaza.MY_STATE
+import com.app.service.reviewaza.MainActivity
 import com.app.service.reviewaza.R
 import com.app.service.reviewaza.call.Key.Companion.DB_USERS
 import com.app.service.reviewaza.databinding.ActivityMypageEditDialogBinding
 import com.app.service.reviewaza.databinding.ActivityMypageInfoBinding
 import com.app.service.reviewaza.login.UserItem
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
@@ -39,7 +51,8 @@ class MyPageInfoActivity : AppCompatActivity() {
     private var fileName = "IMAGE_${SimpleDateFormat("yyyymmdd_HHmmss").format(Date())}_.png"
     private var imagesRef = storage!!.reference.child("images/").child(fileName)
 
-    private var myUserId = Firebase.auth.currentUser?.uid ?: null
+    private var myUserId = Firebase.auth.currentUser?.uid ?: ""
+    var flag = false
 
     // 갤러리 이미지 로드하는 런처
     private val imageLoadLauncher =
@@ -55,15 +68,7 @@ class MyPageInfoActivity : AppCompatActivity() {
         binding = ActivityMypageInfoBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        currentUserDB.get().addOnSuccessListener {
-            val currentUserItem = it.getValue(UserItem::class.java) ?: return@addOnSuccessListener
-            if (myUserId != null) Glide.with(binding.myPageImage)
-                .load(Uri.parse(currentUserItem.userImage)).fitCenter().into(binding.myPageImage)
-            else binding.myPageImage.setImageResource(R.drawable.ic_baseline_person_24)
-            binding.nicknameValueTextView.setText(currentUserItem.username)
-        }
-
-        if (myUserId != null) binding.emailValueTextView.text = Firebase.auth.currentUser?.email
+        initViews()
 
         binding.logoutButton.setOnClickListener {
             userLogout()
@@ -96,6 +101,34 @@ class MyPageInfoActivity : AppCompatActivity() {
         }
 
     }
+
+    private fun initViews() {
+
+        currentUserDB.get().addOnSuccessListener {
+            val currentUserItem = it.getValue(UserItem::class.java) ?: return@addOnSuccessListener
+
+            if (currentUserItem.userImage != "") {
+                binding.nicknameValueTextView.setText(currentUserItem.username)
+
+                Toast.makeText(this, "왜 안될까? ${currentUserItem.userImage}", Toast.LENGTH_SHORT)
+                    .show()
+                Glide.with(binding.myPageImage)
+                    .load(Uri.parse(currentUserItem.userImage))
+                    .override(350, 350)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .centerCrop()
+                    .into(binding.myPageImage)
+
+
+            }
+            flag = false
+
+        }
+
+
+        if (MY_STATE != "") binding.emailValueTextView.text = Firebase.auth.currentUser?.email
+    }
+
 
     private fun showAlertDialog(action: String) {
 
@@ -177,9 +210,25 @@ class MyPageInfoActivity : AppCompatActivity() {
 
     private fun updateImages(uri: Uri) {
         val images = uri
-        uploadImageToFirebase(images)
+        if (images != null) {
+            uploadImageToFirebase(images,
+                mSuccessHandler = { imageuri ->
+                    user["userImage"] = imageuri
+                    currentUserDB.updateChildren(user)
+                    flag = true
+                },
+                mErrorHandler = {
+                    Toast.makeText(this, "게시글 업로드에 실패했습니다", Toast.LENGTH_SHORT).show()
+                })
+        } else {
+//            user["userImage"] = uri.toString()
+//            currentUserDB.updateChildren(user)
+//            flag = true
+        }
+
         binding.myPageImage.setImageURI(images)
     }
+
 
     override fun onRequestPermissionsResult( // 권한을 동의하게 된다면 바로 이미지를 로드할 수 있게 해주는 기능
         requestCode: Int,
@@ -197,12 +246,25 @@ class MyPageInfoActivity : AppCompatActivity() {
         }
     }
 
-    private fun uploadImageToFirebase(uri: Uri) {
+    private fun uploadImageToFirebase(
+        uri: Uri,
+        mSuccessHandler: (String) -> Unit,
+        mErrorHandler: () -> Unit,
+    ) {
+        imagesRef.putFile(uri!!)
+            .addOnCompleteListener {
+            if (it.isSuccessful) {
+                imagesRef.downloadUrl.addOnSuccessListener { uri ->
+                    mSuccessHandler(uri.toString())
+                }.addOnFailureListener {
+                    mErrorHandler()
+                }
 
-        imagesRef.putFile(uri!!).addOnSuccessListener {
-            Toast.makeText(this, "이미지 업로드 성공", Toast.LENGTH_SHORT).show()
-        }.addOnFailureListener {
-            Toast.makeText(this, "이미지 업로드 실패", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "이미지 업로드 성공", Toast.LENGTH_SHORT).show()
+            } else {
+                mErrorHandler
+            }
+
         }
     }
 
@@ -220,48 +282,48 @@ class MyPageInfoActivity : AppCompatActivity() {
     }
 
     private fun userDelete() {
-
-        when (LOGIN_SET) {
-            "Kakao" -> {
-                UserApiClient.instance.unlink { error ->
-                    if (error != null) {
-                        Log.d("카카오로그인", "회원 탈퇴 실패")
-                    } else {
-                        Log.d("카카오로그인", "회원 탈퇴 성공")
-                    }
+        if (LOGIN_SET == "Kakao") {
+            UserApiClient.instance.unlink { error ->
+                if (error != null) {
+                    Log.d("카카오로그인", "회원 탈퇴 실패")
+                } else {
+                    MY_STATE = ""
+                    Log.d("카카오로그인", "회원 탈퇴 성공")
                 }
             }
-
-            else -> {
-                FirebaseAuth.getInstance().currentUser!!.delete().addOnCompleteListener { task ->
-                    Toast.makeText(this, "아이디 삭제가 완료되었습니다", Toast.LENGTH_SHORT).show()
-                    Firebase.auth.signOut()
-                    finish()
-                }
+        } else {
+            FirebaseAuth.getInstance().currentUser!!.delete().addOnCompleteListener { task ->
+                Toast.makeText(this, "아이디 삭제가 완료되었습니다", Toast.LENGTH_SHORT).show()
+                Firebase.auth.signOut()
+                finish()
             }
-
         }
-
     }
 
     private fun userLogout() {
-        when (LOGIN_SET) {
-            "Kakao" -> {
-                UserApiClient.instance.logout { error ->
-                    if (error != null) {
-                        Log.d("카카오", "카카오 로그아웃 실패")
-                    } else {
-                        Log.d("카카오", "카카오 로그아웃 성공!")
-                    }
+        if (LOGIN_SET == "Kakao") {
+            UserApiClient.instance.logout { error ->
+                if (error != null) {
+                    Toast.makeText(this, "로그아웃 실패 $error", Toast.LENGTH_SHORT).show()
+                } else {
+                    MY_STATE = ""
+                    Toast.makeText(this, "로그아웃 성공", Toast.LENGTH_SHORT).show()
                 }
-            }
-            else -> {
-                Firebase.auth.signOut()
-                myUserId = null
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                 finish()
             }
-
+        } else {
+            Firebase.auth.signOut()
+            myUserId = ""
+            MY_STATE = ""
+            finish()
         }
     }
+
 }
+
+
+
+
 

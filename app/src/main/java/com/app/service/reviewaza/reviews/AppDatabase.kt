@@ -8,7 +8,7 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [Reviews::class], version = 4)
+@Database(entities = [Reviews::class], version = 5)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun reviewsDao(): ReviewsDao
@@ -22,15 +22,15 @@ abstract class AppDatabase : RoomDatabase() {
                         context.applicationContext,
                         AppDatabase::class.java,
                         "app-database.db"
-                    ).addMigrations(MIGRATION_3_4)
+                    ).addMigrations(MIGRATION_4_5)
                         .build()
                 }
             }
             return INSTANCE
         }
-        private val MIGRATION_3_4 = object : Migration(3, 4) {
+        private val MIGRATION_4_5 = object : Migration(4, 5) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE 'reviews' ADD COLUMN 'userEmail' TEXT NOT NULL Default '0'")
+                database.execSQL("ALTER TABLE 'reviews' ADD COLUMN 'userId' TEXT NOT NULL Default '0'")
             }
 
         }

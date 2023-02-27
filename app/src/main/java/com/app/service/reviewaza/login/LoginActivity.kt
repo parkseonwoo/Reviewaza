@@ -96,16 +96,7 @@ class LoginActivity : AppCompatActivity() {
 
         // 카카오 로그인 버튼
         binding.kakaoLoginBtn.setOnClickListener {
-            UserApiClient.instance.logout { error ->
-                if (error != null) {
-                    Toast.makeText(this, "로그아웃 실패 $error", Toast.LENGTH_SHORT).show()
-                }else {
-                    Toast.makeText(this, "로그아웃 성공", Toast.LENGTH_SHORT).show()
-                }
-                val intent = Intent(this, MainActivity::class.java)
-                startActivity(intent.addFlags(FLAG_ACTIVITY_CLEAR_TOP))
-                finish()
-            }
+
             kakaoLogin()
         }
 
@@ -154,6 +145,8 @@ class LoginActivity : AppCompatActivity() {
         if (signInIntent != null) {
             startActivityForResult(signInIntent, GOOGLE_LOGIN_CODE)
             LOGIN_SET = "Google"
+            MY_STATE = googleSignInClient.toString()
+            finish()
         }
     }
 
@@ -244,6 +237,7 @@ class LoginActivity : AppCompatActivity() {
             else if (token != null) {
                 Toast.makeText(this, "로그인에 성공하였습니다.", Toast.LENGTH_SHORT).show()
                 LOGIN_SET = "Kakao"
+                MY_STATE = token.toString()
                 finish()
             }
         }
@@ -292,6 +286,7 @@ class LoginActivity : AppCompatActivity() {
     // 유저정보 넘겨주고 메인 액티비티 호출
     fun moveMainPage(user: FirebaseUser?) {
         if (user != null) {
+            MY_STATE = user.toString()
             finish()
         }
     }

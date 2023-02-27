@@ -9,189 +9,187 @@
             type="com.app.service.reviewaza.mypage.MyPageInfoActivity" />
     </data>
 
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".mypage.MyPageInfoActivity">
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".mypage.MyPageInfoActivity">
 
-    <ImageView
-        android:id="@+id/myPageImage"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:src="@drawable/ic_baseline_person_24"
-        app:layout_constraintWidth_percent="0.2"
-        app:layout_constraintHeight_percent="0.15"
-        app:layout_constraintBottom_toBottomOf="@id/guideLineH1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        <ImageView
+            android:id="@+id/myPageImage"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/ic_baseline_person_24"
+            app:layout_constraintBottom_toBottomOf="@id/guideLineH1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
-    <ImageView
-        android:id="@+id/nicknameEditImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_baseline_edit_24"
-        app:layout_constraintBottom_toBottomOf="@id/nicknameValueTextView"
-        app:layout_constraintStart_toEndOf="@id/nicknameValueTextView" />
+        <ImageView
+            android:id="@+id/nicknameEditImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_edit_24"
+            app:layout_constraintBottom_toBottomOf="@id/nicknameValueTextView"
+            app:layout_constraintStart_toEndOf="@id/nicknameValueTextView" />
 
-    <ImageView
-        android:id="@+id/passwordEditImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_baseline_edit_24"
-        app:layout_constraintBottom_toBottomOf="@id/passwordValueTextView"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <ImageView
+            android:id="@+id/passwordEditImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_edit_24"
+            app:layout_constraintBottom_toBottomOf="@id/passwordValueTextView"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    <ImageView
-        android:id="@+id/phoneNumberEditImageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_baseline_edit_24"
-        app:layout_constraintBottom_toBottomOf="@id/phoneNumberValueTextView"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <ImageView
+            android:id="@+id/phoneNumberEditImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_edit_24"
+            app:layout_constraintBottom_toBottomOf="@id/phoneNumberValueTextView"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    <TextView
-        android:id="@+id/nicknameTextView"
-        style="@style/Title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="36dp"
-        android:text="닉네임"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/guideLineH1" />
+        <TextView
+            android:id="@+id/nicknameTextView"
+            style="@style/Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="36dp"
+            android:text="닉네임"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/guideLineH1" />
 
-    <TextView
-        android:id="@+id/nicknameValueTextView"
-        style="@style/Value"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="36dp"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:text="박선우"
-        app:layout_constraintBaseline_toBaselineOf="@id/nicknameTextView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/guideLineV" />
+        <TextView
+            android:id="@+id/nicknameValueTextView"
+            style="@style/Value"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="36dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="박선우"
+            app:layout_constraintBaseline_toBaselineOf="@id/nicknameTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/guideLineV" />
 
-    <TextView
-        android:id="@+id/emailTextView"
-        style="@style/Title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="이메일"
-        app:layout_constraintStart_toStartOf="@id/nicknameTextView"
-        app:layout_constraintTop_toBottomOf="@id/nicknameTextView" />
+        <TextView
+            android:id="@+id/emailTextView"
+            style="@style/Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="이메일"
+            app:layout_constraintStart_toStartOf="@id/nicknameTextView"
+            app:layout_constraintTop_toBottomOf="@id/nicknameTextView" />
 
-    <TextView
-        android:id="@+id/emailValueTextView"
-        style="@style/Value"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="***@***.com"
-        app:layout_constraintBaseline_toBaselineOf="@id/emailTextView"
-        app:layout_constraintEnd_toEndOf="@id/nicknameValueTextView"
-        app:layout_constraintStart_toStartOf="@id/guideLineV" />
+        <TextView
+            android:id="@+id/emailValueTextView"
+            style="@style/Value"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="***@***.com"
+            app:layout_constraintBaseline_toBaselineOf="@id/emailTextView"
+            app:layout_constraintEnd_toEndOf="@id/nicknameValueTextView"
+            app:layout_constraintStart_toStartOf="@id/guideLineV" />
 
-    <TextView
-        android:id="@+id/passwordTextView"
-        style="@style/Title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="비밀번호 "
-        app:layout_constraintStart_toStartOf="@id/nicknameTextView"
-        app:layout_constraintTop_toBottomOf="@id/emailTextView" />
+        <TextView
+            android:id="@+id/passwordTextView"
+            style="@style/Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="비밀번호 "
+            app:layout_constraintStart_toStartOf="@id/nicknameTextView"
+            app:layout_constraintTop_toBottomOf="@id/emailTextView" />
 
-    <TextView
-        android:id="@+id/passwordValueTextView"
-        style="@style/Value"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="********"
-        app:layout_constraintBaseline_toBaselineOf="@id/passwordTextView"
-        app:layout_constraintEnd_toEndOf="@id/nicknameValueTextView"
-        app:layout_constraintStart_toStartOf="@id/guideLineV" />
+        <TextView
+            android:id="@+id/passwordValueTextView"
+            style="@style/Value"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="********"
+            app:layout_constraintBaseline_toBaselineOf="@id/passwordTextView"
+            app:layout_constraintEnd_toEndOf="@id/nicknameValueTextView"
+            app:layout_constraintStart_toStartOf="@id/guideLineV" />
 
-    <TextView
-        android:id="@+id/phoneNumberTextView"
-        style="@style/Title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="휴대폰번호"
-        app:layout_constraintStart_toStartOf="@id/nicknameTextView"
-        app:layout_constraintTop_toBottomOf="@id/passwordTextView" />
+        <TextView
+            android:id="@+id/phoneNumberTextView"
+            style="@style/Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="휴대폰번호"
+            app:layout_constraintStart_toStartOf="@id/nicknameTextView"
+            app:layout_constraintTop_toBottomOf="@id/passwordTextView" />
 
-    <TextView
-        android:id="@+id/phoneNumberValueTextView"
-        style="@style/Value"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="010-0000-0000"
-        app:layout_constraintBaseline_toBaselineOf="@id/phoneNumberTextView"
-        app:layout_constraintEnd_toEndOf="@id/nicknameValueTextView"
-        app:layout_constraintStart_toStartOf="@id/guideLineV" />
+        <TextView
+            android:id="@+id/phoneNumberValueTextView"
+            style="@style/Value"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="010-0000-0000"
+            app:layout_constraintBaseline_toBaselineOf="@id/phoneNumberTextView"
+            app:layout_constraintEnd_toEndOf="@id/nicknameValueTextView"
+            app:layout_constraintStart_toStartOf="@id/guideLineV" />
 
-    <androidx.constraintlayout.helper.widget.Layer
-        android:id="@+id/nicknameEditHelper"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:constraint_referenced_ids="nicknameValueTextView, nicknameEditImageView"
-        tools:ignore="MissingConstraints"/>
+        <androidx.constraintlayout.helper.widget.Layer
+            android:id="@+id/nicknameEditHelper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="nicknameValueTextView, nicknameEditImageView"
+            tools:ignore="MissingConstraints"/>
 
-    <androidx.constraintlayout.helper.widget.Layer
-        android:id="@+id/passwordEditHelper"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:constraint_referenced_ids="passwordValueTextView, passwordEditImageView"
-        tools:ignore="MissingConstraints"/>
+        <androidx.constraintlayout.helper.widget.Layer
+            android:id="@+id/passwordEditHelper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="passwordValueTextView, passwordEditImageView"
+            tools:ignore="MissingConstraints"/>
 
-    <androidx.constraintlayout.helper.widget.Layer
-        android:id="@+id/phoneNumberEditHelper"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:constraint_referenced_ids="phoneNumberValueTextView, phoneNumberEditImageView"
-        tools:ignore="MissingConstraints"/>
+        <androidx.constraintlayout.helper.widget.Layer
+            android:id="@+id/phoneNumberEditHelper"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="phoneNumberValueTextView, phoneNumberEditImageView"
+            tools:ignore="MissingConstraints"/>
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideLineH1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.2" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideLineH1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.2" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideLineH2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.55" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideLineH2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.55" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideLineV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.4" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideLineV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.4" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/logoutButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="36dp"
-        android:clickable="true"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideLineH2"
-        app:srcCompat="@drawable/ic_baseline_logout_24" />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/logoutButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="36dp"
+            android:clickable="true"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/guideLineH2"
+            app:srcCompat="@drawable/ic_baseline_logout_24" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/deleteUserButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="36dp"
-        android:clickable="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideLineH2"
-        app:srcCompat="@drawable/ic_baseline_person_off_24" />
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/deleteUserButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="36dp"
+            android:clickable="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/guideLineH2"
+            app:srcCompat="@drawable/ic_baseline_person_off_24" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

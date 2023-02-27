@@ -18,6 +18,7 @@ class ReviewsWriteActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListen
     private lateinit var reviewsAdapter: ReviewsAdapter
 
     private var myUsername = FirebaseAuth.getInstance().currentUser?.email
+    private var userId = FirebaseAuth.getInstance().currentUser?.uid
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,7 +87,8 @@ class ReviewsWriteActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListen
         val detail = binding.reviewsWriteDetailEditTextView.text.toString()
         var currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
         val userEmail = myUsername
-        val reviews = Reviews(rating, taxiType, taxiNumber, detail, currentTime, userEmail!!)
+        val userId = userId
+        val reviews = Reviews(rating, taxiType, taxiNumber, detail, currentTime, userEmail!!, userId!!)
 
         Thread {
             AppDatabase.getInstance(this)?.reviewsDao()?.insert(reviews)
