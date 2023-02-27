@@ -3,12 +3,8 @@ package com.app.service.reviewaza.reviews
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.isVisible
-import com.app.service.reviewaza.LOGIN_EMAIL
-import com.app.service.reviewaza.LOGIN_VALUE
 import com.app.service.reviewaza.databinding.ActivityReviewsDetailBinding
 
 

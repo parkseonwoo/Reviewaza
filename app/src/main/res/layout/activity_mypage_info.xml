@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="info"
+            type="com.app.service.reviewaza.mypage.MyPageInfoActivity" />
+    </data>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".mypage.MyPageInfoActivity">
@@ -16,15 +24,15 @@
         app:layout_constraintBottom_toBottomOf="@id/guideLineH1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <ImageView
         android:id="@+id/nicknameEditImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_baseline_edit_24"
-        app:layout_constraintBottom_toBottomOf="@id/nicknameTextView"
-        app:layout_constraintStart_toEndOf="@id/nicknameTextView" />
+        app:layout_constraintBottom_toBottomOf="@id/nicknameValueTextView"
+        app:layout_constraintStart_toEndOf="@id/nicknameValueTextView" />
 
     <ImageView
         android:id="@+id/passwordEditImageView"
@@ -47,24 +55,13 @@
         style="@style/Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="닉네임"
-        app:layout_constraintBottom_toTopOf="@+id/guideLineH1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/myPageImage" />
-
-    <TextView
-        android:id="@+id/idTextView"
-        style="@style/Title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:layout_marginStart="36dp"
-        android:text="아이디"
+        android:text="닉네임"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/guideLineH1" />
 
     <TextView
-        android:id="@+id/idValueTextView"
+        android:id="@+id/nicknameValueTextView"
         style="@style/Value"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -72,7 +69,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:text="박선우"
-        app:layout_constraintBaseline_toBaselineOf="@id/idTextView"
+        app:layout_constraintBaseline_toBaselineOf="@id/nicknameTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideLineV" />
 
@@ -82,8 +79,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="이메일"
-        app:layout_constraintStart_toStartOf="@id/idTextView"
-        app:layout_constraintTop_toBottomOf="@id/idTextView" />
+        app:layout_constraintStart_toStartOf="@id/nicknameTextView"
+        app:layout_constraintTop_toBottomOf="@id/nicknameTextView" />
 
     <TextView
         android:id="@+id/emailValueTextView"
@@ -92,7 +89,7 @@
         android:layout_height="wrap_content"
         android:text="***@***.com"
         app:layout_constraintBaseline_toBaselineOf="@id/emailTextView"
-        app:layout_constraintEnd_toEndOf="@id/idValueTextView"
+        app:layout_constraintEnd_toEndOf="@id/nicknameValueTextView"
         app:layout_constraintStart_toStartOf="@id/guideLineV" />
 
     <TextView
@@ -101,7 +98,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="비밀번호 "
-        app:layout_constraintStart_toStartOf="@id/idTextView"
+        app:layout_constraintStart_toStartOf="@id/nicknameTextView"
         app:layout_constraintTop_toBottomOf="@id/emailTextView" />
 
     <TextView
@@ -111,7 +108,7 @@
         android:layout_height="wrap_content"
         android:text="********"
         app:layout_constraintBaseline_toBaselineOf="@id/passwordTextView"
-        app:layout_constraintEnd_toEndOf="@id/idValueTextView"
+        app:layout_constraintEnd_toEndOf="@id/nicknameValueTextView"
         app:layout_constraintStart_toStartOf="@id/guideLineV" />
 
     <TextView
@@ -120,7 +117,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="휴대폰번호"
-        app:layout_constraintStart_toStartOf="@id/idTextView"
+        app:layout_constraintStart_toStartOf="@id/nicknameTextView"
         app:layout_constraintTop_toBottomOf="@id/passwordTextView" />
 
     <TextView
@@ -130,14 +127,28 @@
         android:layout_height="wrap_content"
         android:text="010-0000-0000"
         app:layout_constraintBaseline_toBaselineOf="@id/phoneNumberTextView"
-        app:layout_constraintEnd_toEndOf="@id/idValueTextView"
+        app:layout_constraintEnd_toEndOf="@id/nicknameValueTextView"
         app:layout_constraintStart_toStartOf="@id/guideLineV" />
 
     <androidx.constraintlayout.helper.widget.Layer
         android:id="@+id/nicknameEditHelper"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="nicknameTextView, nicknameEditImageView"
+        app:constraint_referenced_ids="nicknameValueTextView, nicknameEditImageView"
+        tools:ignore="MissingConstraints"/>
+
+    <androidx.constraintlayout.helper.widget.Layer
+        android:id="@+id/passwordEditHelper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="passwordValueTextView, passwordEditImageView"
+        tools:ignore="MissingConstraints"/>
+
+    <androidx.constraintlayout.helper.widget.Layer
+        android:id="@+id/phoneNumberEditHelper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="phoneNumberValueTextView, phoneNumberEditImageView"
         tools:ignore="MissingConstraints"/>
 
     <androidx.constraintlayout.widget.Guideline
@@ -172,7 +183,7 @@
         app:srcCompat="@drawable/ic_baseline_logout_24" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/cancelAccountButton"
+        android:id="@+id/deleteUserButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="36dp"
@@ -183,3 +194,4 @@
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

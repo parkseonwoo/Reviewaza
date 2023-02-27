@@ -6,10 +6,9 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
-import com.app.service.reviewaza.LOGIN_EMAIL
 import com.app.service.reviewaza.databinding.ActivityReviewsWriteBinding
-import com.app.service.reviewaza.databinding.ItemReviewsBinding
 import com.google.android.material.chip.Chip
+import com.google.firebase.auth.FirebaseAuth
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -17,6 +16,8 @@ class ReviewsWriteActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListen
 
     private lateinit var binding : ActivityReviewsWriteBinding
     private lateinit var reviewsAdapter: ReviewsAdapter
+
+    private var myUsername = FirebaseAuth.getInstance().currentUser?.email
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +41,7 @@ class ReviewsWriteActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListen
     private fun initViews() {
         reviewsAdapter = ReviewsAdapter(mutableListOf(), this@ReviewsWriteActivity)
 
-        binding.reviewsUserEmail.setText(LOGIN_EMAIL)
+        binding.reviewsUserEmail.setText(myUsername)
 
         val types = listOf("친절해요", "쾌적해요", "깔끔해요", "보통이였어요", "불친절해요", "별로였어요", "싸가지없어요")
         binding.reviewsChipGroup.apply {
@@ -84,8 +85,8 @@ class ReviewsWriteActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListen
         val taxiNumber = binding.reviewsWriteTaxiNumberEditText.text.toString()
         val detail = binding.reviewsWriteDetailEditTextView.text.toString()
         var currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
-        val userEmail = LOGIN_EMAIL
-        val reviews = Reviews(rating, taxiType, taxiNumber, detail, currentTime, userEmail)
+        val userEmail = myUsername
+        val reviews = Reviews(rating, taxiType, taxiNumber, detail, currentTime, userEmail!!)
 
         Thread {
             AppDatabase.getInstance(this)?.reviewsDao()?.insert(reviews)

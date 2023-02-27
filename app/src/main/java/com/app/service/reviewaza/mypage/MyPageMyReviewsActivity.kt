@@ -10,10 +10,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.app.service.reviewaza.LOGIN_EMAIL
 import com.app.service.reviewaza.REVIEWS_DETAIL_FLAG
 import com.app.service.reviewaza.databinding.ActivityLatestReviewsBinding
 import com.app.service.reviewaza.reviews.*
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.item_reviews.*
 
 class MyPageMyReviewsActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListener {
@@ -21,6 +22,8 @@ class MyPageMyReviewsActivity : AppCompatActivity(), ReviewsAdapter.ItemClickLis
     private lateinit var reviewsAdapter: ReviewsAdapter
     private lateinit var reviews: Reviews
     private lateinit var searchAdapter: ReviewsSearchAdapter
+
+    private val myUserId = Firebase.auth.currentUser?.uid ?: ""
 
     private val updateDeleteReviews = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -65,7 +68,8 @@ class MyPageMyReviewsActivity : AppCompatActivity(), ReviewsAdapter.ItemClickLis
         }
 
         Thread {
-            val list = AppDatabase.getInstance(this)?.reviewsDao()?.getMyReviews(LOGIN_EMAIL)
+            var myUserEmail = Firebase.auth.currentUser?.email
+            val list = AppDatabase.getInstance(this)?.reviewsDao()?.getMyReviews(myUserEmail!!)
 
             if (list != null) {
                 reviewsAdapter.list.addAll(list)

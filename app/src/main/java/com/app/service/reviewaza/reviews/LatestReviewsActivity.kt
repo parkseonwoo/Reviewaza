@@ -2,6 +2,7 @@ package com.app.service.reviewaza.reviews
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
@@ -12,10 +13,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.widget.SearchView
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.app.service.reviewaza.LOGIN_VALUE
 import com.app.service.reviewaza.R
 import com.app.service.reviewaza.REVIEWS_DETAIL_FLAG
 import com.app.service.reviewaza.databinding.ActivityLatestReviewsBinding
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.item_reviews.*
 
 class LatestReviewsActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListener {
@@ -23,6 +25,8 @@ class LatestReviewsActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListe
     private lateinit var reviewsAdapter: ReviewsAdapter
     private lateinit var reviews: Reviews
     private lateinit var searchAdapter: ReviewsSearchAdapter
+
+    private val myUserId = Firebase.auth.currentUser?.uid ?: null
 
     private val updateAddReviewsWriteResult = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -112,9 +116,10 @@ class LatestReviewsActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListe
 
 
         binding.reviewsWriteButton.setOnClickListener {
-            if (LOGIN_VALUE != 1) {
+            if (myUserId == null) {
                 Toast.makeText(this, "로그인 후 이용해주세요.", Toast.LENGTH_SHORT).show()
             } else {
+                Log.e("리뷰쓰기", "$myUserId")
                 Intent(this, ReviewsWriteActivity::class.java).let {
                     updateAddReviewsWriteResult.launch(it)
                 }
@@ -126,22 +131,14 @@ class LatestReviewsActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListe
     private fun initRecyclerView() {
 
         reviewsAdapter = ReviewsAdapter(mutableListOf(), this)
-
-        Thread {
-            val list = AppDatabase.getInstance(this)?.reviewsDao()?.getAll() ?: emptyList()
-            reviewsAdapter.list.addAll(list)
-            runOnUiThread {
-                reviewsAdapter.notifyDataSetChanged()
-                binding.reviewsRecyclerView.apply {
-                    adapter = reviewsAdapter
-                    layoutManager =
-                        LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
-                    val dividerItemDecoration =
-                        DividerItemDecoration(applicationContext, LinearLayoutManager.VERTICAL)
-                    addItemDecoration(dividerItemDecoration)
-                }
-            }
-        }.start()
+        binding.reviewsRecyclerView.apply {
+            adapter = reviewsAdapter
+            layoutManager =
+                LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
+            val dividerItemDecoration =
+                DividerItemDecoration(applicationContext, LinearLayoutManager.VERTICAL)
+            addItemDecoration(dividerItemDecoration)
+        }
 
     }
 

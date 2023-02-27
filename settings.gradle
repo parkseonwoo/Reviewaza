@@ -13,7 +13,13 @@ dependencyResolutionManagement {
         // Naver Map API
         jcenter()
         maven {
-            url ="https://naver.jfrog.io/artifactory/maven/"
+            url "https://maven.google.com"
+        }
+        maven {
+            url = "https://naver.jfrog.io/artifactory/maven/"
+        }
+        maven {
+            url = 'https://devrepo.kakao.com/nexus/content/groups/public/'
         }
     }
 }

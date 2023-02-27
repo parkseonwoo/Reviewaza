@@ -4,6 +4,7 @@ plugins {
     id 'com.google.gms.google-services'
     id 'kotlin-android-extensions'
     id 'kotlin-kapt'
+    id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
     //id 'kotlin-parcelize'
 }
 
@@ -11,6 +12,7 @@ plugins {
 def localProperties = new Properties()
 localProperties.load(new FileInputStream(rootProject.file("local.properties")))
 def MAPS_API_KEY=localProperties['MAPS_API_KEY']
+def KAKAO_NATIVE_KEY=localProperties['KAKAO_NATIVE_KEY']
 
 
 android {
@@ -28,6 +30,13 @@ android {
 
         // 매니페스트에서 사용할려면 이 코드를 사용해주세요.
         manifestPlaceholders = [MAPS_API_KEY:MAPS_API_KEY]
+        manifestPlaceholders = [KAKAO_NATIVE_KEY:KAKAO_NATIVE_KEY]
+//        configurations {
+//            implementation.exclude(group: 'com.google.firebase', module: 'protolite-well-known-types')
+//            implementation.exclude(group: 'com.google.protobuf', module: 'protobuf-javalite')
+//            //implementation.exclude group: "com.google.protobuf", module: "protobuf-java"
+//
+//        }
     }
 
     buildTypes {
@@ -40,6 +49,7 @@ android {
     packagingOptions {
         exclude 'META-INF/INDEX.LIST'
         exclude 'META-INF/DEPENDENCIES'
+        exclude 'google/protobuf/*.proto'
     }
 
 
@@ -77,14 +87,22 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.4.1'
     implementation 'androidx.navigation:navigation-ui-ktx:2.4.1'
+    //implementation 'com.google.firebase:firebase-firestore-ktx:24.4.3'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 
     // FireBase
-    implementation platform('com.google.firebase:firebase-bom:27.0.0')
+    implementation platform('com.google.firebase:firebase-bom:29.3.1')
     implementation 'com.google.firebase:firebase-auth-ktx'
     implementation 'com.google.android.gms:play-services-auth:17.0.0'
+
+    // Firebase Facebook login
+    implementation 'com.facebook.android:facebook-android-sdk:[8,9)'
+
+    // Kakao login
+    implementation "com.kakao.sdk:v2-user:2.0.1"
+    implementation group: 'com.kakao.sdk', name: 'usermgmt', version: '1.27.0'
 
     // Naver Map API
     implementation("com.naver.maps:map-sdk:3.16.1")
@@ -110,8 +128,16 @@ dependencies {
     // Firebase cloud messaging
     implementation 'com.google.firebase:firebase-messaging-ktx'
 
+    // FireStore storage
+    implementation 'com.google.firebase:firebase-storage-ktx'
+
+    // FirebaseUI Storage only
+    implementation 'com.firebaseui:firebase-ui-storage:7.2.0'
+
+    // Glide
+    implementation 'com.github.bumptech.glide:glide:4.14.2'
+
     // OKHttp
     implementation 'com.squareup.okhttp3:okhttp:4.10.0'
-
 
 }

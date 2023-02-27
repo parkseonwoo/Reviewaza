@@ -50,14 +50,37 @@
         android:text="로그인" />
 
     <android.widget.Button
+        android:id="@+id/kakao_login_btn"
+        style="@style/LoginButtons"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/btn_round"
+        android:backgroundTint="#f9e000"
+        android:drawableLeft="@drawable/drawable_left_image_costomise_kakao_login"
+        android:text="카카오톡으로 계속하기"
+        android:textColor="#37271D" />
+
+    <android.widget.Button
         android:id="@+id/google_login_btn"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:background="@drawable/btn_round"
         android:backgroundTint="@color/white"
         android:drawableLeft="@drawable/drawable_left_image_costomise_google_login"
-        android:text="구글 로그인"
+        android:text="구글로 계속하기"
         style="@style/LoginButtons"
         android:textColor="@color/black" />
+
+    <android.widget.Button
+        android:id="@+id/facebook_login_btn"
+        style="@style/LoginButtons"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/btn_round"
+        android:backgroundTint="@color/com_facebook_blue"
+        android:drawableLeft="@drawable/drawable_left_image_costomise_facebook_login"
+        android:text="@string/facebook"
+        android:textAllCaps="false"
+        android:textColor="@color/white" />
 
 </LinearLayout>

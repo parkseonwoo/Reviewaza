@@ -4,15 +4,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.app.service.reviewaza.LOGIN_VALUE
 import com.app.service.reviewaza.chatbot.ChatActivity
 import com.app.service.reviewaza.databinding.ActivityMypageBinding
 import com.app.service.reviewaza.login.LoginActivity
-import kotlinx.android.synthetic.main.activity_mypage.*
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class MyPageActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMypageBinding
+    private val myUserId = Firebase.auth.currentUser?.uid ?: null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,7 +21,7 @@ class MyPageActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.myPageMyInfo.setOnClickListener {
-            if(LOGIN_VALUE == 0) {
+            if(myUserId == null) {
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
             } else {
@@ -31,7 +32,7 @@ class MyPageActivity : AppCompatActivity() {
         }
 
         binding.myPageMyReviews.setOnClickListener {
-            if(LOGIN_VALUE != 1) {
+            if(myUserId == null) {
                 Toast.makeText(this, "로그인을 먼저 해주세요.", Toast.LENGTH_SHORT).show()
             } else {
                 val intent = Intent(this, MyPageMyReviewsActivity::class.java)
