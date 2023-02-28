@@ -112,19 +112,26 @@ class MyPageInfoActivity : AppCompatActivity() {
 
                 Toast.makeText(this, "왜 안될까? ${currentUserItem.userImage}", Toast.LENGTH_SHORT)
                     .show()
-                Glide.with(binding.myPageImage)
-                    .load(Uri.parse(currentUserItem.userImage))
-                    .override(350, 350)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .centerCrop()
-                    .into(binding.myPageImage)
-
-
+                if (currentUserItem.userImage == null) {
+                    Glide.with(binding.myPageImage)
+                        .load(R.drawable.ic_baseline_person_24)
+                        .override(350, 350)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .centerCrop()
+                        .into(binding.myPageImage)
+                } else {
+                    Glide.with(binding.myPageImage)
+                        .load(Uri.parse(currentUserItem.userImage))
+                        .override(350, 350)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .centerCrop()
+                        .into(binding.myPageImage)
+                }
             }
+
             flag = false
 
         }
-
 
         if (MY_STATE != "") binding.emailValueTextView.text = Firebase.auth.currentUser?.email
     }

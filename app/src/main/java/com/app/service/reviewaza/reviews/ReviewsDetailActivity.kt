@@ -86,7 +86,6 @@ class ReviewsDetailActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListe
 
             override fun onDataChange(snapshot: DataSnapshot) { // snapshot은 uid로 가져온 데이터 하나하나를 의미
 
-
                 snapshot.children.forEach {
                     val user = it.getValue(UserItem::class.java)
                     Log.e("리뷰 이미지", "userId: ${user?.userId}, reviewsId: ${reviews.userId}")
@@ -104,7 +103,6 @@ class ReviewsDetailActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListe
             }
 
             override fun onCancelled(error: DatabaseError) {}
-
 
         })
     }
