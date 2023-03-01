@@ -6,14 +6,15 @@ import androidx.room.PrimaryKey
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-@Entity(tableName = "reviews")
+@Entity(tableName = "review")
 data class Reviews(
-    val rating: Float,
-    val taxiType: String,
-    val taxiNumber: String,
-    val detail: String,
-    val currentTime: String,
-    val userEmail: String,
-    val userId: String,
+    var reviewId: String? = null,
+    val rating: Float? = null,
+    val taxiType: String? = null,
+    val taxiNumber: String? = null,
+    val detail: String? = null,
+    val currentTime: String? = null,
+    val userEmail: String? = null,
+    val userId: String? = null,
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
 ) : Parcelable

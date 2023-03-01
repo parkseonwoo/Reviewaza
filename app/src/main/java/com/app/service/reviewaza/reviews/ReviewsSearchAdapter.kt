@@ -9,9 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.app.service.reviewaza.databinding.ItemReviewsBinding
 
 class ReviewsSearchAdapter(
-    val list: MutableList<Reviews>,
-    private val itemClickListener: ReviewsAdapter.ItemClickListener? = null
-) : RecyclerView.Adapter<ReviewsSearchAdapter.ReviewsViewHolder>() , Filterable {
+    val list: MutableList<Reviews>
+) : RecyclerView.Adapter<ReviewsSearchAdapter.ViewHolder>() , Filterable {
 
     // TODO 간헐적으로 리뷰 검색이 안 되는 경우 오류 해결
 
@@ -22,42 +21,37 @@ class ReviewsSearchAdapter(
         filteredReviews.addAll(list)
     }
 
-    inner class ReviewsViewHolder(private val binding: ItemReviewsBinding) :
+    inner class ViewHolder(private val binding: ItemReviewsBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(reviews: Reviews) {
             binding.apply {
-                reviewsRatingBar.rating = reviews.rating
+                reviewsRatingBar.rating = reviews.rating!!
                 reviewsTaxiTypeValue.text = reviews.taxiType
                 reviewsTaxiNumberValue.text = reviews.taxiNumber
                 reviewsDateValueTextView.text = reviews.currentTime
             }
         }
     }
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReviewsSearchAdapter.ReviewsViewHolder {
-        val inflater =
-            parent.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val binding = ItemReviewsBinding.inflate(inflater, parent, false)
-        return ReviewsViewHolder(binding)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReviewsSearchAdapter.ViewHolder {
+        return ViewHolder(
+            ItemReviewsBinding.inflate(LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
     }
 
-    override fun onBindViewHolder(holder: ReviewsSearchAdapter.ReviewsViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ReviewsSearchAdapter.ViewHolder, position: Int) {
 
         //val reviews = list[position]
         val reviews : Reviews = filteredReviews[position]
 
         holder.bind(reviews)
 
-        holder.itemView.setOnClickListener {
-            itemClickListener?.onClick(reviews)
-        }
     }
 
     override fun getItemCount(): Int {
         return filteredReviews.size
-    }
-
-    interface ItemClickListener {
-        fun onClick(reviews: Reviews)
     }
 
     // -- Filter
@@ -84,14 +78,14 @@ class ReviewsSearchAdapter(
             } else if (filterString.trim { it <= ' ' }.length <= 2) {
 
                 for (review in list) {
-                    if (review.taxiNumber.contains(filterString)) {
+                    if (review.taxiNumber?.contains(filterString) == true) {
                         filteredList.add(review)
                     }
                 }
                 //그 외의 경우(공백제외 2글자 초과)
             } else {
                 for (review in list) {
-                    if (review.taxiType.contains(filterString) || review.detail.contains(filterString)) {
+                    if (review.taxiType?.contains(filterString) == true || review.detail?.contains(filterString) == true) {
                         filteredList.add(review)
                     }
                 }

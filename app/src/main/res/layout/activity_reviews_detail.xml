@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/reviewsDetailLayout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    style="@style/ReviewsViews">
 
     <ImageView
         android:id="@+id/reviewsWriteImageView"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        app:layout_constraintEnd_toEndOf="@id/guideLineV"
         app:layout_constraintHeight_percent="0.1"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/guideLineV"
         app:srcCompat="@drawable/ic_baseline_person_24" />
 
     <TextView
@@ -28,9 +31,11 @@
         android:id="@+id/reviewsWriteRatingBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@id/guideLineV"
+        app:layout_constraintBottom_toBottomOf="@id/reviewsUserEmail"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@id/guideLineV"
+        app:layout_constraintEnd_toEndOf="@+id/reviewsDetailLayout"
+        android:layout_marginEnd="10dp"
         app:layout_constraintVertical_bias="0.36"
         app:srb_clearRatingEnabled="true"
         app:srb_clickable="false"
@@ -51,7 +56,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="택시 종류 : "
-
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/guideLine1" />
 
@@ -84,7 +88,8 @@
         android:layout_marginTop="16dp"
         android:hint="11일 1111"
         app:layout_constraintStart_toEndOf="@+id/reviewsWriteTaxiNumberTextView"
-        app:layout_constraintTop_toBottomOf="@id/guideLine1" />
+        app:layout_constraintTop_toBottomOf="@id/guideLine1"
+        app:layout_constraintEnd_toEndOf="@id/reviewsDetailLayout"/>
 
 
     <com.google.android.material.chip.ChipGroup
@@ -106,14 +111,15 @@
         android:hint="내용을 입력하세요"
         app:layout_constraintHeight_percent="0.2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/reviewsChipGroup" />
+        app:layout_constraintTop_toBottomOf="@id/reviewsChipGroup"
+        app:layout_constraintEnd_toEndOf="@+id/reviewsDetailLayout"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideLine1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.1" />
+        app:layout_constraintGuide_percent="0.15" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideLine2"

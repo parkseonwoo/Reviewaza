@@ -115,16 +115,16 @@ class MyPageInfoActivity : AppCompatActivity() {
                 if (currentUserItem.userImage == null) {
                     Glide.with(binding.myPageImage)
                         .load(R.drawable.ic_baseline_person_24)
-                        .override(350, 350)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .centerCrop()
+                        .fitCenter()
+                        .circleCrop()
                         .into(binding.myPageImage)
                 } else {
                     Glide.with(binding.myPageImage)
                         .load(Uri.parse(currentUserItem.userImage))
-                        .override(350, 350)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .centerCrop()
+                        .fitCenter()
+                        .circleCrop()
                         .into(binding.myPageImage)
                 }
             }

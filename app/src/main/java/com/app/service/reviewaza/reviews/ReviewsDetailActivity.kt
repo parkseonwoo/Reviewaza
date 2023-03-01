@@ -4,10 +4,13 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import com.app.service.reviewaza.REVIEWS_DETAIL_FLAG
+import com.app.service.reviewaza.call.CallActivity
 import com.app.service.reviewaza.call.Key
 import com.app.service.reviewaza.databinding.ActivityReviewsDetailBinding
 import com.app.service.reviewaza.login.UserItem
@@ -19,19 +22,16 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
-import java.text.SimpleDateFormat
-import java.util.*
 
 
-class ReviewsDetailActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListener {
+class ReviewsDetailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityReviewsDetailBinding
     private lateinit var reviews: Reviews
-    private lateinit var reviewsAdapter: ReviewsAdapter
+    private lateinit var reviewsAdapter: ReviewListAdapter
 
-    private val currentUserId = Firebase.auth.currentUser?.uid ?: ""
     private val currentUserDB = Firebase.database.reference.child(Key.DB_USERS)
+    private val currentReviewDB = Firebase.database.reference.child(Key.DB_REVIEWS)
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -39,12 +39,9 @@ class ReviewsDetailActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListe
         binding = ActivityReviewsDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // deprecated
-        // reviews = intent.getSerializableExtra("reviews") as Reviews
-
         reviews = intent.getParcelableExtra("reviews")!!
 
-        if (currentUserId != null) {
+        if (REVIEWS_DETAIL_FLAG != "MyPage_DETAILS") {
             binding.reviewsEditButton.isEnabled = false
             binding.reviewsDeleteButton.isEnabled = false
             binding.reviewsEditButton.isVisible = false
@@ -58,6 +55,7 @@ class ReviewsDetailActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListe
 
         binding.reviewsEditButton.setOnClickListener {
             Toast.makeText(this, "수정 버튼 클릭", Toast.LENGTH_SHORT).show()
+            //updateReview()
         }
 
         binding.reviewsDeleteButton.setOnClickListener {
@@ -75,27 +73,30 @@ class ReviewsDetailActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListe
     }
 
     private fun initView() {
-        reviewsAdapter = ReviewsAdapter(mutableListOf(), this@ReviewsDetailActivity)
+        reviewsAdapter = ReviewListAdapter(mutableListOf()) {
+
+        }
         binding.reviewsUserEmail.text = reviews.userEmail
-        binding.reviewsWriteRatingBar.rating = reviews.rating
+        binding.reviewsWriteRatingBar.rating = reviews.rating!!
         binding.reviewsWriteTaxiTypeValueTextView.text = reviews.taxiType
         binding.reviewsWriteTaxiNumberValueTextView.text = reviews.taxiNumber
         binding.reviewsWriteDetailTextView.text = reviews.detail
 
-        currentUserDB.addListenerForSingleValueEvent(object: ValueEventListener { // 유저 내요이 많이 바뀌지 않기 때문에 addListenerForSingleValueEvent로 부름
+        currentUserDB.addListenerForSingleValueEvent(object :
+            ValueEventListener {
 
-            override fun onDataChange(snapshot: DataSnapshot) { // snapshot은 uid로 가져온 데이터 하나하나를 의미
+            override fun onDataChange(snapshot: DataSnapshot) {
 
                 snapshot.children.forEach {
                     val user = it.getValue(UserItem::class.java)
                     Log.e("리뷰 이미지", "userId: ${user?.userId}, reviewsId: ${reviews.userId}")
-                    if(user?.userId == reviews.userId) {
-                        Log.e("리뷰 이미지", "username: ${user.username}, reviewsEmail: ${reviews.userEmail}")
+                    if (user?.userId == reviews.userId) {
+
                         Glide.with(binding.reviewsWriteImageView)
                             .load(Uri.parse(user?.userImage))
-                            .override(350, 350)
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .centerCrop()
+                            .fitCenter()
+                            .circleCrop()
                             .into(binding.reviewsWriteImageView)
                     }
                 }
@@ -108,10 +109,20 @@ class ReviewsDetailActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListe
     }
 
     fun delete() {
+        var currentReview = ""
         Thread {
-            AppDatabase.getInstance(this)?.reviewsDao()?.delete(reviews)
+            ReviewDatabase.getInstance(this)?.reviewsDao()?.delete(reviews)
+
             runOnUiThread {
                 reviewsAdapter.list.remove(reviews)
+                currentReviewDB.get().addOnSuccessListener {
+                    val review = it.getValue(Reviews::class.java)
+                    currentReview = review?.reviewId.toString()
+                }
+
+                Log.e("reviewId", "current: ${currentReview}, reviewsid: ${reviews.reviewId}")
+                currentReviewDB.child(currentReview).child(reviews.reviewId!!).removeValue()
+                reviewsAdapter.notifyDataSetChanged()
                 val intent = Intent().putExtra("isDelete", true)
                 setResult(RESULT_OK, intent)
                 Toast.makeText(this, "삭제가 완료됐습니다", Toast.LENGTH_SHORT).show()
@@ -120,8 +131,23 @@ class ReviewsDetailActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListe
         }.start()
     }
 
-    override fun onClick(reviews: Reviews) {
-        TODO("Not yet implemented")
-    }
+//    private fun updateReview() {
+//        if(reviews.reviewId != "") {
+//            binding.reviewsWriteDetailTextView.isFocusableInTouchMode = true
+//            binding.reviewsWriteDetailTextView.isFocusable = true
+//            binding.reviewsWriteDetailTextView.selectionEnd
+//
+//            val review = mutableMapOf<String, Any>()
+//            review["detail"] = binding.reviewsWriteDetailTextView.text
+//
+//            Firebase.database(Key.DB_URL).reference.child(Key.DB_REVIEWS).child(currentUserId!!).updateChildren(review)
+//        }
+//
+//        Toast.makeText(this, "리뷰 작성 완료!", Toast.LENGTH_SHORT).show()
+//    }
 
+
+    companion object {
+        const val EXTRA_REVIEW_ID = "REVIEW_ID"
+    }
 }

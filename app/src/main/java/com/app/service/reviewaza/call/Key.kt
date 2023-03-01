@@ -6,5 +6,6 @@ class Key {
         const val DB_USERS = "Users"
         const val DB_CALLS = "Calls"
         const val DB_CHATS = "Chats"
+        const val DB_REVIEWS = "Reviews"
     }
 }

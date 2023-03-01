@@ -2,6 +2,7 @@ package com.app.service.reviewaza.mypage
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.widget.SearchView
 import android.widget.Toast
@@ -11,27 +12,34 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.service.reviewaza.REVIEWS_DETAIL_FLAG
+import com.app.service.reviewaza.call.CallActivity
+import com.app.service.reviewaza.call.Key
 import com.app.service.reviewaza.databinding.ActivityLatestReviewsBinding
 import com.app.service.reviewaza.reviews.*
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.item_reviews.*
 
-class MyPageMyReviewsActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListener {
+class MyPageMyReviewsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLatestReviewsBinding
-    private lateinit var reviewsAdapter: ReviewsAdapter
+    private lateinit var reviewsAdapter: ReviewListAdapter
     private lateinit var reviews: Reviews
     private lateinit var searchAdapter: ReviewsSearchAdapter
 
-    private val myUserId = Firebase.auth.currentUser?.uid ?: ""
+    private var myUsername = FirebaseAuth.getInstance().currentUser?.email
 
-    private val updateDeleteReviews = registerForActivityResult(
+    private val startMyReviews = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         val isDelete = result.data?.getBooleanExtra("isDelete", false) ?: false
 
         if (result.resultCode == RESULT_OK && isDelete) {
-            updateDeleteReviews()
+            initRecyclerView()
         }
     }
 
@@ -46,7 +54,7 @@ class MyPageMyReviewsActivity : AppCompatActivity(), ReviewsAdapter.ItemClickLis
 
         initRecyclerView()
 
-        binding.reviewsSearchView.setOnQueryTextListener(searchViewTextListener)
+        //binding.reviewsSearchView.setOnQueryTextListener(searchViewTextListener)
 
         binding.toolBar.apply {
             title = "나의 리뷰 목록"
@@ -56,8 +64,20 @@ class MyPageMyReviewsActivity : AppCompatActivity(), ReviewsAdapter.ItemClickLis
 
     }
 
+
     private fun initRecyclerView() {
-        reviewsAdapter = ReviewsAdapter(mutableListOf(), this)
+
+        val reviewsDB = Firebase.database.reference.child(Key.DB_REVIEWS)
+
+        reviewsAdapter = ReviewListAdapter(mutableListOf()) {
+
+            val intent = Intent(this, ReviewsDetailActivity::class.java)
+            Log.e("마이페이지 init: ", "${it}")
+            intent.putExtra("reviews", it)
+            startMyReviews.launch(intent)
+
+        }
+
         binding.reviewsRecyclerView.apply {
             adapter = reviewsAdapter
             layoutManager =
@@ -65,104 +85,86 @@ class MyPageMyReviewsActivity : AppCompatActivity(), ReviewsAdapter.ItemClickLis
             val dividerItemDecoration =
                 DividerItemDecoration(applicationContext, LinearLayoutManager.VERTICAL)
             addItemDecoration(dividerItemDecoration)
-        }
 
-        Thread {
-            var myUserEmail = Firebase.auth.currentUser?.email
-            val list = AppDatabase.getInstance(this)?.reviewsDao()?.getMyReviews(myUserEmail!!)
+            reviewsDB.addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
 
-            if (list != null) {
-                reviewsAdapter.list.addAll(list)
-            }
+                    val reviewsList = mutableListOf<Reviews>()
 
-            runOnUiThread {
-                binding.notFoundView.isVisible = list?.isEmpty() ?: true
-                reviewsAdapter.notifyDataSetChanged()
-            }
-        }.start()
+                    snapshot.children.forEach {
+                        val review = it.getValue(Reviews::class.java)
 
-    }
-
-
-
-    private fun initSearchRecyclerView() {
-
-        searchAdapter = ReviewsSearchAdapter(mutableListOf(), this)
-
-        Thread {
-            val list = AppDatabase.getInstance(this)?.reviewsDao()?.getAll() ?: emptyList()
-            searchAdapter.list.addAll(list)
-            runOnUiThread {
-                searchAdapter.notifyDataSetChanged()
-                binding.reviewsRecyclerView.apply {
-                    adapter = searchAdapter
-                    layoutManager =
-                        LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
-                    val dividerItemDecoration =
-                        DividerItemDecoration(applicationContext, LinearLayoutManager.VERTICAL)
-                    addItemDecoration(dividerItemDecoration)
-                }
-            }
-        }.start()
-
-    }
-
-    //SearchView 텍스트 입력시 이벤트
-    var searchViewTextListener: SearchView.OnQueryTextListener =
-        object : SearchView.OnQueryTextListener {
-
-            //검색버튼 입력시 호출, 검색버튼이 없으므로 사용하지 않음
-            override fun onQueryTextSubmit(s: String): Boolean {
-                return false
-            }
-
-            //텍스트 입력/수정시에 호출
-            override fun onQueryTextChange(s: String): Boolean {
-                initSearchRecyclerView()
-                searchAdapter.filter.filter(s)
-                return false
-            }
-        }
-
-    private fun updateDeleteReviews() {
-        Thread {
-            AppDatabase.getInstance(this)?.reviewsDao()?.delete(this.reviews)?.let { reviews ->
-                reviewsAdapter.list.remove(this.reviews)
-                runOnUiThread {
-                    binding.reviewsRecyclerView.apply {
-                        adapter = reviewsAdapter
-                        layoutManager =
-                            LinearLayoutManager(
-                                applicationContext,
-                                LinearLayoutManager.VERTICAL,
-                                false
-                            )
-                        val dividerItemDecoration =
-                            DividerItemDecoration(applicationContext, LinearLayoutManager.VERTICAL)
-                        addItemDecoration(dividerItemDecoration)
+                        if (review?.userEmail == myUsername) {
+                            reviewsList.add(review!!)
+                        }
+                        Log.e("리뷰 페이지", "userEmail: ${review?.userEmail}, mtUsername: ${myUsername}")
                     }
 
-                    reviewsAdapter.notifyDataSetChanged()
+                    reviewsAdapter.submitList(reviewsList)
                 }
-            }
-        }.start()
-    }
 
-    override fun onClick(reviews: Reviews) {
-        this.reviews = reviews
-        reviewsTaxiTelNumberTextView.setOnClickListener {
-            with(Intent(Intent.ACTION_DIAL)) {
-                startActivity(this)
-            }
-            Toast.makeText(this@MyPageMyReviewsActivity, "호출중...", Toast.LENGTH_SHORT).show()
+                override fun onCancelled(error: DatabaseError) {}
+            })
         }
 
-        Intent(this@MyPageMyReviewsActivity, ReviewsDetailActivity::class.java).apply {
-            putExtra("reviews", reviews)
-            updateDeleteReviews.launch(this)
-        }
+//        Thread {
+//            var myUserEmail = Firebase.auth.currentUser?.email
+//            val list = ReviewDatabase.getInstance(this)?.reviewsDao()?.getMyReviews(myUserEmail!!)
+//
+//            if (list != null) {
+//                reviewsAdapter.list.addAll(list)
+//            }
+//
+//            runOnUiThread {
+//                binding.notFoundView.isVisible = list?.isEmpty() ?: true
+//                Toast.makeText(this, "list: $list", Toast.LENGTH_SHORT).show()
+//                reviewsAdapter.submitList(list)
+//            }
+//        }.start()
 
     }
+
+
+
+//    private fun initSearchRecyclerView() {
+//
+//        searchAdapter = ReviewsSearchAdapter(mutableListOf(), this)
+//
+//        Thread {
+//            val list = AppDatabase.getInstance(this)?.reviewsDao()?.getAll() ?: emptyList()
+//            searchAdapter.list.addAll(list)
+//            runOnUiThread {
+//                searchAdapter.notifyDataSetChanged()
+//                binding.reviewsRecyclerView.apply {
+//                    adapter = searchAdapter
+//                    layoutManager =
+//                        LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
+//                    val dividerItemDecoration =
+//                        DividerItemDecoration(applicationContext, LinearLayoutManager.VERTICAL)
+//                    addItemDecoration(dividerItemDecoration)
+//                }
+//            }
+//        }.start()
+//
+//    }
+
+    //SearchView 텍스트 입력시 이벤트
+//    var searchViewTextListener: SearchView.OnQueryTextListener =
+//        object : SearchView.OnQueryTextListener {
+//
+//            //검색버튼 입력시 호출, 검색버튼이 없으므로 사용하지 않음
+//            override fun onQueryTextSubmit(s: String): Boolean {
+//                return false
+//            }
+//
+//            //텍스트 입력/수정시에 호출
+//            override fun onQueryTextChange(s: String): Boolean {
+//                initSearchRecyclerView()
+//                searchAdapter.filter.filter(s)
+//                return false
+//            }
+//        }
+
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId) {

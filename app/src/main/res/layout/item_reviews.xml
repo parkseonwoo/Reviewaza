@@ -21,6 +21,7 @@
         app:layout_constraintBottom_toBottomOf="@id/reviewsRating"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@id/reviewsRating"
+        app:layout_constraintTop_toTopOf="@id/reviewsRating"
         app:layout_constraintVertical_bias="0.36"
         app:srb_clearRatingEnabled="true"
         app:srb_clickable="false"

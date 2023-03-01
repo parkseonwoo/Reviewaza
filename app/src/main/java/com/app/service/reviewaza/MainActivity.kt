@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 import com.app.service.reviewaza.call.CallListActivity
 import com.app.service.reviewaza.databinding.ActivityMainBinding
 import com.app.service.reviewaza.mypage.MyPageActivity
-import com.app.service.reviewaza.reviews.LatestReviewsActivity
+import com.app.service.reviewaza.reviews.ReviewsListActivity
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.mainReviewImageButton.setOnClickListener {
-            val intent = Intent(this, LatestReviewsActivity::class.java)
+            val intent = Intent(this, ReviewsListActivity::class.java)
             startActivity(intent)
         }
 

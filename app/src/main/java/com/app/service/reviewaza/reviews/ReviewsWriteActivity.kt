@@ -3,7 +3,7 @@ package com.app.service.reviewaza.reviews
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.view.View
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
@@ -19,15 +19,17 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.*
 
-class ReviewsWriteActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListener {
+class ReviewsWriteActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityReviewsWriteBinding
-    private lateinit var reviewsAdapter: ReviewsAdapter
 
     private var myUsername = FirebaseAuth.getInstance().currentUser?.email
     private var userId = FirebaseAuth.getInstance().currentUser?.uid
+    private val currentReviewDB = Firebase.database.reference.child(Key.DB_REVIEWS)
     private val currentUserDB = Firebase.database.reference.child(Key.DB_USERS).child(userId!!)
+    private lateinit var reviewsAdapter: ReviewListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,9 +50,13 @@ class ReviewsWriteActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListen
     }
 
     private fun initViews() {
-        reviewsAdapter = ReviewsAdapter(mutableListOf(), this@ReviewsWriteActivity)
+
+        reviewsAdapter = ReviewListAdapter(mutableListOf()) {
+            Log.e("리뷰 쓰기", "확인")
+        }
 
         currentUserDB.get().addOnSuccessListener {
+
             val currentUserItem = it.getValue(UserItem::class.java) ?: return@addOnSuccessListener
 
             if (currentUserItem.userImage != "") {
@@ -58,9 +64,10 @@ class ReviewsWriteActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListen
 
                 Glide.with(binding.reviewsWriteImageView)
                     .load(Uri.parse(currentUserItem.userImage))
-                    .override(350, 350)
+                    //.override(350, 350)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .centerCrop()
+                    .fitCenter()
+                    .circleCrop()
                     .into(binding.reviewsWriteImageView)
             }
         }
@@ -73,7 +80,8 @@ class ReviewsWriteActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListen
         }
         binding.reviewsWriteTaxiTypeEditText.addTextChangedListener {
             it?.let { text ->
-                binding.reviewsWriteTaxiTypeLayout.error = when (text.length) {
+                binding.reviewsWriteTaxiTypeLayout.error =
+                    when (text.length) {
                     0 -> "값을 입력해주세요"
                     1 -> "2자 이상을 입력해주세요"
                     else -> null
@@ -102,6 +110,8 @@ class ReviewsWriteActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListen
     }
 
     private fun add() {
+
+        var reviewId = UUID.randomUUID().toString()
         val rating = binding.reviewsWriteRatingBar.rating
         val taxiType = binding.reviewsWriteTaxiTypeEditText.text.toString()
         val taxiNumber = binding.reviewsWriteTaxiNumberEditText.text.toString()
@@ -111,10 +121,27 @@ class ReviewsWriteActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListen
         val userEmail = myUsername
         val userId = userId
         val reviews =
-            Reviews(rating, taxiType, taxiNumber, detail, currentTime, userEmail!!, userId!!)
+            Reviews(reviewId, rating, taxiType, taxiNumber, detail, currentTime, userEmail!!, userId!!)
+
+        val newReview = Reviews(
+            reviewId = reviewId,
+            rating = rating,
+            taxiType = taxiType,
+            taxiNumber = taxiNumber,
+            detail = detail,
+            currentTime = currentTime,
+            userEmail = userEmail,
+            userId = userId
+        )
+
+        currentReviewDB.push().apply {
+            newReview.reviewId = key!!
+            setValue(newReview)
+        }
+        //updateReview(newReview)
 
         Thread {
-            AppDatabase.getInstance(this)?.reviewsDao()?.insert(reviews)
+            ReviewDatabase.getInstance(this)?.reviewsDao()?.insert(reviews)
             runOnUiThread {
                 reviewsAdapter.list.add(reviews)
                 val intent = Intent().putExtra("isUpdated", true)
@@ -124,10 +151,5 @@ class ReviewsWriteActivity : AppCompatActivity(), ReviewsAdapter.ItemClickListen
             }
         }.start()
     }
-
-    override fun onClick(reviews: Reviews) {
-        TODO("Not yet implemented")
-    }
-
 
 }

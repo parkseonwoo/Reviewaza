@@ -1,137 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/reviewsWriteLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    style="@style/ReviewsViews">
 
-    <ImageView
-        android:id="@+id/reviewsWriteImageView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintHeight_percent="0.1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/guideLineV"
-        app:srcCompat="@drawable/ic_baseline_person_24" />
+        <ImageView
+            android:id="@+id/reviewsWriteImageView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/guideLineV"
+            app:srcCompat="@drawable/ic_baseline_person_24" />
 
-    <TextView
-        android:id="@+id/reviewsUserEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="유저 이메일"
-        android:layout_marginStart="20dp"
-        app:layout_constraintTop_toBottomOf="@+id/reviewsWriteImageView"
-        app:layout_constraintStart_toStartOf="@+id/reviewsWriteImageView"/>
-
-    <com.willy.ratingbar.BaseRatingBar
-        android:id="@+id/reviewsWriteRatingBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@id/guideLineV"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="@id/guideLineV"
-        app:layout_constraintVertical_bias="0.36"
-        app:srb_clearRatingEnabled="true"
-        app:srb_clickable="true"
-        app:srb_isIndicator="false"
-        app:srb_minimumStars="1"
-        app:srb_numStars="5"
-        app:srb_rating="2"
-        app:srb_scrollable="true"
-        app:srb_starHeight="30dp"
-        app:srb_starPadding="15dp"
-        app:srb_starWidth="30dp"
-        app:srb_stepSize="0.5" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/reviewsWriteTaxiTypeLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:errorEnabled="true"
-        app:counterEnabled="true"
-        app:counterMaxLength="30"
-        app:layout_constraintWidth_percent="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/guideLine1" >
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/reviewsWriteTaxiTypeEditText"
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/reviewsUserEmail"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="택시 종류" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:text="유저 이메일"
+            android:layout_marginStart="20dp"
+            app:layout_constraintTop_toBottomOf="@+id/reviewsWriteImageView"
+            app:layout_constraintStart_toStartOf="@+id/reviewsWriteImageView"/>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/reviewsWriteTaxiNumberLayout"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:errorEnabled="true"
-        app:counterEnabled="true"
-        app:counterMaxLength="30"
-        app:layout_constraintWidth_percent="0.5"
-        app:layout_constraintStart_toEndOf="@id/reviewsWriteTaxiTypeLayout"
-        app:layout_constraintTop_toBottomOf="@id/guideLine1" >
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/reviewsWriteTaxiNumberEditText"
-            android:layout_width="match_parent"
+        <com.willy.ratingbar.BaseRatingBar
+            android:id="@+id/reviewsWriteRatingBar"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="택시 번호" />
-    </com.google.android.material.textfield.TextInputLayout>
+            app:layout_constraintBottom_toBottomOf="@id/guideLineV"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@id/guideLineV"
+            app:layout_constraintEnd_toEndOf="@+id/reviewsWriteLayout"
+            android:layout_marginEnd="10dp"
+            app:layout_constraintVertical_bias="0.36"
+            app:srb_clearRatingEnabled="true"
+            app:srb_clickable="true"
+            app:srb_isIndicator="false"
+            app:srb_minimumStars="1"
+            app:srb_numStars="5"
+            app:srb_rating="2"
+            app:srb_scrollable="true"
+            app:srb_starHeight="30dp"
+            app:srb_starPadding="15dp"
+            app:srb_starWidth="30dp"
+            app:srb_stepSize="0.5" />
 
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/reviewsChipGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        app:layout_constraintTop_toBottomOf="@+id/reviewsWriteTaxiTypeLayout"
-        app:layout_constraintStart_toStartOf="@+id/reviewsWriteImageView"
-        app:selectionRequired="false"
-        app:singleSelection="false" />
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/reviewsWriteTaxiTypeLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:errorEnabled="true"
+            app:counterEnabled="true"
+            app:counterMaxLength="30"
+            app:layout_constraintWidth_percent="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/guideLine1" >
 
-    <EditText
-        android:id="@+id/reviewsWriteDetailEditTextView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:hint="내용을 입력하세요"
-        android:layout_marginTop="30dp"
-        app:layout_constraintHeight_percent="0.2"
-        app:layout_constraintTop_toBottomOf="@id/reviewsChipGroup"
-        app:layout_constraintStart_toStartOf="parent" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/reviewsWriteTaxiTypeEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="택시 종류" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <android.widget.Button
-        android:id="@+id/reviewsWriteOkButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="확인"
-        android:backgroundTint="@color/white"
-        android:background="@drawable/btn_round"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/reviewsWriteTaxiNumberLayout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:errorEnabled="true"
+            app:counterEnabled="true"
+            app:counterMaxLength="30"
+            app:layout_constraintWidth_percent="0.5"
+            app:layout_constraintStart_toEndOf="@id/reviewsWriteTaxiTypeLayout"
+            app:layout_constraintTop_toBottomOf="@id/guideLine1"
+            app:layout_constraintEnd_toEndOf="@+id/reviewsWriteLayout">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideLine1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.1" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/reviewsWriteTaxiNumberEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="택시 번호" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideLine2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.2" />
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/reviewsChipGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@+id/reviewsWriteTaxiTypeLayout"
+            app:layout_constraintStart_toStartOf="@+id/reviewsWriteImageView"
+            app:selectionRequired="false"
+            app:singleSelection="false" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideLineV"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.3" />
+        <EditText
+            android:id="@+id/reviewsWriteDetailEditTextView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:hint="내용을 입력하세요"
+            android:layout_marginTop="30dp"
+            app:layout_constraintHeight_percent="0.2"
+            app:layout_constraintTop_toBottomOf="@id/reviewsChipGroup"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="@id/reviewsWriteLayout"/>
+
+        <android.widget.Button
+            android:id="@+id/reviewsWriteOkButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="확인"
+            android:backgroundTint="@color/white"
+            android:background="@drawable/btn_round"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideLine1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.15" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideLine2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.2" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideLineV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.3" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
