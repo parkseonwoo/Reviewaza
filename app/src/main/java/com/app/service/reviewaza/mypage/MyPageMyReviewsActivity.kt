@@ -37,8 +37,9 @@ class MyPageMyReviewsActivity : AppCompatActivity() {
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
         val isDelete = result.data?.getBooleanExtra("isDelete", false) ?: false
+        val isUpdate = result.data?.getBooleanExtra("isUpdate", false) ?: false
 
-        if (result.resultCode == RESULT_OK && isDelete) {
+        if (result.resultCode == RESULT_OK && isDelete || isUpdate) {
             initRecyclerView()
         }
     }

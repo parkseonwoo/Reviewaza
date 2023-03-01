@@ -3,12 +3,20 @@ package com.app.service.reviewaza.reviews
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import com.app.service.reviewaza.REVIEWS_DETAIL_FLAG
 import com.app.service.reviewaza.call.CallActivity
 import com.app.service.reviewaza.call.Key
@@ -22,6 +30,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import kotlinx.android.synthetic.main.activity_mypage_edit_dialog.*
 
 
 class ReviewsDetailActivity : AppCompatActivity() {
@@ -32,6 +41,17 @@ class ReviewsDetailActivity : AppCompatActivity() {
 
     private val currentUserDB = Firebase.database.reference.child(Key.DB_USERS)
     private val currentReviewDB = Firebase.database.reference.child(Key.DB_REVIEWS)
+
+
+    private val startMyReviews = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        val isUpdate = result.data?.getBooleanExtra("isUpdate", false) ?: false
+
+        if (result.resultCode == RESULT_OK && isUpdate) {
+            initView()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -55,7 +75,7 @@ class ReviewsDetailActivity : AppCompatActivity() {
 
         binding.reviewsEditButton.setOnClickListener {
             Toast.makeText(this, "수정 버튼 클릭", Toast.LENGTH_SHORT).show()
-            //updateReview()
+            updateReview()
         }
 
         binding.reviewsDeleteButton.setOnClickListener {
@@ -74,18 +94,19 @@ class ReviewsDetailActivity : AppCompatActivity() {
 
     private fun initView() {
         reviewsAdapter = ReviewListAdapter(mutableListOf()) {
-
+            startMyReviews.launch(intent)
         }
         binding.reviewsUserEmail.text = reviews.userEmail
         binding.reviewsWriteRatingBar.rating = reviews.rating!!
         binding.reviewsWriteTaxiTypeValueTextView.text = reviews.taxiType
         binding.reviewsWriteTaxiNumberValueTextView.text = reviews.taxiNumber
-        binding.reviewsWriteDetailTextView.text = reviews.detail
+        binding.reviewsWriteDetailTextView.setText(reviews.detail)
 
-        currentUserDB.addListenerForSingleValueEvent(object :
-            ValueEventListener {
+        currentUserDB.addListenerForSingleValueEvent(object : ValueEventListener {
 
             override fun onDataChange(snapshot: DataSnapshot) {
+
+                val reviewsList = mutableListOf<Reviews>()
 
                 snapshot.children.forEach {
                     val user = it.getValue(UserItem::class.java)
@@ -100,6 +121,7 @@ class ReviewsDetailActivity : AppCompatActivity() {
                             .into(binding.reviewsWriteImageView)
                     }
                 }
+                reviewsAdapter.submitList(reviewsList)
 
             }
 
@@ -131,21 +153,46 @@ class ReviewsDetailActivity : AppCompatActivity() {
         }.start()
     }
 
-//    private fun updateReview() {
-//        if(reviews.reviewId != "") {
-//            binding.reviewsWriteDetailTextView.isFocusableInTouchMode = true
-//            binding.reviewsWriteDetailTextView.isFocusable = true
-//            binding.reviewsWriteDetailTextView.selectionEnd
-//
-//            val review = mutableMapOf<String, Any>()
-//            review["detail"] = binding.reviewsWriteDetailTextView.text
-//
-//            Firebase.database(Key.DB_URL).reference.child(Key.DB_REVIEWS).child(currentUserId!!).updateChildren(review)
-//        }
-//
-//        Toast.makeText(this, "리뷰 작성 완료!", Toast.LENGTH_SHORT).show()
-//    }
+    private fun updateReview() {
+        binding.updateReviewOkButton.isVisible = true
+        binding.reviewsDeleteButton.isVisible = false
+        binding.reviewsEditButton.isVisible = false
 
+        binding.reviewsWriteRatingBar.setIsIndicator(false)
+        binding.reviewsWriteRatingBar.isEnabled = true
+        binding.reviewsWriteRatingBar.isClickable = true
+        binding.reviewsWriteRatingBar.isFocusableInTouchMode = true
+
+        binding.reviewsWriteDetailTextView.isEnabled = true
+        binding.reviewsWriteDetailTextView.isClickable = true
+        binding.reviewsWriteDetailTextView.isFocusableInTouchMode = true
+        binding.reviewsWriteDetailTextView.focusable
+
+        binding.updateReviewOkButton.setOnClickListener {
+            val reviewsList = mutableListOf<Reviews>()
+            currentReviewDB.get().addOnSuccessListener {
+                val updates = Reviews(
+                    rating = binding.reviewsWriteRatingBar.rating,
+                    taxiType = reviews.taxiType,
+                    taxiNumber = reviews.taxiNumber,
+                    userEmail = reviews.userEmail,
+                    currentTime = reviews.currentTime,
+                    reviewId = reviews.reviewId,
+                    userId = reviews.userId,
+                    detail = binding.reviewsWriteDetailTextView.text.toString()
+                )
+                currentReviewDB.child(reviews.reviewId!!).setValue(updates)
+            }
+
+            val intent = Intent().putExtra("isUpdate", true)
+            setResult(RESULT_OK, intent)
+            reviewsAdapter.submitList(reviewsList)
+            reviewsAdapter.notifyDataSetChanged()
+            Toast.makeText(this, "리뷰 수정 완료!", Toast.LENGTH_SHORT).show()
+            finish()
+        }
+
+    }
 
     companion object {
         const val EXTRA_REVIEW_ID = "REVIEW_ID"
