@@ -3,34 +3,23 @@ package com.app.service.reviewaza.reviews
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
-import android.view.KeyEvent
-import android.view.View
-import android.view.inputmethod.EditorInfo
-import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.core.widget.addTextChangedListener
 import com.app.service.reviewaza.REVIEWS_DETAIL_FLAG
-import com.app.service.reviewaza.call.CallActivity
 import com.app.service.reviewaza.call.Key
 import com.app.service.reviewaza.databinding.ActivityReviewsDetailBinding
 import com.app.service.reviewaza.login.UserItem
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import kotlinx.android.synthetic.main.activity_mypage_edit_dialog.*
 
 
 class ReviewsDetailActivity : AppCompatActivity() {

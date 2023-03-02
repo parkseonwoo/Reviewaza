@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -24,6 +25,7 @@
         <activity android:name=".chatbot.ChatActivity"/>
         <activity android:name=".call.CallListActivity"/>
         <activity android:name=".call.CallActivity"/>
+        <activity android:name=".call.AlertDetails"/>
         <!-- Facebook -->
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"

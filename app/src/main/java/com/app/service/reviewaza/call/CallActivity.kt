@@ -28,6 +28,7 @@ class CallActivity : AppCompatActivity() {
     private var otherUserId: String = ""
     private var otherUserFcmToken: String = ""
     private var myUserId: String = ""
+    private var myUserImage: String = ""
     private var myUserName: String = ""
     private var isInit = false
 
@@ -47,6 +48,7 @@ class CallActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 val myUserItem = it.getValue(UserItem::class.java)
                 myUserName = myUserItem?.username ?: ""
+                myUserImage = myUserItem?.userImage ?: ""
 
                 getOtherUserData()
             }
@@ -86,11 +88,16 @@ class CallActivity : AppCompatActivity() {
 
             val root = JSONObject()
             val notification = JSONObject()
+            val data = JSONObject()
             notification.put("title", getString(R.string.app_name))
             notification.put("body", message)
+            data.put("myUserId", myUserId)
+            data.put("myUserName", myUserName)
+            data.put("myUserImage", myUserImage)
             root.put("to", otherUserFcmToken)
             root.put("priority", "high")
             root.put("notification", notification)
+            root.put("data", data)
 
             val requestBody =
                 root.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
@@ -109,6 +116,13 @@ class CallActivity : AppCompatActivity() {
             })
 
             binding.callMessage.text.clear()
+
+            if(isCalling)
+            binding.taxiCallButton.apply {
+                setText("호출중...")
+                isEnabled = false
+                isClickable = false
+            }
 
         }
 
@@ -146,5 +160,6 @@ class CallActivity : AppCompatActivity() {
     companion object {
         const val EXTRA_CALL_ID = "CALL_ID"
         const val EXTRA_OTHER_USER_ID = "OTHER_USER_ID"
+        var isCalling = false
     }
 }

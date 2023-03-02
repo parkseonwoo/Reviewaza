@@ -17,8 +17,8 @@ import com.app.service.reviewaza.R
 import com.app.service.reviewaza.REVIEWS_DETAIL_FLAG
 import com.app.service.reviewaza.call.Key
 import com.app.service.reviewaza.databinding.ActivityLatestReviewsBinding
-import com.app.service.reviewaza.mypage.MyPageActivity
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -31,6 +31,8 @@ class ReviewsListActivity : AppCompatActivity() {
     private lateinit var searchAdapter: ReviewsSearchAdapter
 
     private val myUserId = Firebase.auth.currentUser?.uid ?: null
+
+    private val reviewDB = Firebase.database.reference.child(Key.DB_REVIEWS)
 
     private val updateViewResult = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -68,44 +70,71 @@ class ReviewsListActivity : AppCompatActivity() {
 
         binding.reviewTypeSpinner.adapter = spinnerAdapter
 
-//        binding.reviewTypeSpinner.onItemSelectedListener =
-//            object : AdapterView.OnItemSelectedListener {
-//                override fun onItemSelected(
-//                    parent: AdapterView<*>?,
-//                    view: View?,
-//                    position: Int,
-//                    id: Long
-//                ) {
-//                    reviewsAdapter = ReviewListAdapter(mutableListOf()) {
-//                        when (position) {
-//
-//                            0 -> Thread {
-//                                val list =
-//                                    AppDatabase.getInstance(this@ReviewsListActivity)?.reviewsDao()
-//                                        ?.getAll() ?: emptyList()
-//                                initRatingRecyclerView(list)
-//
-//                            }.start()
-//                            1 -> Thread {
-//                                val list =
-//                                    AppDatabase.getInstance(this@ReviewsListActivity)?.reviewsDao()
-//                                        ?.getHigerReviews() ?: emptyList()
-//                                initRatingRecyclerView(list)
-//                            }.start()
-//                            else -> Thread {
-//                                val list =
-//                                    AppDatabase.getInstance(this@ReviewsListActivity)?.reviewsDao()
-//                                        ?.getLowerReviews() ?: emptyList()
-//                                initRatingRecyclerView(list)
-//                            }.start()
-//                        }
-//                    }
-//                }
-//                override fun onNothingSelected(parent: AdapterView<*>?) {
-//                    Toast.makeText(this@ReviewsListActivity, "아무것도 선택되지 않음", Toast.LENGTH_SHORT)
-//                        .show()
-//                }
-//            }
+        binding.reviewTypeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                when (position) {
+
+                    0 -> { // 최신순
+                       initRecyclerView()
+                    }
+
+                    1 -> { // 별점 높은 순
+                        reviewDB.addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(snapshot: DataSnapshot) {
+
+                                val reviewsList = mutableListOf<Reviews>()
+
+                                snapshot.children.forEach {
+                                    val review = it.getValue(Reviews::class.java)
+                                    val reviewId = review?.reviewId
+
+                                    if (review?.reviewId != "") {
+                                        reviewsList.add(review!!)
+                                    }
+
+                                    val reviewQuery = reviewDB.child(reviewId!!).orderByChild("rating")
+
+                                    reviewQuery.addListenerForSingleValueEvent(object: ValueEventListener{
+                                        override fun onDataChange(snapshot: DataSnapshot) {
+                                            if (review?.reviewId != "") {
+                                                reviewsList.add(review!!)
+                                            }
+                                        }
+
+                                        override fun onCancelled(error: DatabaseError) {
+                                            TODO("Not yet implemented")
+                                        }
+
+                                    })
+                                }
+                                Log.e("리뷰 별점 정렬", "review")
+                                reviewsAdapter.submitList(reviewsList)
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {}
+                        })
+                    }
+
+                    2 -> { // 별점 낮은 순
+
+                    }
+
+                    //일치하는게 없는 경우
+                    else -> {
+
+                    }
+                }
+            }
+        }
 
 
         binding.reviewsWriteButton.setOnClickListener {
@@ -123,8 +152,6 @@ class ReviewsListActivity : AppCompatActivity() {
 
     private fun initRecyclerView() {
 
-        val reviewsDB = Firebase.database.reference.child(Key.DB_REVIEWS)
-
         reviewsAdapter = ReviewListAdapter(mutableListOf()) {
 
             val intent = Intent(this, ReviewsDetailActivity::class.java)
@@ -132,7 +159,7 @@ class ReviewsListActivity : AppCompatActivity() {
             startActivity(intent)
 
             if (it.reviewId != "") {
-                reviewsDB.get().addOnSuccessListener {
+                reviewDB.get().addOnSuccessListener {
                     if (it.value != "") {
                         val reviewId = it.getValue(Reviews::class.java)
                         val currentReviewId = reviewId?.reviewId
@@ -153,7 +180,7 @@ class ReviewsListActivity : AppCompatActivity() {
                 DividerItemDecoration(applicationContext, LinearLayoutManager.VERTICAL)
             addItemDecoration(dividerItemDecoration)
 
-            reviewsDB.addListenerForSingleValueEvent(object : ValueEventListener {
+            reviewDB.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
 
                     val reviewsList = mutableListOf<Reviews>()
@@ -167,6 +194,7 @@ class ReviewsListActivity : AppCompatActivity() {
                         Log.e("리뷰 페이지", "reviewId: ${review.reviewId}")
                     }
 
+                    reviewsList.reverse()
                     reviewsAdapter.submitList(reviewsList)
                 }
 
@@ -230,30 +258,6 @@ class ReviewsListActivity : AppCompatActivity() {
                 return false
             }
         }
-
-//    private fun updateDeleteReviews() {
-//        Thread {
-//            ReviewDatabase.getInstance(this)?.reviewsDao()?.delete()?.let { reviews ->
-//                reviewsAdapter.list.remove(reviews)
-//                runOnUiThread {
-//                    reviewsAdapter.notifyDataSetChanged()
-//                    binding.reviewsRecyclerView.apply {
-//                        adapter = reviewsAdapter
-//                        layoutManager =
-//                            LinearLayoutManager(
-//                                applicationContext,
-//                                LinearLayoutManager.VERTICAL,
-//                                false
-//                            )
-//                        val dividerItemDecoration =
-//                            DividerItemDecoration(applicationContext, LinearLayoutManager.VERTICAL)
-//                        addItemDecoration(dividerItemDecoration)
-//                    }
-//                }
-//            }
-//        }.start()
-//    }
-
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {

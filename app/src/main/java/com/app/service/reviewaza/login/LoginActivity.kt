@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import com.app.service.reviewaza.*
 import com.app.service.reviewaza.call.Key.Companion.DB_URL
@@ -26,6 +27,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
 import com.kakao.sdk.auth.LoginClient
@@ -122,6 +124,8 @@ class LoginActivity : AppCompatActivity() {
                     Firebase.messaging.token.addOnCompleteListener {
                         val token = it.result
 
+                        val db = Firebase.firestore
+
                         val user = mutableMapOf<String, Any>()
                         user["userId"] = userId
                         user["username"] = email
@@ -129,7 +133,6 @@ class LoginActivity : AppCompatActivity() {
 
                         Firebase.database(DB_URL).reference.child(DB_USERS).child(userId)
                             .updateChildren(user)
-
                     }
                     moveMainPage(task.result?.user)
                 } else {
@@ -290,5 +293,9 @@ class LoginActivity : AppCompatActivity() {
             finish()
         }
     }
+
+companion object {
+    const val TAG = "MyLog"
+}
 
 }

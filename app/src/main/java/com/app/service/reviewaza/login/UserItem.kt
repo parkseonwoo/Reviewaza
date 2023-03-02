@@ -1,7 +1,5 @@
 package com.app.service.reviewaza.login
 
-import android.net.Uri
-
 data class UserItem (
      val userId: String? = null,
      val username: String? = null,

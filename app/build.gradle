@@ -31,12 +31,11 @@ android {
         // 매니페스트에서 사용할려면 이 코드를 사용해주세요.
         manifestPlaceholders = [MAPS_API_KEY:MAPS_API_KEY]
         manifestPlaceholders = [KAKAO_NATIVE_KEY:KAKAO_NATIVE_KEY]
-//        configurations {
-//            implementation.exclude(group: 'com.google.firebase', module: 'protolite-well-known-types')
-//            implementation.exclude(group: 'com.google.protobuf', module: 'protobuf-javalite')
-//            //implementation.exclude group: "com.google.protobuf", module: "protobuf-java"
-//
-//        }
+        configurations {
+            implementation.exclude(group: 'com.google.firebase', module: 'protolite-well-known-types')
+            implementation.exclude(group: 'com.google.protobuf', module: 'protobuf-javalite')
+            //implementation.exclude group: "com.google.protobuf", module: "protobuf-java"
+        }
     }
 
     buildTypes {
@@ -85,7 +84,7 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.4.1'
     implementation 'androidx.navigation:navigation-ui-ktx:2.4.1'
-    //implementation 'com.google.firebase:firebase-firestore-ktx:24.4.3'
+    implementation 'com.google.firebase:firebase-firestore-ktx:24.4.3'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
@@ -140,5 +139,8 @@ dependencies {
 
     // SimpleRatingBar
     implementation 'com.github.ome450901:SimpleRatingBar:1.5.1'
+
+    // FCM
+    implementation 'androidx.work:work-runtime:2.7.0-alpha05'
 
 }

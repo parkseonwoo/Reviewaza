@@ -7,7 +7,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
-import com.app.service.reviewaza.R
 import com.app.service.reviewaza.call.Key
 import com.app.service.reviewaza.databinding.ActivityReviewsWriteBinding
 import com.app.service.reviewaza.login.UserItem
@@ -16,6 +15,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.chip.Chip
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ktx.database
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -105,7 +105,6 @@ class ReviewsWriteActivity : AppCompatActivity() {
         return Chip(this).apply {
             setText(text)
             isCheckable = true
-            isCheckable = true
         }
     }
 
@@ -121,7 +120,16 @@ class ReviewsWriteActivity : AppCompatActivity() {
         val userEmail = myUsername
         val userId = userId
         val reviews =
-            Reviews(reviewId, rating, taxiType, taxiNumber, detail, currentTime, userEmail!!, userId!!)
+            Reviews(
+                reviewId,
+                rating,
+                taxiType,
+                taxiNumber,
+                detail,
+                currentTime,
+                userEmail!!,
+                userId!!
+            )
 
         val newReview = Reviews(
             reviewId = reviewId,

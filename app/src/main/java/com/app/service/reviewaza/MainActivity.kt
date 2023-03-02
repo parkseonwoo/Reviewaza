@@ -1,18 +1,20 @@
 package com.app.service.reviewaza
 
+import android.app.ActivityManager
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.app.service.reviewaza.call.CallListActivity
 import com.app.service.reviewaza.databinding.ActivityMainBinding
 import com.app.service.reviewaza.mypage.MyPageActivity
 import com.app.service.reviewaza.reviews.ReviewsListActivity
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding

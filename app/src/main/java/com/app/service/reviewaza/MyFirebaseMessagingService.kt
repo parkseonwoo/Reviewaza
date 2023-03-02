@@ -4,7 +4,9 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.app.service.reviewaza.call.AlertDetails
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -15,7 +17,12 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
         if(message.notification != null) {
-            showNotification(message.notification?.title, message.notification!!.body!!)
+            val userId = message.data["myUserId"].toString()
+            val userImage = message.data["myUserImage"].toString()
+            val myUserName = message.data["myUserName"].toString()
+
+            showNotification(myUserName, message.notification!!.body!!, userId, userImage)
+            Log.e("notificationset", "${message.notification?.title}")
         }
     }
 
@@ -23,24 +30,43 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         super.onNewToken(token)
     }
 
-    private fun showNotification(title: String?, body: String) {
+    private fun showNotification(userId: String?, message: String, userName:String, userImage:String) {
 
-        val intent = Intent(this, AlertDetails::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        val intent = Intent(this, AlertDetails::class.java)
+        //val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
+
+        intent.putExtra("isFCM", true)
+        intent.putExtra("userId", userId)
+        intent.putExtra("userName", userName)
+        intent.putExtra("userImage", userImage)
+        intent.putExtra("userMessage", message)
+        startActivity(intent.addFlags(FLAG_ACTIVITY_NEW_TASK))
+
+        val pendingIntent: PendingIntent
+        pendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PendingIntent.getActivity(
+                this,
+                0,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+            )
+        } else {
+            PendingIntent.getActivity(
+                this,
+                0, intent, PendingIntent.FLAG_UPDATE_CURRENT
+            )
         }
-        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
-
-        val name = "택시 알림"
+        val title = userId
         val descriptionText = "택시 알림입니다."
         val importance = NotificationManager.IMPORTANCE_DEFAULT
 
-        val mChannel = NotificationChannel(getString(R.string.default_notification_channel_id), name, importance)
+        val mChannel = NotificationChannel(getString(R.string.default_notification_channel_id), title, importance)
         mChannel.description = descriptionText
 
         val notificationBuilder = NotificationCompat.Builder(applicationContext, getString(R.string.default_notification_channel_id))
             .setSmallIcon(R.drawable.ic_baseline_local_taxi_24)
-            .setContentTitle(getString(R.string.app_name))
-            .setContentText(body)
+            .setContentTitle(title)
+            .setContentText(message)
             .setContentIntent(pendingIntent)
 
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
@@ -56,6 +82,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         notificationManager.notify(0, notificationBuilder.build())
     }
+
 
 }
 
