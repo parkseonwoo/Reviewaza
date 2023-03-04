@@ -27,7 +27,6 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
 import com.kakao.sdk.auth.LoginClient
@@ -123,8 +122,6 @@ class LoginActivity : AppCompatActivity() {
 
                     Firebase.messaging.token.addOnCompleteListener {
                         val token = it.result
-
-                        val db = Firebase.firestore
 
                         val user = mutableMapOf<String, Any>()
                         user["userId"] = userId

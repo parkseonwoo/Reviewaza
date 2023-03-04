@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/homeButton"
+        android:icon="@drawable/ic_baseline_home_24"
+        android:title="홈" />
+
+    <item
+        android:id="@+id/reviewButton"
+        android:icon="@drawable/ic_baseline_rate_review_24"
+        android:title="리뷰" />
+
+    <item
+        android:id="@+id/callButton"
+        android:icon="@drawable/ic_baseline_local_taxi_24"
+        android:title="호출" />
+
+    <item
+        android:id="@+id/mypageButton"
+        android:icon="@drawable/ic_baseline_person_24"
+        android:title="마이페이지" />
+
+</menu>

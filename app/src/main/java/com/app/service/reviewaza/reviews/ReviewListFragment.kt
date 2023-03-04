@@ -1,5 +1,6 @@
 package com.app.service.reviewaza.reviews
 
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -11,22 +12,23 @@ import android.widget.SearchView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.service.reviewaza.R
 import com.app.service.reviewaza.REVIEWS_DETAIL_FLAG
 import com.app.service.reviewaza.call.Key
-import com.app.service.reviewaza.databinding.ActivityLatestReviewsBinding
+import com.app.service.reviewaza.databinding.FragmentReviewsBinding
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 
-class ReviewsListActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityLatestReviewsBinding
+class ReviewListFragment : Fragment(R.layout.fragment_reviews) {
+
+    private lateinit var binding: FragmentReviewsBinding
     private lateinit var reviewsAdapter: ReviewListAdapter
     private lateinit var searchAdapter: ReviewsSearchAdapter
 
@@ -34,23 +36,20 @@ class ReviewsListActivity : AppCompatActivity() {
 
     private val reviewDB = Firebase.database.reference.child(Key.DB_REVIEWS)
 
-    private val updateViewResult = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        val isUpdated = result.data?.getBooleanExtra("isUpdated", false) ?: false
-
-        if (result.resultCode == RESULT_OK && isUpdated) {
-            initRecyclerView()
-        }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        REVIEWS_DETAIL_FLAG = "LATEST_DETAILS"
-        super.onCreate(savedInstanceState)
-        binding = ActivityLatestReviewsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding = FragmentReviewsBinding.bind(view)
         initRecyclerView()
+
+        val updateViewResult = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            val isUpdated = result.data?.getBooleanExtra("isUpdated", false) ?: false
+
+            if (result.resultCode == RESULT_OK && isUpdated) {
+                initRecyclerView()
+            }
+        }
 
         // 검색 기능에서 어댑터 연결해주기
         binding.reviewsSearchView.setOnQueryTextListener(searchViewTextListener)
@@ -58,12 +57,10 @@ class ReviewsListActivity : AppCompatActivity() {
 
         binding.toolBar.apply {
             title = "리뷰 목록"
-            setSupportActionBar(this)
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }
 
         var spinnerAdapter = ArrayAdapter.createFromResource(
-            this,
+            context!!,
             R.array.review_types,
             android.R.layout.simple_list_item_1
         )
@@ -136,13 +133,12 @@ class ReviewsListActivity : AppCompatActivity() {
             }
         }
 
-
         binding.reviewsWriteButton.setOnClickListener {
             if (myUserId == null) {
-                Toast.makeText(this, "로그인 후 이용해주세요.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "로그인 후 이용해주세요.", Toast.LENGTH_SHORT).show()
             } else {
                 Log.e("리뷰쓰기", "$myUserId")
-                Intent(this, ReviewsWriteActivity::class.java).let {
+                Intent(context, ReviewsWriteActivity::class.java).let {
                     updateViewResult.launch(it)
                 }
             }
@@ -154,7 +150,7 @@ class ReviewsListActivity : AppCompatActivity() {
 
         reviewsAdapter = ReviewListAdapter(mutableListOf()) {
 
-            val intent = Intent(this, ReviewsDetailActivity::class.java)
+            val intent = Intent(context, ReviewsDetailActivity::class.java)
             intent.putExtra("reviews", it)
             startActivity(intent)
 
@@ -175,9 +171,9 @@ class ReviewsListActivity : AppCompatActivity() {
         binding.reviewsRecyclerView.apply {
             adapter = reviewsAdapter
             layoutManager =
-                LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
+                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             val dividerItemDecoration =
-                DividerItemDecoration(applicationContext, LinearLayoutManager.VERTICAL)
+                DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
             addItemDecoration(dividerItemDecoration)
 
             reviewDB.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -223,23 +219,17 @@ class ReviewsListActivity : AppCompatActivity() {
     private fun initSearchRecyclerView() {
 
         searchAdapter = ReviewsSearchAdapter(mutableListOf())
-
-        Thread {
-            val list = ReviewDatabase.getInstance(this)?.reviewsDao()?.getAll() ?: emptyList()
-            searchAdapter.list.addAll(list)
-            runOnUiThread {
-                searchAdapter.notifyDataSetChanged()
-                binding.reviewsRecyclerView.apply {
-                    adapter = searchAdapter
-                    layoutManager =
-                        LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
-                    val dividerItemDecoration =
-                        DividerItemDecoration(applicationContext, LinearLayoutManager.VERTICAL)
-                    addItemDecoration(dividerItemDecoration)
-                }
-            }
-        }.start()
-
+        //val list = ReviewDatabase.getInstance(context!!)?.reviewsDao()?.getAll() ?: emptyList()
+        //searchAdapter.list.addAll(list)
+        //searchAdapter.notifyDataSetChanged()
+        binding.reviewsRecyclerView.apply {
+            adapter = searchAdapter
+            layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            val dividerItemDecoration =
+                DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
+            addItemDecoration(dividerItemDecoration)
+        }
     }
 
     //SearchView 텍스트 입력시 이벤트
@@ -262,7 +252,7 @@ class ReviewsListActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                finish()
+                //finish()
                 true
             }
             else -> {

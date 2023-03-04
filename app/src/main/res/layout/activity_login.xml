@@ -9,6 +9,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="로그인 페이지"
+        android:fontFamily="@font/agrofont"
+        android:layout_marginStart="30dp"
         style="@style/Title" />
 
     <EditText
@@ -16,6 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:background="@drawable/edittext_rounded_corner_rectangle"
         android:inputType="textPersonName"
         android:hint="email"
         style="@style/LoginButtons"/>
@@ -25,6 +28,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:background="@drawable/edittext_rounded_corner_rectangle"
         android:inputType="textPersonName"
         android:hint="password"
         style="@style/LoginButtons"/>

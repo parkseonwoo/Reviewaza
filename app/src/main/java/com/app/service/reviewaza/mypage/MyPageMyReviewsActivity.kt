@@ -4,29 +4,24 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import android.widget.SearchView
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.service.reviewaza.REVIEWS_DETAIL_FLAG
-import com.app.service.reviewaza.call.CallActivity
 import com.app.service.reviewaza.call.Key
-import com.app.service.reviewaza.databinding.ActivityLatestReviewsBinding
+import com.app.service.reviewaza.databinding.FragmentReviewsBinding
 import com.app.service.reviewaza.reviews.*
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import kotlinx.android.synthetic.main.item_reviews.*
 
 class MyPageMyReviewsActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityLatestReviewsBinding
+    private lateinit var binding: FragmentReviewsBinding
     private lateinit var reviewsAdapter: ReviewListAdapter
     private lateinit var reviews: Reviews
     private lateinit var searchAdapter: ReviewsSearchAdapter
@@ -47,7 +42,7 @@ class MyPageMyReviewsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         REVIEWS_DETAIL_FLAG = "MyPage_DETAILS"
         super.onCreate(savedInstanceState)
-        binding = ActivityLatestReviewsBinding.inflate(layoutInflater)
+        binding = FragmentReviewsBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.reviewsWriteButton.isEnabled = false
         binding.reviewsWriteButton.isVisible = false

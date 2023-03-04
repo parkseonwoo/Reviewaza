@@ -16,16 +16,17 @@
 
         <activity android:name=".login.LoginActivity" />
         <activity android:name=".login.SignUpActivity" />
-        <activity android:name=".mypage.MyPageActivity" />
+        <activity android:name=".mypage.MyPageFragment" />
         <activity android:name=".mypage.MyPageInfoActivity"/>
         <activity android:name=".mypage.MyPageMyReviewsActivity" />
-        <activity android:name=".reviews.ReviewsListActivity" />
+        <activity android:name=".reviews.ReviewListFragment" />
         <activity android:name=".reviews.ReviewsWriteActivity"/>
         <activity android:name=".reviews.ReviewsDetailActivity"/>
         <activity android:name=".chatbot.ChatActivity"/>
-        <activity android:name=".call.CallListActivity"/>
+        <activity android:name=".call.CallListFragment"/>
         <activity android:name=".call.CallActivity"/>
         <activity android:name=".call.AlertDetails"/>
+
         <!-- Facebook -->
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -91,5 +92,8 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGEE" />
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
 </manifest>

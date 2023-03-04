@@ -2,10 +2,12 @@ package com.app.service.reviewaza.call
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import android.view.View
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.app.service.reviewaza.R
 import com.app.service.reviewaza.call.Key.Companion.DB_USERS
-import com.app.service.reviewaza.databinding.ActivityCalllistBinding
+import com.app.service.reviewaza.databinding.FragmentCalllistBinding
 import com.app.service.reviewaza.login.UserItem
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
@@ -15,14 +17,13 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import java.util.*
 
-class CallListActivity : AppCompatActivity() {
+class CallListFragment : Fragment(R.layout.fragment_calllist) {
 
-    private lateinit var binding : ActivityCalllistBinding
+    private lateinit var binding : FragmentCalllistBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityCalllistBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding = FragmentCalllistBinding.bind(view)
 
         val callListAdapter = CallListAdapter { otherUser ->
             val myUserId = Firebase.auth.currentUser?.uid ?: ""
@@ -45,11 +46,15 @@ class CallListActivity : AppCompatActivity() {
                     chatRoomDB.setValue(newChatRoom)
                 }
 
-                val intent = Intent(this, CallActivity::class.java)
+                val intent = Intent(context, CallActivity::class.java)
                 intent.putExtra(CallActivity.EXTRA_CALL_ID, callId)
                 intent.putExtra(CallActivity.EXTRA_OTHER_USER_ID, otherUser.userId)
                 startActivity(intent)
             }
+        }
+
+        binding.toolBar.apply {
+            title = "호출 목록"
         }
 
         binding.callListRecyclerView.apply {
