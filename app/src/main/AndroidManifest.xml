@@ -16,14 +16,11 @@
 
         <activity android:name=".login.LoginActivity" />
         <activity android:name=".login.SignUpActivity" />
-        <activity android:name=".mypage.MyPageFragment" />
         <activity android:name=".mypage.MyPageInfoActivity"/>
         <activity android:name=".mypage.MyPageMyReviewsActivity" />
-        <activity android:name=".reviews.ReviewListFragment" />
         <activity android:name=".reviews.ReviewsWriteActivity"/>
         <activity android:name=".reviews.ReviewsDetailActivity"/>
         <activity android:name=".chatbot.ChatActivity"/>
-        <activity android:name=".call.CallListFragment"/>
         <activity android:name=".call.CallActivity"/>
         <activity android:name=".call.AlertDetails"/>
 

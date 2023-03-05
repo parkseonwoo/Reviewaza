@@ -1,6 +1,5 @@
 package com.app.service.reviewaza.call
 
-
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -11,29 +10,77 @@ import com.app.service.reviewaza.databinding.ActivityFcmDialogBinding
 import com.app.service.reviewaza.login.UserItem
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import kotlinx.android.synthetic.main.activity_fcm_dialog.*
+import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONObject
+import java.io.IOException
 
 class AlertDetails : AppCompatActivity() {
 
     private lateinit var binding: ActivityFcmDialogBinding
+
+    private var userId: String = ""
+    private var otherUserFcmToken: String = ""
+    private var chatRoomId: String = ""
+    private val chatItemList = mutableListOf<ChatItem>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFcmDialogBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val userId = intent.getStringExtra("userId")
+        userId = intent.getStringExtra("userId")!!
         val myUserName = intent.getStringExtra("myUserName")
         val userImage = intent.getStringExtra("userImage")
         val userMessage = intent.getStringExtra("userMessage")
+        val currentLocation = intent.getStringExtra("currentLocation")
+        val destination = intent.getStringExtra("destination")
+        chatRoomId = intent.getStringExtra("chatRoomId")!!
 
-        binding.callUserNameValue.setText("${userId}")
+        binding.callUserNameValue.setText("${myUserName}")
         binding.callUserMessageValue.setText("${userMessage}")
+        binding.callCurrentLocationValue.setText("${currentLocation}")
+        binding.callDetinationValue.setText("${destination}")
+
+        getOtherUserData()
 
         binding.fcmPosButton.setOnClickListener {
+
+            val client = OkHttpClient()
+
+            val root = JSONObject()
+            val notification = JSONObject()
+            val data = JSONObject()
+            notification.put("title", getString(R.string.app_name))
+            notification.put("body", "응답 수락")
+            data.put("call", "call")
+            root.put("to", otherUserFcmToken)
+            root.put("priority", "high")
+            root.put("notification", notification)
+            root.put("data", data)
+
+            val requestBody =
+                root.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
+            val request =
+                Request.Builder().post(requestBody).url("https://fcm.googleapis.com/fcm/send")
+                    .header("Authorization", "key=${getString(R.string.FCM_SERVER_KEY)}").build()
+            client.newCall(request).enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    e.stackTraceToString()
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    Log.e("AlertDetail", response.toString())
+                }
+
+            })
+
             finish()
         }
 
@@ -57,5 +104,36 @@ class AlertDetails : AppCompatActivity() {
             }
         }
     }
+
+    private fun getOtherUserData() {
+        Firebase.database.reference.child(Key.DB_USERS).child(userId).get()
+            .addOnSuccessListener {
+                val otherUserItem = it.getValue(UserItem::class.java)
+                otherUserFcmToken = otherUserItem?.fcmToken.orEmpty()
+                Log.e("alert otherFcmToken", "${otherUserFcmToken} and ${userId}")
+
+                getChatData()
+            }
+    }
+
+    private fun getChatData() {
+        Firebase.database.reference.child(Key.DB_CHATS).child(chatRoomId).addChildEventListener(
+            object : ChildEventListener {
+                override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                    val chatItem = snapshot.getValue(ChatItem::class.java)
+                    chatItem ?: return
+
+                    chatItemList.add(chatItem)
+                }
+
+                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
+                override fun onChildRemoved(snapshot: DataSnapshot) {}
+                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+                override fun onCancelled(error: DatabaseError) {}
+
+            })
+    }
+
+
 }
 

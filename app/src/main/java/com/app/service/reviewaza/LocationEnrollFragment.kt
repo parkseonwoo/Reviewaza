@@ -7,6 +7,7 @@ import android.location.Geocoder
 import android.location.Location
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.UiThread
 import androidx.core.app.ActivityCompat
 import com.app.service.reviewaza.databinding.FragmentLocationEnrollBinding
@@ -16,6 +17,7 @@ import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
 import com.naver.maps.geometry.LatLng
 import com.naver.maps.map.CameraUpdate
+import com.naver.maps.map.LocationTrackingMode
 import com.naver.maps.map.MapFragment
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
@@ -94,7 +96,7 @@ class LocationEnrollFragment :
             naverMap.cameraPosition.target.latitude,
             naverMap.cameraPosition.target.longitude
         )
-        marker.icon = OverlayImage.fromResource(R.drawable.ic_baseline_location_searching_24)
+        marker.icon = OverlayImage.fromResource(R.drawable.ic_baseline_location_on_24)
         marker.map = naverMap
 
         // 카메라의 움직임에 대한 이벤트 리스너 인터페이스.
@@ -203,7 +205,7 @@ class LocationEnrollFragment :
 
 
     companion object {
-        private const val LOCATION_PERMISSION_REQUEST_CODE = 1000
+        const val LOCATION_PERMISSION_REQUEST_CODE = 1000
     }
 
 }

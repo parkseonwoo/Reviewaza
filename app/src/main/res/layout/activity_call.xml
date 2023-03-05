@@ -4,23 +4,51 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <EditText
-        android:id="@+id/currentLocation"
-        android:layout_width="0dp"
+    <com.naver.maps.map.MapView
+        android:id="@+id/mapView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.7"
+        app:layout_constraintBottom_toTopOf="@+id/currentLocationTextView"/>
+
+    <Button
+        android:id="@+id/btnConfirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/currentLocationTextView"/>
+
+    <TextView
+        android:id="@+id/currentLocationTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="현재 위치: "
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/mapView"/>
+
+    <TextView
+        android:id="@+id/currentLocationValue"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="현재 위치"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintStart_toEndOf="@id/currentLocationTextView"
+        app:layout_constraintTop_toTopOf="@id/currentLocationTextView"/>
 
-    <EditText
-        android:id="@+id/destination"
-        android:layout_width="0dp"
+    <TextView
+        android:id="@+id/destinationTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="목적지: "
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/currentLocationTextView"/>
+
+    <TextView
+        android:id="@+id/destinationValue"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="목적지 설정"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/currentLocation"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintStart_toEndOf="@id/destinationTextView"
+        app:layout_constraintTop_toTopOf="@id/destinationTextView"/>
 
     <EditText
         android:id="@+id/callMessage"
@@ -28,7 +56,7 @@
         android:layout_height="wrap_content"
         android:hint="호출 메시지 입력"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/destination"
+        app:layout_constraintTop_toBottomOf="@+id/destinationTextView"
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <Button

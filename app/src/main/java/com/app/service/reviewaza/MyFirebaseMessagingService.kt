@@ -17,11 +17,19 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
         if(message.notification != null) {
-            val userId = message.data["myUserId"].toString()
-            val userImage = message.data["myUserImage"].toString()
-            val myUserName = message.data["myUserName"].toString()
+            Log.e("noti data test", "${message.data["call"].toString()}")
 
-            showNotification(myUserName, message.notification!!.body!!, userId, userImage)
+            val userId = message.data["myUserId"].toString()
+            val userImage = message.data["userImage"].toString()
+            val userName = message.data["userName"].toString()
+            val currentLocation = message.data["currentLocation"].toString()
+            val destination = message.data["destination"].toString()
+            val chatRoomId = message.data["chatRoomId"].toString()
+
+            Log.e("fcm test", "userId: ${userId}, userName: ${userName}")
+            Log.e("fcm test", "${destination}")
+
+            showNotification(userId, message.notification!!.body!!, userName, userImage, currentLocation, destination, chatRoomId)
             Log.e("notificationset", "${message.notification?.title}")
         }
     }
@@ -30,16 +38,20 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         super.onNewToken(token)
     }
 
-    private fun showNotification(userId: String?, message: String, userName:String, userImage:String) {
+    private fun showNotification(userId: String?, message: String, myUserName:String, myUserImage:String,
+                                 currentLocation: String, destination: String, chatRoomId:String) {
 
         val intent = Intent(this, AlertDetails::class.java)
         //val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
 
         intent.putExtra("isFCM", true)
         intent.putExtra("userId", userId)
-        intent.putExtra("userName", userName)
-        intent.putExtra("userImage", userImage)
+        intent.putExtra("myUserName", myUserName)
+        intent.putExtra("userImage", myUserImage)
         intent.putExtra("userMessage", message)
+        intent.putExtra("currentLocation", currentLocation)
+        intent.putExtra("destination", destination)
+        intent.putExtra("chatRoomId", chatRoomId)
         startActivity(intent.addFlags(FLAG_ACTIVITY_NEW_TASK))
 
         val pendingIntent: PendingIntent
@@ -56,7 +68,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 0, intent, PendingIntent.FLAG_UPDATE_CURRENT
             )
         }
-        val title = userId
+        val title = myUserName
         val descriptionText = "택시 알림입니다."
         val importance = NotificationManager.IMPORTANCE_DEFAULT
 
