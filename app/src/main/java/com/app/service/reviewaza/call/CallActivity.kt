@@ -32,9 +32,7 @@ import com.naver.maps.map.LocationTrackingMode
 import com.naver.maps.map.MapView
 import com.naver.maps.map.NaverMap
 import com.naver.maps.map.OnMapReadyCallback
-import com.naver.maps.map.overlay.Marker
-import com.naver.maps.map.overlay.Overlay
-import com.naver.maps.map.overlay.OverlayImage
+import com.naver.maps.map.overlay.*
 import com.naver.maps.map.util.FusedLocationSource
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
@@ -55,6 +53,8 @@ class CallActivity : AppCompatActivity(), OnMapReadyCallback, Overlay.OnClickLis
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationSource: FusedLocationSource
     private lateinit var naverMap: NaverMap
+
+    val arrowheadPath = ArrowheadPathOverlay()
 
     private var chatRoomId: String = ""
     private var otherUserId: String = ""
@@ -269,6 +269,9 @@ class CallActivity : AppCompatActivity(), OnMapReadyCallback, Overlay.OnClickLis
     @UiThread
     override fun onMapReady(naverMap: NaverMap) {
         this.naverMap = naverMap
+
+        var currentPos: LatLng = LatLng(37.5670135, 126.9783740)
+
         // 내장 위치 추적 기능 사용
         naverMap.locationSource = locationSource
 
@@ -291,12 +294,13 @@ class CallActivity : AppCompatActivity(), OnMapReadyCallback, Overlay.OnClickLis
                 naverMap.cameraPosition.target.latitude,
                 naverMap.cameraPosition.target.longitude
             )
+            arrowheadPath.map = null
             // 주소 텍스트 세팅 및 확인 버튼 비활성화
             binding.destinationValue.run {
                 text = "위치 이동 중"
                 setTextColor(Color.parseColor("#c4c4c4"))
             }
-            binding.btnConfirm.run {
+            binding.taxiCallButton.run {
                 setBackgroundResource(R.drawable.edittext_rounded_corner_rectangle)
                 setTextColor(Color.parseColor("#ffffff"))
                 isEnabled = false
@@ -319,10 +323,13 @@ class CallActivity : AppCompatActivity(), OnMapReadyCallback, Overlay.OnClickLis
                 DESTINATION = text.toString()
                 setTextColor(Color.parseColor("#2d2d2d"))
             }
-            binding.btnConfirm.run {
+
+            binding.taxiCallButton.run {
                 setBackgroundResource(R.drawable.edittext_rounded_corner_rectangle)
                 setTextColor(Color.parseColor("#FF000000"))
                 isEnabled = true
+
+                getPath(currentPos, marker.position)
             }
         }
 
@@ -347,6 +354,7 @@ class CallActivity : AppCompatActivity(), OnMapReadyCallback, Overlay.OnClickLis
                 naverMap.locationOverlay.run {
                     isVisible = true
                     position = LatLng(currentLocation!!.latitude, currentLocation!!.longitude)
+                    currentPos = position
                 }
                 val text = getAddress(
                     currentLocation!!.latitude,
@@ -363,6 +371,7 @@ class CallActivity : AppCompatActivity(), OnMapReadyCallback, Overlay.OnClickLis
                     )
                 )
                 naverMap.moveCamera(cameraUpdate)
+
 
                 // 빨간색 마커 현재위치로 변경
                 marker.position = LatLng(
@@ -426,6 +435,19 @@ class CallActivity : AppCompatActivity(), OnMapReadyCallback, Overlay.OnClickLis
                 )
                 .check()
         }
+    }
+
+    private fun getPath(curLatLng: LatLng, desLatLng: LatLng) {
+
+        arrowheadPath.color = Color.YELLOW
+        arrowheadPath.headSizeRatio = 2f
+        arrowheadPath.width = 20
+
+        arrowheadPath.coords = listOf(
+            LatLng(curLatLng.latitude, curLatLng.longitude),
+            LatLng(desLatLng.latitude, desLatLng.longitude)
+        )
+        arrowheadPath.map = naverMap
     }
 
     override fun onClick(p0: Overlay): Boolean {
