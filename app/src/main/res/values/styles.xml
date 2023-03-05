@@ -38,4 +38,8 @@
         <item name="android:padding">20dp</item>
     </style>
 
+    <style name="thumbs">
+        <item name="android:paddingStart">8dp</item>
+    </style>
+
 </resources>

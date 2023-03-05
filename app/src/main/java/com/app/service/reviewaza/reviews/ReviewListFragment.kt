@@ -41,6 +41,8 @@ class ReviewListFragment : Fragment(R.layout.fragment_reviews) {
         binding = FragmentReviewsBinding.bind(view)
         initRecyclerView()
 
+        REVIEWS_DETAIL_FLAG = "REVIEW_LIST_DETAIL"
+
         val updateViewResult = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
         ) { result ->
@@ -53,7 +55,6 @@ class ReviewListFragment : Fragment(R.layout.fragment_reviews) {
 
         // 검색 기능에서 어댑터 연결해주기
         binding.reviewsSearchView.setOnQueryTextListener(searchViewTextListener)
-
 
         binding.toolBar.apply {
             title = "리뷰 목록"

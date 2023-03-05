@@ -1,18 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="24dp">
+
+    <ImageView
+        android:id="@+id/reivewsTaxiTelImageView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_baseline_phone_24"
+        app:layout_constraintEnd_toStartOf="@id/reviewsTaxiTelNumberTextView"
+        app:layout_constraintTop_toTopOf="@id/reviewsTaxiTelNumberTextView" />
+
+    <ImageView
+        android:id="@+id/thumbUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_baseline_thumb_up_24"
+        app:layout_constraintEnd_toStartOf="@+id/thumbUpValue"
+        app:layout_constraintTop_toTopOf="@+id/thumbUpValue" />
+
+    <ImageView
+        android:id="@+id/thumbDown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:src="@drawable/ic_baseline_thumb_down_24"
+        app:layout_constraintEnd_toStartOf="@+id/thumbDownValue"
+        app:layout_constraintTop_toTopOf="@+id/thumbDownValue" />
 
     <TextView
         android:id="@+id/reviewsRating"
+        style="@style/Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/Title"
         android:text="평점 : "
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/reviewsTaxiTypeTextView"
+        style="@style/Value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="택시 종류: "
+        app:layout_constraintStart_toStartOf="@id/reviewsRating"
+        app:layout_constraintTop_toBottomOf="@id/reviewsRating" />
+
+    <TextView
+        android:id="@+id/reviewsTaxiTypeValue"
+        style="@style/Value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="택시 종류"
+        app:layout_constraintBottom_toBottomOf="@+id/reviewsTaxiTypeTextView"
+        app:layout_constraintStart_toEndOf="@+id/reviewsTaxiTypeTextView" />
+
+    <TextView
+        android:id="@+id/reviewsTaxiNumberTextView"
+        style="@style/Value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="택시 번호: "
+        app:layout_constraintStart_toStartOf="@+id/reviewsTaxiTypeTextView"
+        app:layout_constraintTop_toBottomOf="@+id/reviewsTaxiTypeTextView" />
+
+    <TextView
+        android:id="@+id/reviewsTaxiNumberValue"
+        style="@style/Value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="11일 1111"
+        app:layout_constraintBottom_toBottomOf="@+id/reviewsTaxiNumberTextView"
+        app:layout_constraintStart_toEndOf="@+id/reviewsTaxiNumberTextView" />
+
+    <TextView
+        android:id="@+id/reviewsDateTextView"
+        style="@style/Value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="날짜 : "
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="@id/reviewsRating"
+        app:layout_constraintTop_toBottomOf="@+id/reviewsTaxiNumberTextView" />
+
+    <TextView
+        android:id="@+id/reviewsDateValueTextView"
+        style="@style/Value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="0000-00-00"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="@id/reviewsDateTextView"
+        app:layout_constraintStart_toEndOf="@+id/reviewsDateTextView" />
+
+    <TextView
+        android:id="@+id/reviewsTaxiTelNumberTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="전화하기 >"
+        app:layout_constraintBottom_toBottomOf="@+id/reviewsDateTextView"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/thumbUpValue"
+        style="@style/thumbs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1"
+        app:layout_constraintEnd_toStartOf="@+id/thumbDown"
+        app:layout_constraintTop_toTopOf="@+id/thumbDown" />
+
+    <TextView
+        android:id="@+id/thumbDownValue"
+        style="@style/thumbs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.helper.widget.Layer
+        android:id="@+id/telLayer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:constraint_referenced_ids="reivewsTaxiTelImageView,reviewsTaxiTelNumberTextView"
+        tools:ignore="MissingConstraints" />
 
     <com.willy.ratingbar.BaseRatingBar
         android:id="@+id/reviewsRatingBar"
@@ -34,67 +149,5 @@
         app:srb_starPadding="15dp"
         app:srb_starWidth="30dp"
         app:srb_stepSize="0.5" />
-    <TextView
-        android:id="@+id/reviewsTaxiTypeTextView"
-        style="@style/Value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="택시 종류: "
-        app:layout_constraintStart_toStartOf="@id/reviewsRating"
-        app:layout_constraintTop_toBottomOf="@id/reviewsRating"/>
-
-    <TextView
-        android:id="@+id/reviewsTaxiTypeValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/Value"
-        android:hint="택시 종류"
-        app:layout_constraintTop_toBottomOf="@id/reviewsRating"
-        app:layout_constraintStart_toEndOf="@id/reviewsTaxiTypeTextView" />
-
-    <TextView
-        android:id="@+id/reviewsTaxiNumberTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/Value"
-        android:text="택시 번호: "
-        app:layout_constraintStart_toEndOf="@id/reviewsTaxiTypeTextView"
-        app:layout_constraintBottom_toBottomOf="@id/reviewsTaxiTypeTextView"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <TextView
-        android:id="@+id/reviewsTaxiNumberValue"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/Value"
-        android:hint="11일 1111"
-        app:layout_constraintStart_toEndOf="@+id/reviewsTaxiNumberTextView"
-        app:layout_constraintBottom_toBottomOf="@id/reviewsTaxiTypeTextView" />
-
-    <TextView
-        android:id="@+id/reviewsDateTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/Value"
-        android:text="날짜 : "
-        app:layout_constraintTop_toBottomOf="@id/reviewsTaxiTypeTextView"
-        app:layout_constraintStart_toStartOf="@id/reviewsRating"/>
-
-    <TextView
-        android:id="@+id/reviewsDateValueTextView"
-        style="@style/Value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="0000-00-00"
-        app:layout_constraintBottom_toBottomOf="@id/reviewsDateTextView"
-        app:layout_constraintStart_toEndOf="@+id/reviewsDateTextView" />
-
-    <TextView
-        android:id="@+id/reviewsTaxiTelNumberTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="호출하기 >"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="@+id/reviewsDateTextView"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

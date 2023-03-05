@@ -63,6 +63,8 @@ class MyPageMyReviewsActivity : AppCompatActivity() {
 
     private fun initRecyclerView() {
 
+        binding.bottomNavigationView.isVisible = false
+
         val reviewsDB = Firebase.database.reference.child(Key.DB_REVIEWS)
 
         reviewsAdapter = ReviewListAdapter(mutableListOf()) {

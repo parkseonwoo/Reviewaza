@@ -1,13 +1,16 @@
 package com.app.service.reviewaza.reviews
 
+import android.app.Activity
+import android.content.Intent
+import android.graphics.Color
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.app.service.reviewaza.databinding.ItemReviewsBinding
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
+
 
 class ReviewListAdapter(
     val list: MutableList<Reviews>,
@@ -22,8 +25,21 @@ class ReviewListAdapter(
                 reviewsTaxiNumberValue.text = reviews.taxiNumber
                 reviewsDateValueTextView.text = reviews.currentTime
 
+                thumbUpValue.setText("${reviews.thumbUp}")
+                thumbDownValue.setText("-${reviews.thumbDown}")
+                thumbUp.setColorFilter(Color.RED)
+                thumbDown.setColorFilter(Color.BLUE)
+
                 binding.root.setOnClickListener {
                     onClick(reviews)
+                }
+
+                binding.telLayer.setOnClickListener {
+                    val intent = Intent(
+                        Intent.ACTION_DIAL,
+                        Uri.parse("tel:010-1234-1234")
+                    )
+                    (it.getContext() as Activity).startActivity(intent)
                 }
 
             }

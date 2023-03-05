@@ -118,6 +118,8 @@ class ReviewsWriteActivity : AppCompatActivity() {
             LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
         val userEmail = myUsername
         val userId = userId
+        val thumbUp = 0
+        val thumbDown = 0
         val reviews =
             Reviews(
                 reviewId,
@@ -127,7 +129,9 @@ class ReviewsWriteActivity : AppCompatActivity() {
                 detail,
                 currentTime,
                 userEmail!!,
-                userId!!
+                userId!!,
+                thumbUp,
+                thumbDown
             )
 
         val newReview = Reviews(
@@ -138,7 +142,9 @@ class ReviewsWriteActivity : AppCompatActivity() {
             detail = detail,
             currentTime = currentTime,
             userEmail = userEmail,
-            userId = userId
+            userId = userId,
+            thumbUp = thumbUp,
+            thumbDown = thumbDown
         )
 
         currentReviewDB.push().apply {

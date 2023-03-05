@@ -16,5 +16,7 @@ data class Reviews(
     val currentTime: String? = null,
     val userEmail: String? = null,
     val userId: String? = null,
+    var thumbUp: Int? = 0,
+    var thumbDown: Int? = 0,
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
 ) : Parcelable

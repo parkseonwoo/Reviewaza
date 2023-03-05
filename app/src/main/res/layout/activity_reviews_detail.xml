@@ -27,6 +27,42 @@
         app:layout_constraintTop_toBottomOf="@+id/reviewsWriteImageView"
         app:layout_constraintStart_toStartOf="@+id/reviewsWriteImageView"/>
 
+    <ImageView
+        android:id="@+id/thumbUp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:src="@drawable/ic_baseline_thumb_up_24"
+        app:layout_constraintStart_toEndOf="@id/reviewsUserEmail"
+        app:layout_constraintTop_toBottomOf="@id/reviewsWriteRatingBar"/>
+
+    <TextView
+        android:id="@+id/thumbUpValue"
+        android:text="1"
+        style="@style/thumbs"
+        android:layout_width="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/thumbUp"
+        app:layout_constraintStart_toEndOf="@id/thumbUp"
+        android:layout_height="wrap_content"/>
+
+    <ImageView
+        android:id="@+id/thumbDown"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:src="@drawable/ic_baseline_thumb_down_24"
+        app:layout_constraintStart_toEndOf="@id/thumbUpValue"
+        app:layout_constraintTop_toTopOf="@id/thumbUp"/>
+
+    <TextView
+        android:id="@+id/thumbDownValue"
+        android:text="1"
+        style="@style/thumbs"
+        android:layout_width="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/thumbUp"
+        app:layout_constraintStart_toEndOf="@id/thumbDown"
+        android:layout_height="wrap_content"/>
+
     <com.willy.ratingbar.BaseRatingBar
         android:id="@+id/reviewsWriteRatingBar"
         android:layout_width="wrap_content"
@@ -53,7 +89,7 @@
 
     <TextView
         android:id="@+id/reviewsWriteTaxiTypeTextView"
-        style="@style/Title"
+        style="@style/Value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -73,13 +109,13 @@
 
     <TextView
         android:id="@+id/reviewsWriteTaxiNumberTextView"
-        style="@style/Title"
+        style="@style/Value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="택시 번호 : "
         android:layout_marginStart="20dp"
-        app:layout_constraintStart_toEndOf="@+id/reviewsWriteTaxiTypeValueTextView"
+        app:layout_constraintEnd_toStartOf="@id/reviewsWriteTaxiNumberTextView"
         app:layout_constraintTop_toBottomOf="@id/guideLine1" />
 
     <TextView

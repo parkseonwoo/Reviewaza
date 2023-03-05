@@ -30,7 +30,8 @@ class ReviewsDetailActivity : AppCompatActivity() {
 
     private val currentUserDB = Firebase.database.reference.child(Key.DB_USERS)
     private val currentReviewDB = Firebase.database.reference.child(Key.DB_REVIEWS)
-
+    private val reviewThumbUp = mutableMapOf<String, Any>()
+    private val reviewThumbDown = mutableMapOf<String, Any>()
 
     private val startMyReviews = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -60,6 +61,10 @@ class ReviewsDetailActivity : AppCompatActivity() {
             binding.reviewsDeleteButton.isEnabled = true
             binding.reviewsEditButton.isVisible = true
             binding.reviewsDeleteButton.isVisible = true
+            binding.thumbUp.isVisible = false
+            binding.thumbUpValue.isVisible = false
+            binding.thumbDown.isVisible = false
+            binding.thumbDownValue.isVisible = false
         }
 
         binding.reviewsEditButton.setOnClickListener {
@@ -77,6 +82,43 @@ class ReviewsDetailActivity : AppCompatActivity() {
             }
         }
 
+        binding.thumbUp.setOnClickListener {
+            var thumbUp:Int = 0
+
+            currentReviewDB.child(reviews.reviewId!!).get().addOnSuccessListener {
+                val review = it.getValue(Reviews::class.java)
+                thumbUp = review?.thumbUp!!
+                Log.e("thumbUp1:", "${thumbUp}")
+
+                thumbUp++
+                Log.e("thumbUp2:", "${thumbUp}")
+
+                binding.thumbUpValue.setText("${thumbUp}")
+                reviewThumbUp["thumbUp"] = thumbUp
+                //binding.thumbUpValue.setText(thumbUp)
+                Log.e("currentReviewId:", "${reviews.reviewId}")
+
+                currentReviewDB.child(reviews.reviewId!!).updateChildren(reviewThumbUp)
+            }
+        }
+
+        binding.thumbDown.setOnClickListener {
+            var thumbDown:Int = 0
+
+            currentReviewDB.child(reviews.reviewId!!).get().addOnSuccessListener {
+                val review = it.getValue(Reviews::class.java)
+                thumbDown = review?.thumbDown!!
+
+                thumbDown++
+                Log.e("thumbUp2:", "${thumbDown}")
+
+                binding.thumbDownValue.setText("-${thumbDown}")
+                reviewThumbDown["thumbDown"] = thumbDown
+
+                currentReviewDB.child(reviews.reviewId!!).updateChildren(reviewThumbDown)
+            }
+        }
+
         initView()
 
     }
@@ -90,6 +132,9 @@ class ReviewsDetailActivity : AppCompatActivity() {
         binding.reviewsWriteTaxiTypeValueTextView.text = reviews.taxiType
         binding.reviewsWriteTaxiNumberValueTextView.text = reviews.taxiNumber
         binding.reviewsWriteDetailTextView.setText(reviews.detail)
+
+        binding.thumbUpValue.setText("${reviews.thumbUp}")
+        binding.thumbDownValue.setText("-${reviews.thumbDown}")
 
         currentUserDB.addListenerForSingleValueEvent(object : ValueEventListener {
 
