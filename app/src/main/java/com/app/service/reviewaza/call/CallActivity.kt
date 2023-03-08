@@ -74,6 +74,26 @@ class CallActivity : AppCompatActivity(), OnMapReadyCallback, Overlay.OnClickLis
     override fun onResume() {
         super.onResume()
         mapView.onResume()
+
+        if(CALL_RESPONSE.equals("YES_RESPONSE")) {
+            Toast.makeText(this, "응답 완료", Toast.LENGTH_SHORT).show()
+            binding.taxiCallButton.isEnabled = true
+            binding.taxiCallButton.isClickable = true
+            binding.taxiCallButton.setText("호출 완료!")
+            CALL_RESPONSE = "RESPONSE"
+            finish()
+        }
+        else if(CALL_RESPONSE.equals("NO_RESPONSE")) {
+            Toast.makeText(this, "응답 완료", Toast.LENGTH_SHORT).show()
+            binding.taxiCallButton.isEnabled = true
+            binding.taxiCallButton.isClickable = true
+            binding.taxiCallButton.setText("호출 거절!")
+            CALL_RESPONSE = "RESPONSE"
+        }
+        else {
+            binding.taxiCallButton.setText("호출")
+        }
+
     }
 
     override fun onPause() {

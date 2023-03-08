@@ -180,7 +180,6 @@ class ReviewListFragment : BaseFragment<FragmentReviewsBinding>(R.layout.fragmen
 
         reviewListViewModel.fetchData().observe(viewLifecycleOwner, Observer {
             Log.e("리뷰 데이터 변경", "observerData : reviewListViewModel.fetchData().observe")
-            //initRecyclerView()
             reviewsAdapter.submitList(it)
         })
 

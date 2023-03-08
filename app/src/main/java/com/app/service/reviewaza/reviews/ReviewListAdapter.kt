@@ -18,10 +18,6 @@ class ReviewListAdapter(
 
     private var reviewList = mutableListOf<Reviews>()
 
-    fun setListData(data: MutableList<Reviews>) {
-        reviewList = data
-    }
-
     inner class ViewHolder(private val binding: ItemReviewsBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(reviews: Reviews) {
             binding.apply {

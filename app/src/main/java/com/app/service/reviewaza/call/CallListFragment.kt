@@ -73,8 +73,6 @@ class CallListFragment : BaseFragment<FragmentCalllistBinding>(R.layout.fragment
 
     fun observerData() {
         callListViewModel.fetchData().observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            callListAdapter.setListData(it)
-            callListAdapter.notifyDataSetChanged()
             callListAdapter.submitList(it)
         })
 

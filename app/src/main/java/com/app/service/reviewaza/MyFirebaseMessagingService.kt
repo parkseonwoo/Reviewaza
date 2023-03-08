@@ -9,6 +9,8 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.app.service.reviewaza.call.AlertDetails
+import com.app.service.reviewaza.call.CallActivity
+import com.app.service.reviewaza.reviews.ReviewsDetailActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 
@@ -16,8 +18,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        if(message.notification != null) {
+        if (message.notification != null) {
             Log.e("noti data test", "${message.data["call"].toString()}")
+            CALL_RESPONSE = message.data["call"].toString()
 
             val userId = message.data["myUserId"].toString()
             val userImage = message.data["userImage"].toString()
@@ -29,7 +32,15 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             Log.e("fcm test", "userId: ${userId}, userName: ${userName}")
             Log.e("fcm test", "${destination}")
 
-            showNotification(userId, message.notification!!.body!!, userName, userImage, currentLocation, destination, chatRoomId)
+            showNotification(
+                userId,
+                message.notification!!.body!!,
+                userName,
+                userImage,
+                currentLocation,
+                destination,
+                chatRoomId
+            )
             Log.e("notificationset", "${message.notification?.title}")
         }
     }
@@ -38,8 +49,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         super.onNewToken(token)
     }
 
-    private fun showNotification(userId: String?, message: String, myUserName:String, myUserImage:String,
-                                 currentLocation: String, destination: String, chatRoomId:String) {
+    private fun showNotification(
+        userId: String?, message: String, myUserName: String, myUserImage: String,
+        currentLocation: String, destination: String, chatRoomId: String
+    ) {
 
         val intent = Intent(this, AlertDetails::class.java)
         //val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
@@ -52,6 +65,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         intent.putExtra("currentLocation", currentLocation)
         intent.putExtra("destination", destination)
         intent.putExtra("chatRoomId", chatRoomId)
+
         startActivity(intent.addFlags(FLAG_ACTIVITY_NEW_TASK))
 
         val pendingIntent: PendingIntent
@@ -72,10 +86,17 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val descriptionText = "택시 알림입니다."
         val importance = NotificationManager.IMPORTANCE_DEFAULT
 
-        val mChannel = NotificationChannel(getString(R.string.default_notification_channel_id), title, importance)
+        val mChannel = NotificationChannel(
+            getString(R.string.default_notification_channel_id),
+            title,
+            importance
+        )
         mChannel.description = descriptionText
 
-        val notificationBuilder = NotificationCompat.Builder(applicationContext, getString(R.string.default_notification_channel_id))
+        val notificationBuilder = NotificationCompat.Builder(
+            applicationContext,
+            getString(R.string.default_notification_channel_id)
+        )
             .setSmallIcon(R.drawable.ic_baseline_local_taxi_24)
             .setContentTitle(title)
             .setContentText(message)
@@ -86,15 +107,16 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         // 오레오 버전 예외처리
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(getString(R.string.default_notification_channel_id),
+            val channel = NotificationChannel(
+                getString(R.string.default_notification_channel_id),
                 "Channel human readable title",
-                NotificationManager.IMPORTANCE_DEFAULT)
+                NotificationManager.IMPORTANCE_DEFAULT
+            )
             notificationManager.createNotificationChannel(channel)
         }
 
         notificationManager.notify(0, notificationBuilder.build())
     }
-
 
 }
 

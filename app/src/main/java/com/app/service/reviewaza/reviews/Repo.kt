@@ -22,9 +22,7 @@ class Repo {
 
     fun getFirebaseData(): LiveData<MutableList<Reviews>> {
 
-        reviewsAdapter = ReviewListAdapter(mutableListOf()) {
-
-        }
+        reviewsAdapter = ReviewListAdapter(mutableListOf()) { }
 
         reviewDB.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {

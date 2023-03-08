@@ -5,16 +5,20 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
+import com.app.service.reviewaza.CALL_RESPONSE
 import com.app.service.reviewaza.R
 import com.app.service.reviewaza.databinding.ActivityFcmDialogBinding
 import com.app.service.reviewaza.login.UserItem
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.ktx.app
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -50,6 +54,12 @@ class AlertDetails : AppCompatActivity() {
 
         getOtherUserData()
 
+        if(CALL_RESPONSE.equals("YES_RESPONSE") || CALL_RESPONSE.equals("NO_RESPONSE")){
+            binding.callCurrentLocationValue.isVisible = false
+            binding.callCurrentLocation.isVisible = false
+            binding.callDestination.setText("기사: ")
+        }
+
         binding.fcmPosButton.setOnClickListener {
 
             val client = OkHttpClient()
@@ -59,7 +69,40 @@ class AlertDetails : AppCompatActivity() {
             val data = JSONObject()
             notification.put("title", getString(R.string.app_name))
             notification.put("body", "응답 수락")
-            data.put("call", "call")
+            data.put("call", "YES_RESPONSE")
+            root.put("to", otherUserFcmToken)
+            root.put("priority", "high")
+            root.put("notification", notification)
+            root.put("data", data)
+
+            val requestBody =
+                root.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
+            val request =
+                Request.Builder().post(requestBody).url("https://fcm.googleapis.com/fcm/send")
+                    .header("Authorization", "key=${getString(R.string.FCM_SERVER_KEY)}").build()
+            client.newCall(request).enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    e.stackTraceToString()
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    Log.e("AlertDetail", response.toString())
+                }
+
+            })
+
+            finish()
+        }
+
+        binding.fcmNegButton.setOnClickListener {
+            val client = OkHttpClient()
+
+            val root = JSONObject()
+            val notification = JSONObject()
+            val data = JSONObject()
+            notification.put("title", getString(R.string.app_name))
+            notification.put("body", "응답 거절")
+            data.put("call", "NO_RESPONSE")
             root.put("to", otherUserFcmToken)
             root.put("priority", "high")
             root.put("notification", notification)
