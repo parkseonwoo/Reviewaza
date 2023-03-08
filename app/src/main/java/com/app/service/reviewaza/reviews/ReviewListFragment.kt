@@ -174,18 +174,13 @@ class ReviewListFragment : BaseFragment<FragmentReviewsBinding>(R.layout.fragmen
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        observerData()
-    }
-
     fun observerData() {
 
         Log.e("리뷰 데이터 변경", "observerData : 시작")
 
         reviewListViewModel.fetchData().observe(viewLifecycleOwner, Observer {
             Log.e("리뷰 데이터 변경", "observerData : reviewListViewModel.fetchData().observe")
-            initRecyclerView()
+            //initRecyclerView()
             reviewsAdapter.submitList(it)
         })
 
