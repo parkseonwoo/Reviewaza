@@ -2,13 +2,19 @@ package com.app.service.reviewaza.call
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.app.service.reviewaza.BaseFragment
 import com.app.service.reviewaza.R
 import com.app.service.reviewaza.call.Key.Companion.DB_USERS
 import com.app.service.reviewaza.databinding.FragmentCalllistBinding
+import com.app.service.reviewaza.databinding.FragmentReviewsBinding
 import com.app.service.reviewaza.login.UserItem
+import com.app.service.reviewaza.reviews.ReviewListAdapter
+import com.app.service.reviewaza.reviews.ReviewListViewModel
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -17,15 +23,15 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import java.util.*
 
-class CallListFragment : Fragment(R.layout.fragment_calllist) {
+class CallListFragment : BaseFragment<FragmentCalllistBinding>(R.layout.fragment_calllist) {
 
-    private lateinit var binding : FragmentCalllistBinding
+    private lateinit var callListAdapter: CallListAdapter
+
+    private val callListViewModel by lazy { ViewModelProvider(this).get(CallListViewModel::class.java) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        binding = FragmentCalllistBinding.bind(view)
 
-        val callListAdapter = CallListAdapter { otherUser ->
+        callListAdapter = CallListAdapter { otherUser ->
             val myUserId = Firebase.auth.currentUser?.uid ?: ""
             val chatRoomDB = Firebase.database.reference.child(Key.DB_CALLS).child(myUserId).child(otherUser.userId ?: "")
 
@@ -62,31 +68,17 @@ class CallListFragment : Fragment(R.layout.fragment_calllist) {
             adapter = callListAdapter
         }
 
-        val currentUserId = Firebase.auth.currentUser?.uid ?: ""
+        observerData()
+    }
 
-        Firebase.database.reference.child(DB_USERS)
-            .addListenerForSingleValueEvent(object: ValueEventListener {
-
-                override fun onDataChange(snapshot: DataSnapshot) {
-
-                    val userItemList = mutableListOf<UserItem>()
-
-                    snapshot.children.forEach {
-                        val user = it.getValue(UserItem::class.java)
-                        user ?: return
-
-                        if(user.userId != currentUserId) {
-                            userItemList.add(user)
-                        }
-                    }
-
-                    callListAdapter.submitList(userItemList)
-                }
-
-                override fun onCancelled(error: DatabaseError) {}
-
-            })
-
+    fun observerData() {
+        callListViewModel.fetchData().observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            callListAdapter.setListData(it)
+            callListAdapter.notifyDataSetChanged()
+            callListAdapter.submitList(it)
+        })
 
     }
+
+    override fun init() {}
 }

@@ -7,9 +7,16 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.app.service.reviewaza.databinding.ItemCallBinding
 import com.app.service.reviewaza.login.UserItem
+import com.app.service.reviewaza.reviews.Reviews
 
 class CallListAdapter(private val onClick: (UserItem) -> Unit)
     : ListAdapter<UserItem, CallListAdapter.ViewHolder>(differ) {
+
+    private var callList = mutableListOf<UserItem>()
+
+    fun setListData(data: MutableList<UserItem>) {
+        callList = data
+    }
 
     inner class ViewHolder(private val binding : ItemCallBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: UserItem) {

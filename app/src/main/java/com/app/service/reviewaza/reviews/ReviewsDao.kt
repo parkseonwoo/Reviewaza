@@ -1,5 +1,6 @@
 package com.app.service.reviewaza.reviews
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
@@ -9,19 +10,19 @@ import androidx.room.Update
 @Dao
 interface ReviewsDao {
     @Query("SELECT * from review ORDER BY id DESC")
-    fun getAll(): List<Reviews>
+    fun getAll(): LiveData<List<Reviews>>
 
     @Query("SELECT * from review ORDER BY id DESC LIMIT 1")
     fun getLatesReviews() : Reviews
 
     @Query("SELECT * FROM review ORDER BY rating DESC")
-    fun getHigerReviews() : List<Reviews>
+    fun getHigerReviews() : LiveData<List<Reviews>>
 
     @Query("SELECT * FROM review ORDER BY rating ASC")
-    fun getLowerReviews() : List<Reviews>
+    fun getLowerReviews() : LiveData<List<Reviews>>
 
     @Query("SELECT * FROM review WHERE userEmail = :user_email")
-    fun getMyReviews(user_email: String) : List<Reviews>
+    fun getMyReviews(user_email: String) : LiveData<List<Reviews>>
 
     @Insert
     fun insert(reviews: Reviews)

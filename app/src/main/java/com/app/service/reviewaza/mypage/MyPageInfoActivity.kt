@@ -9,6 +9,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
+import android.telephony.PhoneNumberFormattingTextWatcher
 import android.util.Log
 import android.widget.ProgressBar
 import android.widget.Toast
@@ -17,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.core.widget.addTextChangedListener
 import com.app.service.reviewaza.LOGIN_SET
 import com.app.service.reviewaza.MY_STATE
 import com.app.service.reviewaza.MainActivity
@@ -160,6 +162,7 @@ class MyPageInfoActivity : AppCompatActivity() {
                         user["userpassword"] = userpassword
                     } else if (action == "phoneNumber") {
                         val userPhoneNumber = editText.textInputEditText.text.toString()
+                        binding.phoneNumberValueTextView.addTextChangedListener { PhoneNumberFormattingTextWatcher() }
                         binding.phoneNumberValueTextView.setText(userPhoneNumber)
                         user["userPhoneNumber"] = userPhoneNumber
                     }

@@ -27,8 +27,7 @@ import com.naver.maps.map.util.FusedLocationSource
 import java.io.IOException
 import java.util.*
 
-class LocationEnrollFragment :
-    BaseFragment<FragmentLocationEnrollBinding>(R.layout.fragment_location_enroll),
+class LocationEnrollFragment : BaseFragment<FragmentLocationEnrollBinding>(R.layout.fragment_location_enroll),
     OnMapReadyCallback {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var locationSource: FusedLocationSource

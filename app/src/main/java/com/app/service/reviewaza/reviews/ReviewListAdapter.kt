@@ -11,11 +11,16 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.app.service.reviewaza.databinding.ItemReviewsBinding
 
-
 class ReviewListAdapter(
     val list: MutableList<Reviews>,
     private val onClick: (Reviews) -> Unit
 ) : ListAdapter<Reviews, ReviewListAdapter.ViewHolder>(differ) {
+
+    private var reviewList = mutableListOf<Reviews>()
+
+    fun setListData(data: MutableList<Reviews>) {
+        reviewList = data
+    }
 
     inner class ViewHolder(private val binding: ItemReviewsBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(reviews: Reviews) {
@@ -58,7 +63,10 @@ class ReviewListAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
 //        val reviews = list[position]
 //        holder.bind(reviews)
+
         holder.bind(currentList[position])
+        //holder.bind(reviewList[position])
+
     }
 
     companion object {

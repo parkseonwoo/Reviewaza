@@ -7,6 +7,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.ViewModelProvider
 import com.app.service.reviewaza.call.Key
 import com.app.service.reviewaza.databinding.ActivityReviewsWriteBinding
 import com.app.service.reviewaza.login.UserItem
@@ -26,9 +27,11 @@ class ReviewsWriteActivity : AppCompatActivity() {
 
     private var myUsername = FirebaseAuth.getInstance().currentUser?.email
     private var userId = FirebaseAuth.getInstance().currentUser?.uid
-    private val currentReviewDB = Firebase.database.reference.child(Key.DB_REVIEWS)
+
     private val currentUserDB = Firebase.database.reference.child(Key.DB_USERS).child(userId!!)
     private lateinit var reviewsAdapter: ReviewListAdapter
+
+    private val reviewListViewModel by lazy { ViewModelProvider(this).get(ReviewListViewModel::class.java) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -134,35 +137,23 @@ class ReviewsWriteActivity : AppCompatActivity() {
                 thumbDown
             )
 
-        val newReview = Reviews(
-            reviewId = reviewId,
-            rating = rating,
-            taxiType = taxiType,
-            taxiNumber = taxiNumber,
-            detail = detail,
-            currentTime = currentTime,
-            userEmail = userEmail,
-            userId = userId,
-            thumbUp = thumbUp,
-            thumbDown = thumbDown
-        )
 
-        currentReviewDB.push().apply {
-            newReview.reviewId = key!!
-            setValue(newReview)
-        }
-        //updateReview(newReview)
 
-        Thread {
-            ReviewDatabase.getInstance(this)?.reviewsDao()?.insert(reviews)
-            runOnUiThread {
-                reviewsAdapter.list.add(reviews)
-                val intent = Intent().putExtra("isUpdated", true)
-                setResult(RESULT_OK, intent)
-                Toast.makeText(this, "저장을 완료했습니다", Toast.LENGTH_SHORT).show()
-                finish()
-            }
-        }.start()
+        reviewListViewModel.addData(reviews)
+
+        Toast.makeText(this, "저장을 완료했습니다", Toast.LENGTH_SHORT).show()
+        finish()
+
+//        Thread {
+//            ReviewDatabase.getInstance(this)?.reviewsDao()?.insert(reviews)
+//            runOnUiThread {
+//                reviewsAdapter.list.add(reviews)
+//                val intent = Intent().putExtra("isUpdated", true)
+//                setResult(RESULT_OK, intent)
+//                Toast.makeText(this, "저장을 완료했습니다", Toast.LENGTH_SHORT).show()
+//                finish()
+//            }
+//        }.start()
     }
 
 }

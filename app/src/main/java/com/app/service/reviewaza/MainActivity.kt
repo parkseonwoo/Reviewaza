@@ -8,6 +8,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.app.service.reviewaza.call.CallListFragment
 import com.app.service.reviewaza.databinding.ActivityMainBinding
@@ -17,56 +18,87 @@ import com.app.service.reviewaza.reviews.ReviewListFragment
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
-    private val homeFragment = LocationEnrollFragment()
-    private val reviewListFragment = ReviewListFragment()
-    private val callFragment = CallListFragment()
-    private val myPageFragment = MyPageFragment()
+    private val fragmentManager = supportFragmentManager
+
+    private var homeFragment: LocationEnrollFragment? = null
+    private var reviewListFragment : ReviewListFragment? = null
+    private var callFragment : CallListFragment? = null
+    private var myPageFragment : MyPageFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding.lifecycleOwner = this
+        initBottomNavigation()
+    }
+
+    private fun initBottomNavigation() {
+
+        // 최초로 보이는 프래그먼트
+        homeFragment = LocationEnrollFragment()
+        fragmentManager.beginTransaction().replace(R.id.frameLayout, homeFragment!!).commit()
 
         binding.bottomNavigationView.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.homeButton -> {
-                    replaceFragment(homeFragment)
+                    if(homeFragment == null) {
+                        homeFragment = LocationEnrollFragment()
+                        fragmentManager.beginTransaction().add(R.id.frameLayout, homeFragment!!).commit()
+                    }
+                    if(homeFragment != null) fragmentManager.beginTransaction().show(homeFragment!!).commit()
+                    if(reviewListFragment != null) fragmentManager.beginTransaction().hide(reviewListFragment!!).commit()
+                    if(callFragment != null) fragmentManager.beginTransaction().hide(callFragment!!).commit()
+                    if(myPageFragment != null) fragmentManager.beginTransaction().hide(myPageFragment!!).commit()
                     supportActionBar?.title = "홈"
                     return@setOnItemSelectedListener true
                 }
                 R.id.reviewButton -> {
-                    replaceFragment(reviewListFragment)
+                    if(reviewListFragment == null) {
+                        reviewListFragment = ReviewListFragment()
+                        fragmentManager.beginTransaction().add(R.id.frameLayout, reviewListFragment!!).commit()
+                    }
+                    if(homeFragment != null) fragmentManager.beginTransaction().hide(homeFragment!!).commit()
+                    if(reviewListFragment != null) fragmentManager.beginTransaction().show(reviewListFragment!!).commit()
+                    if(callFragment != null) fragmentManager.beginTransaction().hide(callFragment!!).commit()
+                    if(myPageFragment != null) fragmentManager.beginTransaction().hide(myPageFragment!!).commit()
                     supportActionBar?.title = "리뷰"
                     return@setOnItemSelectedListener true
                 }
                 R.id.callButton -> {
-                    replaceFragment(callFragment)
+                    if(callFragment == null) {
+                        callFragment = CallListFragment()
+                        fragmentManager.beginTransaction().add(R.id.frameLayout, callFragment!!).commit()
+                    }
+                    if(homeFragment != null) fragmentManager.beginTransaction().hide(homeFragment!!).commit()
+                    if(reviewListFragment != null) fragmentManager.beginTransaction().hide(reviewListFragment!!).commit()
+                    if(callFragment != null) fragmentManager.beginTransaction().show(callFragment!!).commit()
+                    if(myPageFragment != null) fragmentManager.beginTransaction().hide(myPageFragment!!).commit()
                     supportActionBar?.title = "호출"
                     return@setOnItemSelectedListener true
                 }
                 R.id.mypageButton -> {
-                    replaceFragment(myPageFragment)
+                    if(myPageFragment == null) {
+                        myPageFragment = MyPageFragment()
+                        fragmentManager.beginTransaction().add(R.id.frameLayout, myPageFragment!!).commit()
+                    }
+                    if(homeFragment != null) fragmentManager.beginTransaction().hide(homeFragment!!).commit()
+                    if(reviewListFragment != null) fragmentManager.beginTransaction().hide(reviewListFragment!!).commit()
+                    if(callFragment != null) fragmentManager.beginTransaction().hide(callFragment!!).commit()
+                    if(myPageFragment != null) fragmentManager.beginTransaction().show(myPageFragment!!).commit()
                     supportActionBar?.title = "마이페이지"
                     return@setOnItemSelectedListener true
                 }
                 else -> {
-                    supportActionBar?.title = "친구"
-                    return@setOnItemSelectedListener false
+                    return@setOnItemSelectedListener true
                 }
             }
         }
-        replaceFragment(homeFragment)
 
         askNotificationPermission()
 
     }
 
-    private fun replaceFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction().apply {
-            replace(R.id.frameLayout, fragment)
-            commit()
-        }
-    }
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
