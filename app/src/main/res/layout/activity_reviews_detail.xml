@@ -20,12 +20,12 @@
 
     <TextView
         android:id="@+id/reviewsUserEmail"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="유저 이메일"
-        android:layout_marginStart="20dp"
-        app:layout_constraintTop_toBottomOf="@+id/reviewsWriteImageView"
-        app:layout_constraintStart_toStartOf="@+id/reviewsWriteImageView"/>
+        android:text="1234@naver.com"
+        android:foregroundGravity="center"
+        app:layout_constraintStart_toStartOf="@+id/reviewsWriteImageView"
+        app:layout_constraintTop_toBottomOf="@+id/reviewsWriteImageView"/>
 
     <ImageView
         android:id="@+id/thumbUp"
@@ -34,7 +34,8 @@
         android:layout_marginStart="20dp"
         android:src="@drawable/ic_baseline_thumb_up_24"
         app:layout_constraintStart_toEndOf="@id/reviewsUserEmail"
-        app:layout_constraintTop_toBottomOf="@id/reviewsWriteRatingBar"/>
+        app:layout_constraintTop_toTopOf="@id/reviewsUserEmail"
+        app:layout_constraintBottom_toBottomOf="@id/reviewsUserEmail"/>
 
     <TextView
         android:id="@+id/thumbUpValue"

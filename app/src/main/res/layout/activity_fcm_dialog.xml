@@ -19,17 +19,18 @@
         android:id="@+id/callUserName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="호출 유저 이름"
+        android:text="호출 유저"
+        style="@style/Fcm_Dialog_Title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/fcmUserImageView"/>
 
     <TextView
         android:id="@+id/callUserNameValue"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:text="호출 유저 이름 값"
-        app:layout_constraintStart_toEndOf="@+id/callUserName"
-        app:layout_constraintEnd_toEndOf="parent"
+        style="@style/Fcm_Dialog_Value"
+        app:layout_constraintStart_toStartOf="@+id/guideLine"
         app:layout_constraintBottom_toBottomOf="@id/callUserName"/>
 
     <TextView
@@ -37,16 +38,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="현재 위치"
+        style="@style/Fcm_Dialog_Title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/callUserName"/>
 
     <TextView
         android:id="@+id/callCurrentLocationValue"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:text="현재 위치 값"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/callCurrentLocation"
+        style="@style/Fcm_Dialog_Value"
+        app:layout_constraintStart_toStartOf="@+id/guideLine"
+        app:layout_constraintTop_toTopOf="@+id/callCurrentLocation"
         app:layout_constraintBottom_toBottomOf="@+id/callCurrentLocation"/>
 
     <TextView
@@ -54,16 +57,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="목적지"
+        style="@style/Fcm_Dialog_Title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/callCurrentLocation"/>
 
     <TextView
         android:id="@+id/callDetinationValue"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:text="목적지 값"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/callCurrentLocation"
+        style="@style/Fcm_Dialog_Value"
+        app:layout_constraintStart_toStartOf="@+id/guideLine"
+        app:layout_constraintTop_toTopOf="@id/callDestination"
         app:layout_constraintBottom_toBottomOf="@+id/callDestination"/>
 
     <TextView
@@ -71,37 +76,49 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="호출 메시지"
+        style="@style/Fcm_Dialog_Title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/callDestination"/>
 
     <TextView
         android:id="@+id/callUserMessageValue"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:text="호출 메시지를 입력하세요"
-        app:layout_constraintStart_toEndOf="@+id/callUserMessage"
-        app:layout_constraintEnd_toEndOf="parent"
+        style="@style/Fcm_Dialog_Value"
+        android:maxLines="3"
+        app:layout_constraintStart_toStartOf="@+id/guideLine"
+        app:layout_constraintTop_toTopOf="@+id/callUserMessage"
         app:layout_constraintBottom_toBottomOf="@id/callUserMessage"/>
 
     <Button
         android:id="@+id/fcmNegButton"
         android:layout_width="0dp"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="7dp"
         android:layout_weight="1"
         android:text="취소"
-        android:textSize="14sp"
+        android:textSize="20sp"
+        android:layout_marginTop="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/callUserMessage"/>
 
     <Button
         android:id="@+id/fcmPosButton"
         android:layout_width="0dp"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="확인"
-        android:textSize="14sp"
+        android:textSize="20sp"
+        android:layout_marginTop="10dp"
         app:layout_constraintBottom_toBottomOf="@+id/fcmNegButton"
         app:layout_constraintEnd_toEndOf="parent"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.3" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

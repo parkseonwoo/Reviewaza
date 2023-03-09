@@ -8,6 +8,7 @@
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/currentLocationTextView"/>
 
     <TextView
@@ -15,40 +16,45 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="현재 위치: "
+        style="@style/Call_Title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mapView"/>
 
     <TextView
         android:id="@+id/currentLocationValue"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
-        android:hint="현재 위치"
-        android:background="@drawable/edittext_rounded_corner_rectangle"
-        app:layout_constraintStart_toEndOf="@id/currentLocationTextView"
-        app:layout_constraintTop_toTopOf="@id/currentLocationTextView"/>
+        android:hint="현재 위치 값"
+        style="@style/Call_Value"
+        app:layout_constraintStart_toStartOf="@id/guideLine"
+        app:layout_constraintTop_toTopOf="@id/currentLocationTextView"
+        app:layout_constraintBottom_toBottomOf="@id/currentLocationTextView"/>
 
     <TextView
         android:id="@+id/destinationTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:hint="목적지: "
-        android:background="@drawable/edittext_rounded_corner_rectangle"
+        style="@style/Call_Title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/currentLocationTextView"/>
 
     <TextView
         android:id="@+id/destinationValue"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:hint="목적지 설정"
-        app:layout_constraintStart_toEndOf="@id/destinationTextView"
-        app:layout_constraintTop_toTopOf="@id/destinationTextView"/>
+        style="@style/Call_Value"
+        app:layout_constraintStart_toStartOf="@id/guideLine"
+        app:layout_constraintTop_toTopOf="@id/destinationTextView"
+        app:layout_constraintBottom_toBottomOf="@id/destinationTextView"/>
 
     <EditText
         android:id="@+id/callMessage"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="120dp"
         android:hint="호출 메시지 입력"
+        style="@style/Call_Value"
         android:background="@drawable/edittext_rounded_corner_rectangle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/destinationTextView"
@@ -59,9 +65,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="호출"
+        android:layout_marginTop="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/callMessage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideLine"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.3" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -112,8 +112,6 @@ class MyPageInfoActivity : AppCompatActivity() {
             if (currentUserItem.userImage != "") {
                 binding.nicknameValueTextView.setText(currentUserItem.username)
 
-                Toast.makeText(this, "왜 안될까? ${currentUserItem.userImage}", Toast.LENGTH_SHORT)
-                    .show()
                 if (currentUserItem.userImage == null) {
                     Glide.with(binding.myPageImage)
                         .load(R.drawable.ic_baseline_person_24)

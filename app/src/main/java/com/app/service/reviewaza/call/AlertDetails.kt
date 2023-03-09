@@ -16,6 +16,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.ktx.app
@@ -41,11 +42,13 @@ class AlertDetails : AppCompatActivity() {
 
         userId = intent.getStringExtra("userId")!!
         val myUserName = intent.getStringExtra("myUserName")
-        val userImage = intent.getStringExtra("userImage")
+        var userImage = intent.getStringExtra("userImage")
         val userMessage = intent.getStringExtra("userMessage")
         val currentLocation = intent.getStringExtra("currentLocation")
         val destination = intent.getStringExtra("destination")
         chatRoomId = intent.getStringExtra("chatRoomId")!!
+
+        var taxiUserName = intent.getStringExtra("taxiUserName")
 
         binding.callUserNameValue.setText("${myUserName}")
         binding.callUserMessageValue.setText("${userMessage}")
@@ -55,9 +58,39 @@ class AlertDetails : AppCompatActivity() {
         getOtherUserData()
 
         if(CALL_RESPONSE.equals("YES_RESPONSE") || CALL_RESPONSE.equals("NO_RESPONSE")){
+
+            if(userImage == null) {
+                Glide.with(binding.fcmUserImageView)
+                    .load(R.drawable.ic_baseline_person_24)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .fitCenter()
+                    .circleCrop()
+                    .into(binding.fcmUserImageView)
+            } else {
+                Glide.with(binding.fcmUserImageView)
+                    .load(Uri.parse(userImage))
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .fitCenter()
+                    .circleCrop()
+                    .into(binding.fcmUserImageView)
+            }
+            binding.callUserName.setText("기사 ")
+            binding.callUserNameValue.setText(taxiUserName)
             binding.callCurrentLocationValue.isVisible = false
             binding.callCurrentLocation.isVisible = false
-            binding.callDestination.setText("기사: ")
+            binding.callDestination.isVisible = false
+            binding.callDetinationValue.isVisible = false
+            binding.callUserMessage.setText("호출 응답")
+
+            Toast.makeText(this, "${userImage}", Toast.LENGTH_SHORT).show()
+        }
+
+        val currentDB = Firebase.database.reference.child(Key.DB_USERS)
+        val currentUserId = Firebase.auth.currentUser?.uid
+        currentDB.child(currentUserId!!).get().addOnSuccessListener {
+            val user = it.getValue(UserItem::class.java)
+            taxiUserName = user?.username.toString()
+            userImage = user?.userImage.toString()
         }
 
         binding.fcmPosButton.setOnClickListener {
@@ -70,6 +103,8 @@ class AlertDetails : AppCompatActivity() {
             notification.put("title", getString(R.string.app_name))
             notification.put("body", "응답 수락")
             data.put("call", "YES_RESPONSE")
+            data.put("taxiUserName", taxiUserName)
+            data.put("userImage", userImage)
             root.put("to", otherUserFcmToken)
             root.put("priority", "high")
             root.put("notification", notification)
@@ -103,6 +138,8 @@ class AlertDetails : AppCompatActivity() {
             notification.put("title", getString(R.string.app_name))
             notification.put("body", "응답 거절")
             data.put("call", "NO_RESPONSE")
+            data.put("taxiUserName", taxiUserName)
+            data.put("userImage", userImage)
             root.put("to", otherUserFcmToken)
             root.put("priority", "high")
             root.put("notification", notification)
@@ -128,7 +165,6 @@ class AlertDetails : AppCompatActivity() {
         }
 
         if (userImage != "") {
-            Toast.makeText(this, "왜 안될까? ${userImage}", Toast.LENGTH_SHORT).show()
 
             if (userImage == null) {
                 Glide.with(binding.fcmUserImageView)

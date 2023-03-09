@@ -46,7 +46,6 @@ class ReviewsWriteActivity : AppCompatActivity() {
 
         binding.reviewsWriteRatingBar.apply {
             rating = 3f
-            Toast.makeText(this@ReviewsWriteActivity, "$rating 입니다", Toast.LENGTH_SHORT).show()
         }
 
     }

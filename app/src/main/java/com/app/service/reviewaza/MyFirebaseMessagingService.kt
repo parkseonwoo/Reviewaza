@@ -29,6 +29,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             val destination = message.data["destination"].toString()
             val chatRoomId = message.data["chatRoomId"].toString()
 
+            val taxiUserName = message.data["taxiUserName"].toString()
+
             Log.e("fcm test", "userId: ${userId}, userName: ${userName}")
             Log.e("fcm test", "${destination}")
 
@@ -39,7 +41,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                 userImage,
                 currentLocation,
                 destination,
-                chatRoomId
+                chatRoomId,
+                taxiUserName
             )
             Log.e("notificationset", "${message.notification?.title}")
         }
@@ -51,7 +54,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     private fun showNotification(
         userId: String?, message: String, myUserName: String, myUserImage: String,
-        currentLocation: String, destination: String, chatRoomId: String
+        currentLocation: String, destination: String, chatRoomId: String, taxiUserName: String
     ) {
 
         val intent = Intent(this, AlertDetails::class.java)
@@ -65,6 +68,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         intent.putExtra("currentLocation", currentLocation)
         intent.putExtra("destination", destination)
         intent.putExtra("chatRoomId", chatRoomId)
+        intent.putExtra("taxiUserName", taxiUserName)
 
         startActivity(intent.addFlags(FLAG_ACTIVITY_NEW_TASK))
 
