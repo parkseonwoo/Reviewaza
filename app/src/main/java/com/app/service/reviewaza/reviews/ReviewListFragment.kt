@@ -48,85 +48,52 @@ class ReviewListFragment : BaseFragment<FragmentReviewsBinding>(R.layout.fragmen
         REVIEWS_DETAIL_FLAG = "REVIEW_LIST_DETAIL"
 
         // 검색 기능에서 어댑터 연결해주기
-        //binding.reviewsSearchView.setOnQueryTextListener(searchViewTextListener)
+        binding.reviewsSearchView.setOnQueryTextListener(searchViewTextListener)
 
         binding.toolBar.apply {
             title = "리뷰 목록"
         }
 
-//        var spinnerAdapter = ArrayAdapter.createFromResource(
-//            context!!,
-//            R.array.review_types,
-//            android.R.layout.simple_list_item_1
-//        )
+        var spinnerAdapter = ArrayAdapter.createFromResource(
+            context!!,
+            R.array.review_types,
+            android.R.layout.simple_list_item_1
+        )
 
- //       binding.reviewTypeSpinner.adapter = spinnerAdapter
+        binding.reviewTypeSpinner.adapter = spinnerAdapter
 
-//        binding.reviewTypeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-//            override fun onNothingSelected(parent: AdapterView<*>?) {
-//
-//            }
-//
-//            override fun onItemSelected(
-//                parent: AdapterView<*>?,
-//                view: View?,
-//                position: Int,
-//                id: Long
-//            ) {
-//                when (position) {
-//
-//                    0 -> { // 최신순
-//                       //initRecyclerView()
-//                    }
-//
-//                    1 -> { // 별점 높은 순
-//                        reviewDB.addListenerForSingleValueEvent(object : ValueEventListener {
-//                            override fun onDataChange(snapshot: DataSnapshot) {
-//
-//                                val reviewsList = mutableListOf<Reviews>()
-//
-//                                snapshot.children.forEach {
-//                                    val review = it.getValue(Reviews::class.java)
-//                                    val reviewId = review?.reviewId
-//
-//                                    if (review?.reviewId != "") {
-//                                        reviewsList.add(review!!)
-//                                    }
-//
-//                                    val reviewQuery = reviewDB.child(reviewId!!).orderByChild("rating")
-//
-//                                    reviewQuery.addListenerForSingleValueEvent(object: ValueEventListener{
-//                                        override fun onDataChange(snapshot: DataSnapshot) {
-//                                            if (review?.reviewId != "") {
-//                                                reviewsList.add(review!!)
-//                                            }
-//                                        }
-//
-//                                        override fun onCancelled(error: DatabaseError) {
-//                                            TODO("Not yet implemented")
-//                                        }
-//
-//                                    })
-//                                }
-//                                Log.e("리뷰 별점 정렬", "review")
-//                                reviewsAdapter.submitList(reviewsList)
-//                            }
-//
-//                            override fun onCancelled(error: DatabaseError) {}
-//                        })
-//                    }
-//
-//                    2 -> { // 별점 낮은 순
-//
-//                    }
-//
-//                    //일치하는게 없는 경우
-//                    else -> {
-//
-//                    }
-//                }
-//            }
-//        }
+        binding.reviewTypeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                when (position) {
+
+                    0 -> { // 최신순
+                       //initRecyclerView()
+                    }
+
+                    1 -> { // 별점 높은 순
+
+                    }
+
+                    2 -> { // 별점 낮은 순
+
+                    }
+
+                    //일치하는게 없는 경우
+                    else -> {
+
+                    }
+                }
+            }
+        }
 
         binding.reviewsWriteButton.setOnClickListener {
             if (myUserId == null) {
@@ -186,66 +153,49 @@ class ReviewListFragment : BaseFragment<FragmentReviewsBinding>(R.layout.fragmen
 
     }
 
-//    private fun initRatingRecyclerView(list: List<Reviews>) {
-//        reviewsAdapter.list.addAll(0, list)
-//
-//        runOnUiThread {
-//            reviewsAdapter.notifyDataSetChanged()
-//            binding.reviewsRecyclerView.apply {
-//                adapter = reviewsAdapter
-//                layoutManager =
-//                    LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
-//                val dividerItemDecoration =
-//                    DividerItemDecoration(applicationContext, LinearLayoutManager.VERTICAL)
-//                addItemDecoration(dividerItemDecoration)
-//            }
-//
-//        }
-//    }
+    private fun initSearchRecyclerView() {
 
-//    private fun initSearchRecyclerView() {
-//
-//        searchAdapter = ReviewsSearchAdapter(mutableListOf())
-//        //val list = ReviewDatabase.getInstance(context!!)?.reviewsDao()?.getAll() ?: emptyList()
-//        //searchAdapter.list.addAll(list)
-//        //searchAdapter.notifyDataSetChanged()
-//        binding.reviewsRecyclerView.apply {
-//            adapter = searchAdapter
-//            layoutManager =
-//                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-//            val dividerItemDecoration =
-//                DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
-//            addItemDecoration(dividerItemDecoration)
-//        }
-//    }
-//
-//    //SearchView 텍스트 입력시 이벤트
-//    var searchViewTextListener: SearchView.OnQueryTextListener =
-//        object : SearchView.OnQueryTextListener {
-//
-//            //검색버튼 입력시 호출, 검색버튼이 없으므로 사용하지 않음
-//            override fun onQueryTextSubmit(s: String): Boolean {
-//                return false
-//            }
-//
-//            //텍스트 입력/수정시에 호출
-//            override fun onQueryTextChange(s: String): Boolean {
-//                initSearchRecyclerView()
-//                searchAdapter.filter.filter(s)
-//                return false
-//            }
-//        }
-//
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        return when (item.itemId) {
-//            android.R.id.home -> {
-//                //finish()
-//                true
-//            }
-//            else -> {
-//                return super.onOptionsItemSelected(item)
-//            }
-//        }
-//    }
+        searchAdapter = ReviewsSearchAdapter(mutableListOf())
+        //val list = ReviewDatabase.getInstance(context!!)?.reviewsDao()?.getAll() ?: emptyList()
+        //searchAdapter.list.addAll(list)
+        //searchAdapter.notifyDataSetChanged()
+        binding.reviewsRecyclerView.apply {
+            adapter = searchAdapter
+            layoutManager =
+                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            val dividerItemDecoration =
+                DividerItemDecoration(context, LinearLayoutManager.VERTICAL)
+            addItemDecoration(dividerItemDecoration)
+        }
+    }
+
+    //SearchView 텍스트 입력시 이벤트
+    var searchViewTextListener: SearchView.OnQueryTextListener =
+        object : SearchView.OnQueryTextListener {
+
+            //검색버튼 입력시 호출, 검색버튼이 없으므로 사용하지 않음
+            override fun onQueryTextSubmit(s: String): Boolean {
+                return false
+            }
+
+            //텍스트 입력/수정시에 호출
+            override fun onQueryTextChange(s: String): Boolean {
+                initSearchRecyclerView()
+                searchAdapter.filter.filter(s)
+                return false
+            }
+        }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                //finish()
+                true
+            }
+            else -> {
+                return super.onOptionsItemSelected(item)
+            }
+        }
+    }
 
 }

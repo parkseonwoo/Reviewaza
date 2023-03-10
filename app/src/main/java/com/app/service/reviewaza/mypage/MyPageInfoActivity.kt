@@ -19,10 +19,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
-import com.app.service.reviewaza.LOGIN_SET
-import com.app.service.reviewaza.MY_STATE
-import com.app.service.reviewaza.MainActivity
-import com.app.service.reviewaza.R
+import com.app.service.reviewaza.*
 import com.app.service.reviewaza.call.Key.Companion.DB_USERS
 import com.app.service.reviewaza.databinding.ActivityMypageEditDialogBinding
 import com.app.service.reviewaza.databinding.ActivityMypageInfoBinding
@@ -133,7 +130,10 @@ class MyPageInfoActivity : AppCompatActivity() {
 
         }
 
-        if (MY_STATE != "") binding.emailValueTextView.text = Firebase.auth.currentUser?.email
+        if (MY_STATE != "") {
+            binding.emailValueTextView.text = Firebase.auth.currentUser?.email
+        }
+
     }
 
 

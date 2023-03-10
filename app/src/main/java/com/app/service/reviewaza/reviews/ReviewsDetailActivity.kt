@@ -9,6 +9,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.app.service.reviewaza.REVIEWS_DETAIL_FLAG
 import com.app.service.reviewaza.call.Key
 import com.app.service.reviewaza.databinding.ActivityReviewsDetailBinding
@@ -32,6 +34,8 @@ class ReviewsDetailActivity : AppCompatActivity() {
     private val currentReviewDB = Firebase.database.reference.child(Key.DB_REVIEWS)
     private val reviewThumbUp = mutableMapOf<String, Any>()
     private val reviewThumbDown = mutableMapOf<String, Any>()
+
+    private val reviewListViewModel by lazy { ViewModelProvider(this).get(ReviewListViewModel::class.java) }
 
     private val startMyReviews = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
@@ -77,7 +81,9 @@ class ReviewsDetailActivity : AppCompatActivity() {
                 setMessage("정말 삭제하시겠습니까?")
                 setNegativeButton("취소", null)
                 setPositiveButton("확인") { _, _ ->
-                    delete()
+                    if (!NetworkManager.checkNetworkState(context)) {
+                        Toast.makeText(context, "인터넷 연결을 확인해주세요", Toast.LENGTH_SHORT).show()
+                    } else delete()
                 }.show()
             }
         }
@@ -165,26 +171,12 @@ class ReviewsDetailActivity : AppCompatActivity() {
     }
 
     fun delete() {
-        var currentReview = ""
-        Thread {
+        Thread{
             ReviewDatabase.getInstance(this)?.reviewsDao()?.delete(reviews)
-
-            runOnUiThread {
-                reviewsAdapter.list.remove(reviews)
-                currentReviewDB.get().addOnSuccessListener {
-                    val review = it.getValue(Reviews::class.java)
-                    currentReview = review?.reviewId.toString()
-                }
-
-                Log.e("reviewId", "current: ${currentReview}, reviewsid: ${reviews.reviewId}")
-                currentReviewDB.child(currentReview).child(reviews.reviewId!!).removeValue()
-                reviewsAdapter.notifyDataSetChanged()
-                val intent = Intent().putExtra("isDelete", true)
-                setResult(RESULT_OK, intent)
-                Toast.makeText(this, "삭제가 완료됐습니다", Toast.LENGTH_SHORT).show()
-                finish()
-            }
         }.start()
+        reviewListViewModel.deleteData(reviews)
+        Toast.makeText(this, "삭제가 완료됐습니다", Toast.LENGTH_SHORT).show()
+        finish()
     }
 
     private fun updateReview() {
@@ -221,7 +213,6 @@ class ReviewsDetailActivity : AppCompatActivity() {
             val intent = Intent().putExtra("isUpdate", true)
             setResult(RESULT_OK, intent)
             reviewsAdapter.submitList(reviewsList)
-            reviewsAdapter.notifyDataSetChanged()
             Toast.makeText(this, "리뷰 수정 완료!", Toast.LENGTH_SHORT).show()
             finish()
         }

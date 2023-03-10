@@ -73,7 +73,6 @@ class ChatActivity : AppCompatActivity() {
 
     private fun setUpBot() {
         try {
-            // TODO 챗봇 사용 시 JSON KEY 파일 RAW에 삽입
             val stream = this.resources.openRawResource(R.raw.credentials)
             val credentials: GoogleCredentials = GoogleCredentials.fromStream(stream)
                 .createScoped("https://www.googleapis.com/auth/cloud-platform")

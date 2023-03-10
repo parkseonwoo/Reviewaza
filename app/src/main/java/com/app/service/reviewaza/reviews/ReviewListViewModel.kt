@@ -21,9 +21,24 @@ class ReviewListViewModel : ViewModel() {
         return mutableData
     }
 
-        fun addData(reviews: Reviews)  {
-            Log.e("리뷰 데이터 변경", "addData : 시작")
+    fun fetchMyReviewData(): LiveData<MutableList<Reviews>> {
+        val mutableData = MutableLiveData<MutableList<Reviews>>()
+        repo.getMyReviewFirebaseData().observeForever{
+            Log.e("내 리뷰 데이터 변경", "fetchMyReviewData : 시작")
+            mutableData.value = it
+        }
+
+        return mutableData
+    }
+
+    fun addData(reviews: Reviews)  {
+        Log.e("리뷰 데이터 변경", "addData : 시작")
         repo.add(reviews)
+    }
+
+    fun deleteData(reviews: Reviews) {
+        Log.e("리뷰 데이터 변경", "deleteData : 시작")
+        repo.delete(reviews)
     }
 
 }

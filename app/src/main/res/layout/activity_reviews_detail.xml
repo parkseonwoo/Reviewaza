@@ -1,11 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/reviewsDetailLayout"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/reviewsDetailLayout"
+    style="@style/ReviewsViews"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    style="@style/ReviewsViews">
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/updateReviewOkButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="확인"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <EditText
+        android:id="@+id/reviewsWriteDetailTextView"
+        style="@style/Value"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@android:color/transparent"
+        android:clickable="false"
+        android:enabled="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:hint="내용을 입력하세요"
+        app:layout_constraintEnd_toEndOf="@+id/reviewsDetailLayout"
+        app:layout_constraintHeight_percent="0.2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/reviewsWriteTaxiNumberTextView" />
 
     <ImageView
         android:id="@+id/reviewsWriteImageView"
@@ -18,33 +43,15 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_baseline_person_24" />
 
-    <TextView
-        android:id="@+id/reviewsUserEmail"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="1234@naver.com"
-        android:foregroundGravity="center"
-        app:layout_constraintStart_toStartOf="@+id/reviewsWriteImageView"
-        app:layout_constraintTop_toBottomOf="@+id/reviewsWriteImageView"/>
-
     <ImageView
         android:id="@+id/thumbUp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:src="@drawable/ic_baseline_thumb_up_24"
+        app:layout_constraintBottom_toBottomOf="@id/reviewsUserEmail"
         app:layout_constraintStart_toEndOf="@id/reviewsUserEmail"
-        app:layout_constraintTop_toTopOf="@id/reviewsUserEmail"
-        app:layout_constraintBottom_toBottomOf="@id/reviewsUserEmail"/>
-
-    <TextView
-        android:id="@+id/thumbUpValue"
-        android:text="1"
-        style="@style/thumbs"
-        android:layout_width="wrap_content"
-        app:layout_constraintTop_toTopOf="@id/thumbUp"
-        app:layout_constraintStart_toEndOf="@id/thumbUp"
-        android:layout_height="wrap_content"/>
+        app:layout_constraintTop_toTopOf="@id/reviewsUserEmail" />
 
     <ImageView
         android:id="@+id/thumbDown"
@@ -53,40 +60,34 @@
         android:paddingStart="20dp"
         android:src="@drawable/ic_baseline_thumb_down_24"
         app:layout_constraintStart_toEndOf="@id/thumbUpValue"
-        app:layout_constraintTop_toTopOf="@id/thumbUp"/>
+        app:layout_constraintTop_toTopOf="@id/thumbUp" />
+
+    <TextView
+        android:id="@+id/reviewsUserEmail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:foregroundGravity="center"
+        android:text="1234@naver.com"
+        app:layout_constraintStart_toStartOf="@+id/reviewsWriteImageView"
+        app:layout_constraintTop_toBottomOf="@+id/reviewsWriteImageView" />
+
+    <TextView
+        android:id="@+id/thumbUpValue"
+        style="@style/thumbs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1"
+        app:layout_constraintStart_toEndOf="@id/thumbUp"
+        app:layout_constraintTop_toTopOf="@id/thumbUp" />
 
     <TextView
         android:id="@+id/thumbDownValue"
-        android:text="1"
         style="@style/thumbs"
         android:layout_width="wrap_content"
-        app:layout_constraintTop_toTopOf="@id/thumbUp"
-        app:layout_constraintStart_toEndOf="@id/thumbDown"
-        android:layout_height="wrap_content"/>
-
-    <com.willy.ratingbar.BaseRatingBar
-        android:id="@+id/reviewsWriteRatingBar"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="@id/reviewsWriteImageView"
-        app:layout_constraintBottom_toBottomOf="@id/reviewsWriteImageView"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@id/guideLineV"
-        app:layout_constraintEnd_toEndOf="@+id/reviewsDetailLayout"
-        android:layout_marginEnd="50dp"
-        android:layout_marginStart="20dp"
-        app:layout_constraintVertical_bias="0.36"
-        app:srb_clearRatingEnabled="true"
-        app:srb_clickable="false"
-        app:srb_isIndicator="true"
-        app:srb_minimumStars="1"
-        app:srb_numStars="5"
-        app:srb_rating="2"
-        app:srb_scrollable="true"
-        app:srb_starHeight="30dp"
-        app:srb_starPadding="15dp"
-        app:srb_starWidth="30dp"
-        app:srb_stepSize="0.5" />
+        android:text="1"
+        app:layout_constraintStart_toEndOf="@id/thumbDown"
+        app:layout_constraintTop_toTopOf="@id/thumbUp" />
 
     <TextView
         android:id="@+id/reviewsWriteTaxiTypeTextView"
@@ -113,59 +114,19 @@
         style="@style/Value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:text="택시 번호 : "
-        android:layout_marginStart="20dp"
-        app:layout_constraintEnd_toStartOf="@id/reviewsWriteTaxiNumberTextView"
-        app:layout_constraintTop_toBottomOf="@id/guideLine1" />
+        app:layout_constraintStart_toStartOf="@+id/reviewsWriteTaxiTypeTextView"
+        app:layout_constraintTop_toBottomOf="@+id/reviewsWriteTaxiTypeTextView" />
+
 
     <TextView
         android:id="@+id/reviewsWriteTaxiNumberValueTextView"
         style="@style/Value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
         android:hint="11일 1111"
-        app:layout_constraintStart_toEndOf="@+id/reviewsWriteTaxiNumberTextView"
-        app:layout_constraintTop_toBottomOf="@id/guideLine1"
-        app:layout_constraintEnd_toEndOf="@id/reviewsDetailLayout"/>
-
-
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/reviewsChipGroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        app:layout_constraintTop_toBottomOf="@+id/reviewsWriteTaxiTypeTextView"
-        app:layout_constraintStart_toStartOf="@+id/reviewsWriteImageView"
-        app:selectionRequired="false"
-        app:singleSelection="false" />
-
-    <EditText
-        android:id="@+id/reviewsWriteDetailTextView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="28dp"
-        style="@style/Value"
-        android:clickable="false"
-        android:enabled="false"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:hint="내용을 입력하세요"
-        android:background="@android:color/transparent"
-        app:layout_constraintHeight_percent="0.2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/reviewsChipGroup"
-        app:layout_constraintEnd_toEndOf="@+id/reviewsDetailLayout"/>
-
-    <Button
-        android:id="@+id/updateReviewOkButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:visibility="gone"
-        android:text="확인"/>
+        app:layout_constraintBottom_toBottomOf="@+id/reviewsWriteTaxiNumberTextView"
+        app:layout_constraintStart_toEndOf="@+id/reviewsWriteTaxiNumberTextView" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideLine1"
@@ -188,29 +149,61 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.3" />
 
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/reviewsChipGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="@+id/reviewsWriteImageView"
+        app:layout_constraintTop_toBottomOf="@+id/reviewsWriteTaxiTypeTextView"
+        app:selectionRequired="false"
+        app:singleSelection="false" />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/reviewsEditButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clickable="true"
         android:backgroundTint="#F9A825"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/ic_baseline_edit_24"
         tools:layout_editor_absoluteX="51dp"
-        tools:layout_editor_absoluteY="433dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        tools:layout_editor_absoluteY="433dp" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/reviewsDeleteButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:clickable="true"
         android:backgroundTint="#F9A825"
-        app:srcCompat="@drawable/ic_baseline_delete_24"
-        tools:layout_editor_absoluteX="318dp"
-        tools:layout_editor_absoluteY="489dp"
-        app:layout_constraintStart_toEndOf="@+id/reviewsEditButton"
-        app:layout_constraintBottom_toBottomOf="@+id/reviewsEditButton"/>
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="@+id/reviewsEditButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_baseline_delete_24" />
+
+    <com.willy.ratingbar.BaseRatingBar
+        android:id="@+id/reviewsWriteRatingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="50dp"
+        android:layout_marginStart="20dp"
+        app:layout_constraintBottom_toBottomOf="@id/reviewsWriteImageView"
+        app:layout_constraintEnd_toEndOf="@+id/reviewsDetailLayout"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@id/guideLineV"
+        app:layout_constraintTop_toTopOf="@id/reviewsWriteImageView"
+        app:layout_constraintVertical_bias="0.36"
+        app:srb_clearRatingEnabled="true"
+        app:srb_clickable="false"
+        app:srb_isIndicator="true"
+        app:srb_minimumStars="1"
+        app:srb_numStars="5"
+        app:srb_rating="2"
+        app:srb_scrollable="true"
+        app:srb_starHeight="30dp"
+        app:srb_starPadding="15dp"
+        app:srb_starWidth="30dp"
+        app:srb_stepSize="0.5" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

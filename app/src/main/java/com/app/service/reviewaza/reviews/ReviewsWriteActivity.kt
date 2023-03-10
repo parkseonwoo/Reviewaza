@@ -136,23 +136,13 @@ class ReviewsWriteActivity : AppCompatActivity() {
                 thumbDown
             )
 
-
-
+        Thread{
+            ReviewDatabase.getInstance(this)?.reviewsDao()?.insert(reviews)
+        }.start()
         reviewListViewModel.addData(reviews)
-
         Toast.makeText(this, "저장을 완료했습니다", Toast.LENGTH_SHORT).show()
         finish()
 
-//        Thread {
-//            ReviewDatabase.getInstance(this)?.reviewsDao()?.insert(reviews)
-//            runOnUiThread {
-//                reviewsAdapter.list.add(reviews)
-//                val intent = Intent().putExtra("isUpdated", true)
-//                setResult(RESULT_OK, intent)
-//                Toast.makeText(this, "저장을 완료했습니다", Toast.LENGTH_SHORT).show()
-//                finish()
-//            }
-//        }.start()
     }
 
 }

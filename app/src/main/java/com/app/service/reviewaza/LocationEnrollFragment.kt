@@ -73,7 +73,7 @@ class LocationEnrollFragment : BaseFragment<FragmentLocationEnrollBinding>(R.lay
                 .setDeniedMessage("[설정] -> [권한]에서 권한 변경이 가능합니다.")
                 .setDeniedCloseButtonText("닫기")
                 .setGotoSettingButtonText("설정")
-                .setRationaleTitle("HELLO")
+                .setRationaleTitle("택시 리뷰 아자 위치 권한")
                 .setPermissions(
                     android.Manifest.permission.ACCESS_COARSE_LOCATION,
                     android.Manifest.permission.ACCESS_FINE_LOCATION
@@ -97,6 +97,7 @@ class LocationEnrollFragment : BaseFragment<FragmentLocationEnrollBinding>(R.lay
         )
         marker.icon = OverlayImage.fromResource(R.drawable.ic_baseline_location_on_24)
         marker.map = naverMap
+        marker.iconTintColor = Color.RED
 
         // 카메라의 움직임에 대한 이벤트 리스너 인터페이스.
         // 참고 : https://navermaps.github.io/android-map-sdk/reference/com/naver/maps/map/package-summary.html

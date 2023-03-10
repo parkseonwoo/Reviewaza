@@ -4,37 +4,34 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.service.reviewaza.REVIEWS_DETAIL_FLAG
-import com.app.service.reviewaza.call.Key
 import com.app.service.reviewaza.databinding.FragmentReviewsBinding
 import com.app.service.reviewaza.reviews.*
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+
 
 class MyPageMyReviewsActivity : AppCompatActivity() {
     private lateinit var binding: FragmentReviewsBinding
     private lateinit var reviewsAdapter: ReviewListAdapter
-    private lateinit var reviews: Reviews
     private lateinit var searchAdapter: ReviewsSearchAdapter
 
-    private var myUsername = FirebaseAuth.getInstance().currentUser?.email
+    private val reviewListViewModel by lazy { ViewModelProvider(this).get(ReviewListViewModel::class.java) }
 
     private val startMyReviews = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        val isDelete = result.data?.getBooleanExtra("isDelete", false) ?: false
         val isUpdate = result.data?.getBooleanExtra("isUpdate", false) ?: false
 
-        if (result.resultCode == RESULT_OK && isDelete || isUpdate) {
+        if (result.resultCode == RESULT_OK && isUpdate) {
             initRecyclerView()
         }
     }
@@ -58,14 +55,25 @@ class MyPageMyReviewsActivity : AppCompatActivity() {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }
 
+        observerData()
+    }
+
+    fun observerData() {
+
+        Log.e("리뷰 데이터 변경", "observerData : 시작")
+
+        reviewListViewModel.fetchMyReviewData().observe(this, Observer {
+            Log.e("리뷰 데이터 변경", "observerData : reviewListViewModel.fetchData().observe")
+            binding.notFoundView.isVisible = it?.isEmpty() ?: true
+            reviewsAdapter.submitList(it)
+        })
+
     }
 
 
     private fun initRecyclerView() {
 
         binding.bottomNavigationView.isVisible = false
-
-        val reviewsDB = Firebase.database.reference.child(Key.DB_REVIEWS)
 
         reviewsAdapter = ReviewListAdapter(mutableListOf()) {
 
@@ -84,44 +92,9 @@ class MyPageMyReviewsActivity : AppCompatActivity() {
                 DividerItemDecoration(applicationContext, LinearLayoutManager.VERTICAL)
             addItemDecoration(dividerItemDecoration)
 
-            reviewsDB.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-
-                    val reviewsList = mutableListOf<Reviews>()
-
-                    snapshot.children.forEach {
-                        val review = it.getValue(Reviews::class.java)
-
-                        if (review?.userEmail == myUsername) {
-                            reviewsList.add(review!!)
-                        }
-                        Log.e("리뷰 페이지", "userEmail: ${review?.userEmail}, mtUsername: ${myUsername}")
-                    }
-
-                    reviewsAdapter.submitList(reviewsList)
-                }
-
-                override fun onCancelled(error: DatabaseError) {}
-            })
         }
 
-//        Thread {
-//            var myUserEmail = Firebase.auth.currentUser?.email
-//            val list = ReviewDatabase.getInstance(this)?.reviewsDao()?.getMyReviews(myUserEmail!!)
-//
-//            if (list != null) {
-//                reviewsAdapter.list.addAll(list)
-//            }
-//
-//            runOnUiThread {
-//                binding.notFoundView.isVisible = list?.isEmpty() ?: true
-//                Toast.makeText(this, "list: $list", Toast.LENGTH_SHORT).show()
-//                reviewsAdapter.submitList(list)
-//            }
-//        }.start()
-
     }
-
 
 
 //    private fun initSearchRecyclerView() {
@@ -165,7 +138,7 @@ class MyPageMyReviewsActivity : AppCompatActivity() {
 
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId) {
+        return when (item.itemId) {
             android.R.id.home -> {
                 finish()
                 true
