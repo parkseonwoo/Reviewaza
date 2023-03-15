@@ -170,8 +170,16 @@ class CallActivity : AppCompatActivity(), OnMapReadyCallback, Overlay.OnClickLis
                                     map = naverMap
                                 }
                             }
-                            moveCamera(markers.first().position, 17.0)
+                            moveCamera(markers.first().position, 14.0)
 
+                            markers.forEach {
+                                val position = it.position
+                                it.setOnClickListener {
+                                    // Toast.makeText(this@CallActivity, "클릭", Toast.LENGTH_SHORT).show()
+                                    moveCamera(position, 17.0)
+                                    return@setOnClickListener true
+                                }
+                            }
                         }
 
                         override fun onFailure(call: retrofit2.Call<SearchResult>, t: Throwable) { }
@@ -434,7 +442,6 @@ class CallActivity : AppCompatActivity(), OnMapReadyCallback, Overlay.OnClickLis
                     )
                 )
                 naverMap.moveCamera(cameraUpdate)
-
 
                 // 빨간색 마커 현재위치로 변경
                 marker.position = LatLng(

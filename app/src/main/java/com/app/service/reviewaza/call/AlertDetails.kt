@@ -26,7 +26,8 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.io.IOException
 
-class AlertDetails : AppCompatActivity() {
+class
+AlertDetails : AppCompatActivity() {
 
     private lateinit var binding: ActivityFcmDialogBinding
 
