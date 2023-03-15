@@ -39,6 +39,11 @@ class MyPageFragment : Fragment(R.layout.fragment_mypage) {
             }
         }
 
+        binding.myPageScrap.setOnClickListener {
+            val intent = Intent(context, MyPageScrapActivity::class.java)
+            startActivity(intent)
+        }
+
         binding.myPageChatbot.setOnClickListener {
             val intent = Intent(context, ChatActivity::class.java)
             startActivity(intent)

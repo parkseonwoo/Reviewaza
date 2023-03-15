@@ -4,6 +4,7 @@
     <!-- MyPage -->
     <string name="myInfo">마이페이지</string>
     <string name="myReview">내가 쓴 리뷰</string>
+    <string name="myScrap">스크랩</string>
     <string name="myCupon">쿠폰</string>
     <string name="myChatbot">1:1 챗봇</string>
 

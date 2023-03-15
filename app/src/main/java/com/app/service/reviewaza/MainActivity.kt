@@ -9,7 +9,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.Fragment
 import com.app.service.reviewaza.call.CallListFragment
 import com.app.service.reviewaza.databinding.ActivityMainBinding
 import com.app.service.reviewaza.mypage.MyPageFragment

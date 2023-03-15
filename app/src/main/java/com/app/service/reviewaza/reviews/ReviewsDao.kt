@@ -5,12 +5,11 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Update
 
 @Dao
 interface ReviewsDao {
-    @Query("SELECT * from review ORDER BY id DESC")
-    fun getAll(): List<Reviews>
+    @Query("SELECT * from review ORDER BY id ASC")
+    fun getAll(): LiveData<List<Reviews>>
 
     @Query("SELECT * from review ORDER BY id DESC LIMIT 1")
     fun getLatesReviews() : Reviews
@@ -25,11 +24,9 @@ interface ReviewsDao {
     fun getMyReviews(user_email: String) : List<Reviews>
 
     @Insert
-    fun insert(reviews: Reviews)
+    suspend fun insert(reviews: Reviews)
 
     @Delete
     fun delete(reviews: Reviews)
 
-    @Update
-    fun update(reviews: Reviews)
 }

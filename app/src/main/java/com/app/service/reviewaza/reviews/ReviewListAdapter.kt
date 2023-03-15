@@ -16,8 +16,6 @@ class ReviewListAdapter(
     private val onClick: (Reviews) -> Unit
 ) : ListAdapter<Reviews, ReviewListAdapter.ViewHolder>(differ) {
 
-    private var reviewList = mutableListOf<Reviews>()
-
     inner class ViewHolder(private val binding: ItemReviewsBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(reviews: Reviews) {
             binding.apply {
@@ -30,6 +28,7 @@ class ReviewListAdapter(
                 thumbDownValue.setText("-${reviews.thumbDown}")
                 thumbUp.setColorFilter(Color.RED)
                 thumbDown.setColorFilter(Color.BLUE)
+                scrapButton.setColorFilter(Color.CYAN)
 
                 binding.root.setOnClickListener {
                     onClick(reviews)
@@ -57,11 +56,8 @@ class ReviewListAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-//        val reviews = list[position]
-//        holder.bind(reviews)
 
         holder.bind(currentList[position])
-        //holder.bind(reviewList[position])
 
     }
 

@@ -15,7 +15,7 @@
         app:layout_constraintHeight_percent="0.5"
         app:flow_maxElementsWrap="1"
         app:flow_wrapMode="chain"
-        app:constraint_referenced_ids="myPageMyInfo, myPageMyReviews, myPageCupon, myPageChatbot" />
+        app:constraint_referenced_ids="myPageMyInfo, myPageMyReviews, myPageScrap, myPageCupon, myPageChatbot" />
 
     <TextView
         android:id="@+id/myPageMyInfo"
@@ -29,6 +29,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/myReview"
+        tools:ignore="MissingConstraints"/>
+
+    <TextView
+        android:id="@+id/myPageScrap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/myScrap"
         tools:ignore="MissingConstraints"/>
 
     <TextView

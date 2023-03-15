@@ -1,20 +1,22 @@
 package com.app.service.reviewaza.reviews
 
+import android.animation.ValueAnimator
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.app.service.reviewaza.REVIEWS_DETAIL_FLAG
 import com.app.service.reviewaza.call.Key
 import com.app.service.reviewaza.databinding.ActivityReviewsDetailBinding
 import com.app.service.reviewaza.login.UserItem
+import com.app.service.reviewaza.mypage.MyPageViewModel
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.firebase.database.DataSnapshot
@@ -37,6 +39,8 @@ class ReviewsDetailActivity : AppCompatActivity() {
 
     private val reviewListViewModel by lazy { ViewModelProvider(this).get(ReviewListViewModel::class.java) }
 
+    private var isHearting: Boolean = false
+
     private val startMyReviews = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -52,6 +56,8 @@ class ReviewsDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityReviewsDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val myPageViewModel = ViewModelProvider(this, MyPageViewModel.Factory(application)).get(MyPageViewModel::class.java)
 
         reviews = intent.getParcelableExtra("reviews")!!
 
@@ -125,6 +131,13 @@ class ReviewsDetailActivity : AppCompatActivity() {
             }
         }
 
+        binding.scrapButton.setOnClickListener {
+
+            myPageViewModel.insert(reviews)
+            Toast.makeText(this, "스크랩", Toast.LENGTH_SHORT).show()
+
+        }
+
         initView()
 
     }
@@ -171,9 +184,6 @@ class ReviewsDetailActivity : AppCompatActivity() {
     }
 
     fun delete() {
-        Thread{
-            ReviewDatabase.getInstance(this)?.reviewsDao()?.delete(reviews)
-        }.start()
         reviewListViewModel.deleteData(reviews)
         Toast.makeText(this, "삭제가 완료됐습니다", Toast.LENGTH_SHORT).show()
         finish()

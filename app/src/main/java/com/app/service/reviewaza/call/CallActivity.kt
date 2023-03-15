@@ -9,11 +9,13 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.annotation.UiThread
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.service.reviewaza.*
+import com.app.service.reviewaza.R
 import com.app.service.reviewaza.databinding.ActivityCallBinding
 import com.app.service.reviewaza.login.UserItem
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -27,11 +29,8 @@ import com.google.firebase.ktx.Firebase
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.normal.TedPermission
 import com.naver.maps.geometry.LatLng
-import com.naver.maps.map.CameraUpdate
-import com.naver.maps.map.LocationTrackingMode
-import com.naver.maps.map.MapView
-import com.naver.maps.map.NaverMap
-import com.naver.maps.map.OnMapReadyCallback
+import com.naver.maps.geometry.Tm128
+import com.naver.maps.map.*
 import com.naver.maps.map.overlay.*
 import com.naver.maps.map.util.FusedLocationSource
 import okhttp3.*
@@ -65,6 +64,8 @@ class CallActivity : AppCompatActivity(), OnMapReadyCallback, Overlay.OnClickLis
     private var isInit = false
 
     private val chatItemList = mutableListOf<ChatItem>()
+
+    private var markers =  emptyList<Marker>()
 
     override fun onStart() {
         super.onStart()
@@ -146,6 +147,48 @@ class CallActivity : AppCompatActivity(), OnMapReadyCallback, Overlay.OnClickLis
             }
 
         mapView.onCreate(savedInstanceState)
+
+        binding.searchView.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return if(query?.isNotEmpty() == true) {
+                    SearchRepository.getDestinationLocation(query).enqueue(object : retrofit2.Callback<SearchResult> {
+                        override fun onResponse(call: retrofit2.Call<SearchResult>, response: retrofit2.Response<SearchResult>) {
+
+                            val searchItemList = response.body()?.items.orEmpty()
+
+                            if(searchItemList.isEmpty()) {
+                                Toast.makeText(this@CallActivity, "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show()
+                            }
+
+                            markers.forEach{
+                                it.map = null
+                            }
+
+                            markers = searchItemList.map {
+                                Marker(Tm128(it.mapx.toDouble(), it.mapy.toDouble()).toLatLng()).apply {
+                                    captionText = it.title
+                                    map = naverMap
+                                }
+                            }
+                            moveCamera(markers.first().position, 17.0)
+
+                        }
+
+                        override fun onFailure(call: retrofit2.Call<SearchResult>, t: Throwable) { }
+
+                    })
+                    false
+
+                } else {
+                    true
+                }
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return true
+            }
+
+        })
 
         binding.taxiCallButton.setOnClickListener {
 
@@ -472,6 +515,12 @@ class CallActivity : AppCompatActivity(), OnMapReadyCallback, Overlay.OnClickLis
 
     override fun onClick(p0: Overlay): Boolean {
         TODO("Not yet implemented")
+    }
+
+    private fun moveCamera(position: LatLng, zoomLevel: Double) {
+        val cameraUpdate = CameraUpdate.scrollAndZoomTo(position, zoomLevel)
+            .animate(CameraAnimation.Easing)
+        naverMap.moveCamera(cameraUpdate)
     }
 
 

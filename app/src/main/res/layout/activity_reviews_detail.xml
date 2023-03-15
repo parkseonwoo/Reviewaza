@@ -62,6 +62,18 @@
         app:layout_constraintStart_toEndOf="@id/thumbUpValue"
         app:layout_constraintTop_toTopOf="@id/thumbUp" />
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/scrapButton"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:onClick="onClickButton"
+        app:layout_constraintBottom_toBottomOf="@+id/thumbUp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/thumbUp"
+        app:lottie_autoPlay="false"
+        app:lottie_fileName="heart.json"
+        app:lottie_loop="false" />
+
     <TextView
         android:id="@+id/reviewsUserEmail"
         android:layout_width="0dp"
