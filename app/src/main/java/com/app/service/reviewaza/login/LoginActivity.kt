@@ -1,7 +1,6 @@
 package com.app.service.reviewaza.login
 
 import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -23,19 +22,21 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
-import com.kakao.sdk.auth.LoginClient
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.KakaoSdk
-import com.kakao.sdk.common.model.AuthErrorCause
+import com.kakao.sdk.common.model.ClientError
+import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import kotlinx.android.synthetic.main.activity_login.*
 import java.util.*
+import com.kakao.sdk.user.model.User
 
 class LoginActivity : AppCompatActivity() {
 
@@ -45,14 +46,24 @@ class LoginActivity : AppCompatActivity() {
     private var googleSignInClient: GoogleSignInClient? = null
     private var GOOGLE_LOGIN_CODE = 9001
     private var facebookCallbackManager: CallbackManager? = null
-    lateinit var kakaoCallback: (OAuthToken?, Throwable?) -> Unit
+    private lateinit var pendingUser: User
 
-    private var myUserId = Firebase.auth.currentUser?.uid ?: null
+    private val kakaoCallback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
+        if(error != null) {
+            // 로그인 실패
+            showErrorToast()
+            error.printStackTrace()
+
+        } else if(token != null) {
+            // 로그인 성공
+            getKakaoAccountInfo()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        KakaoSdk.init(this, "{KAKAO_NATIVE_KEY}")
+        KakaoSdk.init(this, getString(R.string.KAKAO_NATIVE_KEY))
 
         val REQUEST_ID_TOKEN = "${getString(R.string.REQUEST_ID_TOKEN)}"
 
@@ -97,7 +108,6 @@ class LoginActivity : AppCompatActivity() {
 
         // 카카오 로그인 버튼
         binding.kakaoLoginBtn.setOnClickListener {
-
             kakaoLogin()
         }
 
@@ -153,7 +163,7 @@ class LoginActivity : AppCompatActivity() {
     // 페이스북 로그인 함수
     private fun facebookLogin() {
         LoginManager.getInstance()
-            .logInWithReadPermissions(this, Arrays.asList("public_profile","email"))
+            .logInWithReadPermissions(this, Arrays.asList("public_profile", "email"))
 
         LoginManager.getInstance()
             .registerCallback(facebookCallbackManager, object : FacebookCallback<LoginResult> {
@@ -173,81 +183,98 @@ class LoginActivity : AppCompatActivity() {
             })
     }
 
-    fun handleFacebookAccessToken(token : AccessToken?){
+    fun handleFacebookAccessToken(token: AccessToken?) {
         var credential = FacebookAuthProvider.getCredential(token?.token!!)
 
         auth?.signInWithCredential(credential)
-            ?.addOnCompleteListener{
-                    task ->
-                if(task.isSuccessful){
+            ?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
                     // 아이디, 비밀번호 맞을 때
                     moveMainPage(task.result?.user)
-                    Toast.makeText(this,"로그인 성공",Toast.LENGTH_SHORT).show()
-                }else{
+                    Toast.makeText(this, "로그인 성공", Toast.LENGTH_SHORT).show()
+                } else {
                     // 틀렸을 때
-                    Toast.makeText(this,task.exception?.message,Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, task.exception?.message, Toast.LENGTH_SHORT).show()
                 }
             }
     }
 
     private fun kakaoLogin() {
-        setKaKaoCallback()
-        if(myUserId == null) {
-            if(LoginClient.instance.isKakaoTalkLoginAvailable(this)){
-                LoginClient.instance.loginWithKakaoTalk(this, callback = kakaoCallback)
-            }else{
-                LoginClient.instance.loginWithKakaoAccount(this, callback = kakaoCallback)
+
+        if(UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {
+            // 카카오톡 로그인
+            UserApiClient.instance.loginWithKakaoTalk(this) { token, error ->
+
+                if(error != null) {
+                    // 카카오톡 로그인 실패
+                    if(error is ClientError && error.reason == ClientErrorCause.Cancelled) {
+                        return@loginWithKakaoTalk
+                    }
+                    UserApiClient.instance.loginWithKakaoAccount(this, callback = kakaoCallback)
+                } else if(token != null) {
+                    // 로그인 성공
+                    if(Firebase.auth.currentUser == null) {
+                        getKakaoAccountInfo()
+                    } else {
+                        //navigateToMapActivity()
+                    }
+                }
+            }
+        } else {
+            // 카카오계정 로그인
+            UserApiClient.instance.loginWithKakaoAccount(this, callback = kakaoCallback)
+        }
+    }
+
+    private fun getKakaoAccountInfo() {
+        UserApiClient.instance.me { user, error ->
+            if(error != null) {
+                showErrorToast()
+                error.printStackTrace()
+            } else if(user != null) {
+                // 사용자 정보 요청 성공
+                Log.e("LoginActivity",
+                    "user: 회원번호 : ${user.id} / 이메일: ${user.kakaoAccount?.email} / 닉네임: ${user.kakaoAccount?.profile?.nickname} / 프로필사진: ${user.kakaoAccount?.profile?.thumbnailImageUrl}")
+                checkKakaoUserData(user)
             }
         }
     }
 
-    fun setKaKaoCallback() {
-        val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
-            if (error != null) {
-                when {
-                    error.toString() == AuthErrorCause.AccessDenied.toString() -> {
-                        Toast.makeText(this, "접근이 거부 됨(동의 취소)", Toast.LENGTH_SHORT).show()
+    private fun checkKakaoUserData(user: User) {
+        val kakaoEmail = user.kakaoAccount?.email.orEmpty()
+
+        if(kakaoEmail.isNullOrEmpty()) {
+            // 추가로 이메일 받는 과정
+            pendingUser = user
+        }
+
+        signingFirebase(user, kakaoEmail)
+    }
+
+    private fun signingFirebase(user: User, email: String) {
+        val uId = user.id.toString()
+
+        Firebase.auth.createUserWithEmailAndPassword(email, uId).addOnCompleteListener {
+            if(it.isSuccessful) {
+                updateFirebaseDatabase(user)
+            }
+        }.addOnFailureListener {
+            // 이미 가입된 계정
+            if(it is FirebaseAuthUserCollisionException) {
+                Firebase.auth.signInWithEmailAndPassword(email, uId).addOnCompleteListener { result ->
+                    if(result.isSuccessful) {
+                        updateFirebaseDatabase(user)
+                    } else {
+                        showErrorToast()
                     }
-                    error.toString() == AuthErrorCause.InvalidClient.toString() -> {
-                        Toast.makeText(this, "유효하지 않은 앱", Toast.LENGTH_SHORT).show()
-                    }
-                    error.toString() == AuthErrorCause.InvalidGrant.toString() -> {
-                        Toast.makeText(this, "인증 수단이 유효하지 않아 인증할 수 없는 상태", Toast.LENGTH_SHORT).show()
-                    }
-                    error.toString() == AuthErrorCause.InvalidRequest.toString() -> {
-                        Toast.makeText(this, "요청 파라미터 오류", Toast.LENGTH_SHORT).show()
-                    }
-                    error.toString() == AuthErrorCause.InvalidScope.toString() -> {
-                        Toast.makeText(this, "유효하지 않은 scope ID", Toast.LENGTH_SHORT).show()
-                    }
-                    error.toString() == AuthErrorCause.Misconfigured.toString() -> {
-                        Toast.makeText(this, "설정이 올바르지 않음(android key hash)", Toast.LENGTH_SHORT).show()
-                    }
-                    error.toString() == AuthErrorCause.ServerError.toString() -> {
-                        Toast.makeText(this, "서버 내부 에러", Toast.LENGTH_SHORT).show()
-                    }
-                    error.toString() == AuthErrorCause.Unauthorized.toString() -> {
-                        Toast.makeText(this, "앱이 요청 권한이 없음", Toast.LENGTH_SHORT).show()
-                    }
-                    else -> { // Unknown
-                        Toast.makeText(this, "기타 에러", Toast.LENGTH_SHORT).show()
-                    }
+                }.addOnFailureListener { error ->
+                    error.printStackTrace()
+                    showErrorToast()
                 }
-            }
-            else if (token != null) {
-                Toast.makeText(this, "로그인에 성공하였습니다.", Toast.LENGTH_SHORT).show()
-                LOGIN_SET = "Kakao"
-                MY_STATE = token.toString()
-                finish()
+            } else {
+                showErrorToast()
             }
         }
-        if(LoginClient.instance.isKakaoTalkLoginAvailable(this)){
-            LoginClient.instance.loginWithKakaoTalk(this, callback = callback)
-
-        }else{
-            LoginClient.instance.loginWithKakaoAccount(this, callback = callback)
-        }
-
     }
 
     fun firebaseAuthWithGoogle(account: GoogleSignInAccount?) {
@@ -267,7 +294,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        facebookCallbackManager?.onActivityResult(requestCode,resultCode,data)
+        facebookCallbackManager?.onActivityResult(requestCode, resultCode, data)
         if (requestCode == GOOGLE_LOGIN_CODE) {
             var result = Auth.GoogleSignInApi.getSignInResultFromIntent(data)!!
             // 구글API가 넘겨주는 값 받아옴
@@ -291,8 +318,32 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-companion object {
-    const val TAG = "MyLog"
-}
+    private fun updateFirebaseDatabase(user: User) {
+        val uid = Firebase.auth.currentUser?.uid.orEmpty()
+
+        val personMap = mutableMapOf<String, Any>()
+        personMap["userId"] = uid
+        personMap["username"] = user.kakaoAccount?.profile?.nickname.orEmpty()
+        personMap["userImage"] = user.kakaoAccount?.profile?.thumbnailImageUrl.orEmpty()
+        Firebase.database(DB_URL).reference.child(DB_USERS).child(uid)
+            .updateChildren(personMap)
+
+        Firebase.messaging.token.addOnCompleteListener {
+            val token = it.result
+            val personMap = mutableMapOf<String, Any>()
+            personMap["userId"] = uid
+            personMap["username"] = user.kakaoAccount?.profile?.nickname.orEmpty()
+            personMap["userImage"] = user.kakaoAccount?.profile?.thumbnailImageUrl.orEmpty()
+            personMap["fcmToken"] = token!!
+
+            Firebase.database(DB_URL).reference.child(DB_USERS).child(uid)
+                .updateChildren(personMap)
+        }
+        moveMainPage(auth?.currentUser)
+    }
+
+    private fun showErrorToast() {
+        Toast.makeText(this, "사용자 로그인에 실패했습니다.", Toast.LENGTH_SHORT).show()
+    }
 
 }
