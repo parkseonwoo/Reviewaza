@@ -331,9 +331,6 @@ class LoginActivity : AppCompatActivity() {
         Firebase.messaging.token.addOnCompleteListener {
             val token = it.result
             val personMap = mutableMapOf<String, Any>()
-            personMap["userId"] = uid
-            personMap["username"] = user.kakaoAccount?.profile?.nickname.orEmpty()
-            personMap["userImage"] = user.kakaoAccount?.profile?.thumbnailImageUrl.orEmpty()
             personMap["fcmToken"] = token!!
 
             Firebase.database(DB_URL).reference.child(DB_USERS).child(uid)

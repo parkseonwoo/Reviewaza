@@ -105,6 +105,10 @@ dependencies {
     // Naver Map API
     implementation("com.naver.maps:map-sdk:3.16.1")
 
+    // Google Map
+    implementation 'com.google.android.gms:play-services-maps:18.1.0'
+    implementation 'com.google.android.gms:play-services-location:21.0.1'
+
     // Ted Permission - RxJva3
     // Normal
     implementation 'io.github.ParkSangGwon:tedpermission-normal:3.3.0'

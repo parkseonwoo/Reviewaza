@@ -45,6 +45,7 @@
                 <data android:scheme="@string/FB_LOGIN_PROTOCOL_SCHEME" />
             </intent-filter>
         </activity>
+
         <!-- Kakao -->
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
@@ -57,6 +58,7 @@
                     android:scheme="kakao${KAKAO_NATIVE_KEY}" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -70,6 +72,10 @@
         <meta-data
             android:name="com.naver.maps.map.CLIENT_ID"
             android:value="${MAPS_API_KEY}" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/GOOGLE_MAP_API_KEY" />
 
         <service
             android:name=".MyFirebaseMessagingService"
@@ -85,14 +91,12 @@
 
     </application>
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGEE" />
-
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
 </manifest>

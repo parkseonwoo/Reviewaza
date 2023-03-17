@@ -1,145 +1,147 @@
 package com.app.service.reviewaza
 
+import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.Color
-import android.location.Address
-import android.location.Geocoder
-import android.location.Location
-import android.os.Build
+import android.graphics.Bitmap
+import android.os.Bundle
+import android.os.Looper
 import android.util.Log
+import android.view.RoundedCorner
+import android.view.View
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.UiThread
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.Fragment
+import com.app.service.reviewaza.call.Key.Companion.DB_USERS
 import com.app.service.reviewaza.databinding.FragmentLocationEnrollBinding
+import com.app.service.reviewaza.login.UserItem
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
-import com.gun0912.tedpermission.PermissionListener
-import com.gun0912.tedpermission.normal.TedPermission
-import com.naver.maps.geometry.LatLng
-import com.naver.maps.map.CameraUpdate
-import com.naver.maps.map.LocationTrackingMode
-import com.naver.maps.map.MapFragment
-import com.naver.maps.map.NaverMap
-import com.naver.maps.map.OnMapReadyCallback
-import com.naver.maps.map.overlay.Marker
-import com.naver.maps.map.overlay.OverlayImage
-import com.naver.maps.map.util.FusedLocationSource
-import java.io.IOException
-import java.util.*
+import com.google.android.gms.location.Priority
+import com.google.android.gms.maps.*
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener
+import com.google.android.gms.maps.model.*
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 
-class LocationEnrollFragment : BaseFragment<FragmentLocationEnrollBinding>(R.layout.fragment_location_enroll),
-    OnMapReadyCallback {
+
+class LocationEnrollFragment :
+    BaseFragment<FragmentLocationEnrollBinding>(R.layout.fragment_location_enroll),
+    OnMapReadyCallback, OnMarkerClickListener {
+
+    private lateinit var googleMap: GoogleMap
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private lateinit var locationSource: FusedLocationSource
-    private lateinit var naverMap: NaverMap
+
+    private var trackingUserId: String = ""
+    private val markerMap = hashMapOf<String, Marker>()
+
+    lateinit var mainActivity: MainActivity
+
+    private val locationPermissionRequest = registerForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permission ->
+        when {
+            permission.getOrDefault(android.Manifest.permission.ACCESS_FINE_LOCATION, false) -> {
+                getCurrentLocation()
+            }
+            permission.getOrDefault(android.Manifest.permission.ACCESS_COARSE_LOCATION, false) -> {
+                getCurrentLocation()
+            }
+            else -> {
+                // TODO 설정으로 보내기 or 교육용 팝업 띄워서 다시 권한 요청하기
+            }
+        }
+    }
+
+    private val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(locationResult: LocationResult) {
+
+            // 새로 요청된 위치 정보
+            for (location in locationResult.locations) {
+
+                Log.e(
+                    "MapActivity",
+                    "onLocationResult : ${location.latitude} ${location.longitude}"
+                )
+
+                val uid = Firebase.auth.currentUser?.uid.orEmpty()
+
+                val locationMap = mutableMapOf<String, Any>()
+                locationMap["latitude"] = location.latitude
+                locationMap["longitude"] = location.longitude
+                Firebase.database.reference.child(DB_USERS).child(uid).updateChildren(locationMap)
+            }
+        }
+    }
 
     override fun init() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
-        requestPermissions()
+        requestLocationPermission()
         initView()
     }
 
     private fun initView() {
-        // 네이버맵 동적으로 불러오기
-        val fm = childFragmentManager
-        val mapFragment = fm.findFragmentById(R.id.naver_map) as MapFragment?
-            ?: MapFragment.newInstance().also {
-                fm.beginTransaction().add(R.id.naver_map, it).commit()
-            }
+
+        val mapFragment =
+            childFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment?
+                ?: SupportMapFragment.newInstance().also {
+                    childFragmentManager.beginTransaction().add(R.id.mapFragment, it).commit()
+                }
         mapFragment.getMapAsync(this)
+        setupCuurentLocation()
+        setupFirebaseDatabase()
     }
 
-    // 위치권한 관련 요청
-    private fun requestPermissions() {
-        // 내장 위치 추적 기능 사용
-        locationSource =
-            FusedLocationSource(this, LOCATION_PERMISSION_REQUEST_CODE)
-
-        // 맵 위치 권한 설정을 확인
-        if (Build.VERSION.SDK_INT >= 23) {
-
-            TedPermission.create()
-                .setPermissionListener(object: PermissionListener {
-                    override fun onPermissionGranted() {
-                        Log.e("위치 권한 부여 ", "성공")
-                    }
-
-                    override fun onPermissionDenied(deniedPermissions: MutableList<String>?) {
-                        TODO("Not yet implemented")
-                    }
-
-                })
-                .setRationaleMessage("위치 정보 제공이 필요한 서비스입니다.")
-                .setDeniedMessage("[설정] -> [권한]에서 권한 변경이 가능합니다.")
-                .setDeniedCloseButtonText("닫기")
-                .setGotoSettingButtonText("설정")
-                .setRationaleTitle("택시 리뷰 아자 위치 권한")
-                .setPermissions(
-                    android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                    android.Manifest.permission.ACCESS_FINE_LOCATION
-                )
-                .check()
-        }
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mainActivity = context as MainActivity
     }
 
-    // 네이버맵 불러오기가 완료되면 콜백
+    override fun onResume() {
+        super.onResume()
+        getCurrentLocation()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        fusedLocationClient.removeLocationUpdates(locationCallback)
+    }
+
     @UiThread
-    override fun onMapReady(naverMap: NaverMap) {
-        this.naverMap = naverMap
-        // 내장 위치 추적 기능 사용
-        naverMap.locationSource = locationSource
+    override fun onMapReady(map: GoogleMap) {
+        googleMap = map
+        googleMap.setMaxZoomPreference(20.0f)
+        googleMap.setMinZoomPreference(10.0f)
 
-        // 빨간색 표시 마커 (네이버맵 현재 가운데에 항상 위치)
-        val marker = Marker()
-        marker.position = LatLng(
-            naverMap.cameraPosition.target.latitude,
-            naverMap.cameraPosition.target.longitude
-        )
-        marker.icon = OverlayImage.fromResource(R.drawable.ic_baseline_location_on_24)
-        marker.map = naverMap
-        marker.iconTintColor = Color.RED
-
-        // 카메라의 움직임에 대한 이벤트 리스너 인터페이스.
-        // 참고 : https://navermaps.github.io/android-map-sdk/reference/com/naver/maps/map/package-summary.html
-        naverMap.addOnCameraChangeListener { reason, animated ->
-            Log.i("NaverMap", "카메라 변경 - reson: $reason, animated: $animated")
-            marker.position = LatLng(
-                // 현재 보이는 네이버맵의 정중앙 가운데로 마커 이동
-                naverMap.cameraPosition.target.latitude,
-                naverMap.cameraPosition.target.longitude
-            )
-            // 주소 텍스트 세팅 및 확인 버튼 비활성화
-            binding.tvLocation.run {
-                text = "위치 이동 중"
-                setTextColor(Color.parseColor("#c4c4c4"))
-            }
-            binding.btnConfirm.run {
-                setBackgroundResource(R.drawable.edittext_rounded_corner_rectangle)
-                setTextColor(Color.parseColor("#ffffff"))
-                isEnabled = false
-            }
+        googleMap.setOnMapClickListener {
+            trackingUserId = ""
         }
 
-        // 카메라의 움직임 종료에 대한 이벤트 리스너 인터페이스.
-        naverMap.addOnCameraIdleListener {
-            marker.position = LatLng(
-                naverMap.cameraPosition.target.latitude,
-                naverMap.cameraPosition.target.longitude
-            )
-            // 좌표 -> 주소 변환 텍스트 세팅, 버튼 활성화
-            binding.tvLocation.run {
-                text = getAddress(
-                    naverMap.cameraPosition.target.latitude,
-                    naverMap.cameraPosition.target.longitude
-                )
-                setTextColor(Color.parseColor("#2d2d2d"))
-            }
-            binding.btnConfirm.run {
-                setBackgroundResource(R.drawable.edittext_rounded_corner_rectangle)
-                setTextColor(Color.parseColor("#FF000000"))
-                isEnabled = true
-            }
-        }
+    }
+
+    override fun onMarkerClick(marker: Marker): Boolean {
+        trackingUserId = marker.tag as? String ?: ""
+        return false
+    }
+
+    private fun getCurrentLocation() {
+        val locationRequest =
+            LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5 * 1000).build()
 
         if (ActivityCompat.checkSelfPermission(
                 requireContext(),
@@ -151,58 +153,193 @@ class LocationEnrollFragment : BaseFragment<FragmentLocationEnrollBinding>(R.lay
         ) {
             return
         }
-        // 사용자 현재 위치 받아오기
-        var currentLocation: Location?
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location: Location? ->
-                currentLocation = location
-                // 위치 오버레이의 가시성은 기본적으로 false로 지정되어 있습니다. 가시성을 true로 변경하면 지도에 위치 오버레이가 나타납니다.
-                // 파랑색 점, 현재 위치 표시
-                naverMap.locationOverlay.run {
-                    isVisible = true
-                    position = LatLng(currentLocation!!.latitude, currentLocation!!.longitude)
-                }
 
-                // 카메라 현재위치로 이동
-                val cameraUpdate = CameraUpdate.scrollTo(
-                    LatLng(
-                        currentLocation!!.latitude,
-                        currentLocation!!.longitude
-                    )
-                )
-                naverMap.moveCamera(cameraUpdate)
+        // 권한이 있는 상태
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper()
+        )
 
-                // 빨간색 마커 현재위치로 변경
-                marker.position = LatLng(
-                    naverMap.cameraPosition.target.latitude,
-                    naverMap.cameraPosition.target.longitude
-                )
-            }
+        moveLastLocation()
     }
 
-    // 좌표 -> 주소 변환
-    private fun getAddress(lat: Double, lng: Double): String {
-        val geoCoder = Geocoder(requireContext(), Locale.KOREA)
-        val address: ArrayList<Address>
-        var addressResult = "주소를 가져 올 수 없습니다."
-        try {
-            //세번째 파라미터는 좌표에 대해 주소를 리턴 받는 갯수로
-            //한좌표에 대해 두개이상의 이름이 존재할수있기에 주소배열을 리턴받기 위해 최대갯수 설정
-            address = geoCoder.getFromLocation(lat, lng, 1) as ArrayList<Address>
-            if (address.size > 0) {
-                // 주소 받아오기
-                val currentLocationAddress = address[0].getAddressLine(0)
-                    .toString()
-                addressResult = currentLocationAddress
-
-            }
-
-        } catch (e: IOException) {
-            e.printStackTrace()
+    private fun setupCuurentLocation() {
+        binding.currentLocationButton.setOnClickListener {
+            trackingUserId = ""
+            moveLastLocation()
         }
-        return addressResult
     }
 
+    private fun requestLocationPermission() {
+        locationPermissionRequest.launch(
+            arrayOf(
+                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            )
+        )
+    }
+
+    private fun moveLastLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                android.Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestLocationPermission()
+            return
+        }
+
+        fusedLocationClient.lastLocation.addOnSuccessListener {
+            googleMap.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(LatLng(it.latitude, it.longitude), 16.0f)
+            )
+        }
+    }
+
+    private fun setupFirebaseDatabase() {
+
+        if (Firebase.auth.currentUser != null) {
+            Firebase.database.reference.child(DB_USERS)
+                .addChildEventListener(object : ChildEventListener {
+                    override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+                        val user = snapshot.getValue(UserItem::class.java) ?: return
+                        val uid = user.userId ?: return
+
+                        if (markerMap[uid] == null) {
+                            markerMap[uid] = makeNewMarker(user, uid) ?: return
+                        }
+                    }
+
+                    override fun onChildChanged(
+                        snapshot: DataSnapshot,
+                        previousChildName: String?
+                    ) {
+                        val user = snapshot.getValue(UserItem::class.java)
+                        val uid = user?.userId ?: return
+                        Log.e("dataChangeCheck", "user: $user uid: $uid")
+                        if (markerMap[uid] == null) {
+                            markerMap[uid] = makeNewMarker(user, uid) ?: return
+                        } else {
+
+                            markerMap[uid]?.position =
+                                LatLng(user.latitude ?: 0.0, user.longitude ?: 0.0)
+                        }
+
+                        if (uid == trackingUserId) {
+                            Log.e("trackingUserId", "uid: $uid, tracingId: ${trackingUserId}")
+                            googleMap.animateCamera(
+                                CameraUpdateFactory.newCameraPosition(
+                                    CameraPosition.Builder()
+                                        .target(LatLng(user.latitude ?: 0.0, user.longitude ?: 0.0))
+                                        .zoom(16.0f)
+                                        .build()
+                                )
+                            )
+                        }
+                    }
+
+                    override fun onChildRemoved(snapshot: DataSnapshot) {}
+
+                    override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+
+                    override fun onCancelled(error: DatabaseError) {}
+
+                })
+        } else {
+            Toast.makeText(requireContext(), "로그인을 해주세요", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun makeNewMarker(user: UserItem, uid: String): Marker? {
+        val marker = googleMap.addMarker(
+            MarkerOptions()
+                .position(LatLng(user.latitude ?: 0.0, user.longitude ?: 0.0))
+                .title(user.username.orEmpty())
+        ) ?: return null
+
+        marker.tag = uid
+
+        Log.e("userImage", "${user.userImage}")
+
+        if(user.userImage == null) {
+            Glide.with(this).asBitmap()
+                .load(R.drawable.ic_baseline_person_24)
+                .transform(RoundedCorners(60))
+                .override(200)
+                .listener(object : RequestListener<Bitmap> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Bitmap>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: Bitmap?,
+                        model: Any?,
+                        target: Target<Bitmap>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        resource?.let {
+                            mainActivity.runOnUiThread {
+                                marker.setIcon(
+                                    BitmapDescriptorFactory.fromBitmap(
+                                        resource
+                                    )
+                                )
+                            }
+                        }
+                        return true
+                    }
+
+                }).submit()
+        } else {
+            Glide.with(this).asBitmap()
+                .load(user.userImage)
+                .transform(RoundedCorners(60))
+                .override(200)
+                .listener(object : RequestListener<Bitmap> {
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any?,
+                        target: Target<Bitmap>?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        return false
+                    }
+
+                    override fun onResourceReady(
+                        resource: Bitmap?,
+                        model: Any?,
+                        target: Target<Bitmap>?,
+                        dataSource: DataSource?,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        resource?.let {
+                            mainActivity.runOnUiThread {
+                                marker.setIcon(
+                                    BitmapDescriptorFactory.fromBitmap(
+                                        resource
+                                    )
+                                )
+                            }
+                        }
+                        return true
+                    }
+
+                }).submit()
+
+        }
+
+        return marker
+    }
 
     companion object {
         const val LOCATION_PERMISSION_REQUEST_CODE = 1000

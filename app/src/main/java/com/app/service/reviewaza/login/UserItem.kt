@@ -8,4 +8,6 @@ data class UserItem (
      val userImage: String? = null,
      val description: String? = null,
      val fcmToken: String? = null,
+     var latitude: Double? = null,
+     var longitude: Double? = null,
 )
