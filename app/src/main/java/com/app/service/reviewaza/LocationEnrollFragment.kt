@@ -71,6 +71,8 @@ class LocationEnrollFragment :
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult) {
 
+            if(Firebase.auth.currentUser?.uid == null || Firebase.auth.currentUser?.uid == "") return
+
             // 새로 요청된 위치 정보
             for (location in locationResult.locations) {
 

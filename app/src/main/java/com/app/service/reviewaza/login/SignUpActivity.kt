@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import com.app.service.reviewaza.LOGIN_SET
 import com.app.service.reviewaza.R
+import com.app.service.reviewaza.call.Key
 import com.app.service.reviewaza.databinding.ActivitySignupBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_signup.*
 
@@ -48,9 +51,17 @@ class SignUpActivity : AppCompatActivity() {
             if (isGoToJoin) {
                 auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this) { task ->
+                        val currentUser = Firebase.auth.currentUser
                         if (task.isSuccessful) {
                             // Sign in success, update UI with the signed-in user's information
                             Toast.makeText(this, "화원가입 성공", Toast.LENGTH_LONG).show()
+                            LOGIN_SET="Email"
+                            val userId = currentUser?.uid
+                            val user = mutableMapOf<String, Any>()
+                            user["userId"] = userId!!
+                            user["username"] = email
+                            Firebase.database(Key.DB_URL).reference.child(Key.DB_USERS).child(userId)
+                                .updateChildren(user)
                             finish()
 
                         } else {

@@ -32,31 +32,13 @@ class CallListFragment : BaseFragment<FragmentCalllistBinding>(R.layout.fragment
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         callListAdapter = CallListAdapter { otherUser ->
-            val myUserId = Firebase.auth.currentUser?.uid ?: ""
-            val chatRoomDB = Firebase.database.reference.child(Key.DB_CALLS).child(myUserId).child(otherUser.userId ?: "")
 
-            chatRoomDB.get().addOnSuccessListener {
-                var callId = ""
-                if(it.value != null) {
+            val callId = callListViewModel.getchatRoomDB(otherUser)
 
-                    val chatRoom = it.getValue(CallItem::class.java)
-                    callId = chatRoom?.callId ?: ""
-                } else {
-
-                    callId = UUID.randomUUID().toString()
-                    val newChatRoom = CallItem(
-                        callId = callId,
-                        otherUserName = otherUser.username,
-                        otherUserId = otherUser.userId,
-                    )
-                    chatRoomDB.setValue(newChatRoom)
-                }
-
-                val intent = Intent(context, CallActivity::class.java)
-                intent.putExtra(CallActivity.EXTRA_CALL_ID, callId)
-                intent.putExtra(CallActivity.EXTRA_OTHER_USER_ID, otherUser.userId)
-                startActivity(intent)
-            }
+            val intent = Intent(context, CallActivity::class.java)
+            intent.putExtra(CallActivity.EXTRA_CALL_ID, callId)
+            intent.putExtra(CallActivity.EXTRA_OTHER_USER_ID, otherUser.userId)
+            startActivity(intent)
         }
 
         binding.toolBar.apply {

@@ -10,6 +10,8 @@ import com.app.service.reviewaza.R
 import com.app.service.reviewaza.chatbot.ChatActivity
 import com.app.service.reviewaza.databinding.FragmentMypageBinding
 import com.app.service.reviewaza.login.LoginActivity
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class MyPageFragment : Fragment(R.layout.fragment_mypage) {
 
@@ -20,7 +22,7 @@ class MyPageFragment : Fragment(R.layout.fragment_mypage) {
         binding = FragmentMypageBinding.bind(view)
 
         binding.myPageMyInfo.setOnClickListener {
-            if(MY_STATE == "") {
+            if(MY_STATE == "" || Firebase.auth.currentUser?.uid == "" || Firebase.auth.currentUser?.uid == null) {
                 val intent = Intent(context, LoginActivity::class.java)
                 startActivity(intent)
             } else {

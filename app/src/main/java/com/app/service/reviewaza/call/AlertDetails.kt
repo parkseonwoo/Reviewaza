@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
 import com.app.service.reviewaza.CALL_RESPONSE
 import com.app.service.reviewaza.R
 import com.app.service.reviewaza.databinding.ActivityFcmDialogBinding
@@ -35,6 +36,8 @@ AlertDetails : AppCompatActivity() {
     private var otherUserFcmToken: String = ""
     private var chatRoomId: String = ""
     private val chatItemList = mutableListOf<ChatItem>()
+
+    private val callListViewModel by lazy { ViewModelProvider(this).get(CallListViewModel::class.java) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -192,27 +195,30 @@ AlertDetails : AppCompatActivity() {
                 otherUserFcmToken = otherUserItem?.fcmToken.orEmpty()
                 Log.e("alert otherFcmToken", "${otherUserFcmToken} and ${userId}")
 
-                getChatData()
+                //getChatData()
+                callListViewModel.getChatData(chatRoomId)
             }
     }
 
-    private fun getChatData() {
-        Firebase.database.reference.child(Key.DB_CHATS).child(chatRoomId).addChildEventListener(
-            object : ChildEventListener {
-                override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                    val chatItem = snapshot.getValue(ChatItem::class.java)
-                    chatItem ?: return
 
-                    chatItemList.add(chatItem)
-                }
 
-                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
-                override fun onChildRemoved(snapshot: DataSnapshot) {}
-                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
-                override fun onCancelled(error: DatabaseError) {}
-
-            })
-    }
+//    private fun getChatData() {
+//        Firebase.database.reference.child(Key.DB_CHATS).child(chatRoomId).addChildEventListener(
+//            object : ChildEventListener {
+//                override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
+//                    val chatItem = snapshot.getValue(ChatItem::class.java)
+//                    chatItem ?: return
+//
+//                    chatItemList.add(chatItem)
+//                }
+//
+//                override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
+//                override fun onChildRemoved(snapshot: DataSnapshot) {}
+//                override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
+//                override fun onCancelled(error: DatabaseError) {}
+//
+//            })
+//    }
 
 
 }

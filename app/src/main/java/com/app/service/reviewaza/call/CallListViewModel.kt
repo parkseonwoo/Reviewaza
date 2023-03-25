@@ -19,4 +19,12 @@ class CallListViewModel : ViewModel() {
         return mutableData
     }
 
+    fun getchatRoomDB(otherUser: UserItem):String {
+        return repo.getChatRoomDB(otherUser)
+    }
+
+    fun getChatData(chatRoomId: String) {
+        repo.getChatData(chatRoomId)
+    }
+
 }

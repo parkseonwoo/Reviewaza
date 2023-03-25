@@ -29,6 +29,7 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
+import com.facebook.login.LoginManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ktx.database
@@ -98,6 +99,8 @@ class MyPageInfoActivity : AppCompatActivity() {
         binding.deleteUserButton.setOnClickListener {
             userDelete()
         }
+
+        Toast.makeText(this, "${LOGIN_SET}", Toast.LENGTH_SHORT).show()
 
     }
 
@@ -301,9 +304,17 @@ class MyPageInfoActivity : AppCompatActivity() {
             }
         } else {
             FirebaseAuth.getInstance().currentUser!!.delete().addOnCompleteListener { task ->
-                Toast.makeText(this, "아이디 삭제가 완료되었습니다", Toast.LENGTH_SHORT).show()
-                Firebase.auth.signOut()
-                finish()
+                if(task.isSuccessful){
+                    Toast.makeText(this, "아이디 삭제가 완료되었습니다", Toast.LENGTH_LONG).show()
+
+                    //로그아웃처리
+                    FirebaseAuth.getInstance().signOut()
+                    LoginManager.getInstance().logOut()
+                    finish()
+                }else{
+                    Toast.makeText(this, task.exception.toString(), Toast.LENGTH_LONG).show()
+
+                }
             }
         }
     }

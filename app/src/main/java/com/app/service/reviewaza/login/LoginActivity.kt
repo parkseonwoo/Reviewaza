@@ -137,10 +137,10 @@ class LoginActivity : AppCompatActivity() {
                         user["userId"] = userId
                         user["username"] = email
                         user["fcmToken"] = token!!
-
                         Firebase.database(DB_URL).reference.child(DB_USERS).child(userId)
                             .updateChildren(user)
                     }
+
                     moveMainPage(task.result?.user)
                 } else {
                     // Show the error message, 아이디와 패스워드가 틀렸을 때
